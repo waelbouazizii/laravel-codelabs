@@ -416,7 +416,7 @@
               <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
               Objectif
             </h3>
-            <p class="text-gray-700 leading-relaxed">Vérifier quels outils sont déjà installés, pour décider si l'Étape 1 (installation de la chaîne d'outils) est nécessaire.</p>
+            <p class="text-gray-700 leading-relaxed">Vérifier quels outils sont déjà installés, pour décider si l'Étape 1 (installer les outils manquants) est nécessaire.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -514,7 +514,7 @@ git --version</code></pre>
             <div class="flex flex-col items-stretch gap-1">
               <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
                 <i class="fa-solid fa-globe text-brand w-5 text-center" aria-hidden="true"></i>
-                <div><p class="font-medium text-sm">Navigateur</p><p class="text-sm text-gray-600">GET http://127.0.0.1:8000/bonjour</p></div>
+                <div><p class="font-medium text-sm">Navigateur</p><p class="text-sm text-gray-600">GET http://localhost:8000/bonjour</p></div>
               </div>
               <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
               <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
@@ -850,6 +850,12 @@ composer run dev</code></pre>
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-amber-900">Si PowerShell affiche « l'exécution de scripts est désactivée sur ce système », utilisez <code class="bg-white px-1 py-0.5 rounded text-xs">npm.cmd install</code>.</p>
             </div>
+            <p class="text-gray-700 mb-3">Si Node.js n'a pas pu être installé (Étape 1, partie B), ne lancez pas ces deux commandes : lancez uniquement la commande ci-dessous, puis ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande php artisan serve">Copier</button>
+              <pre><code class="language-bash">php artisan serve</code></pre>
+            </div>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-blue-900"><code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> reste en cours d'exécution. Laissez ce terminal ouvert, et ouvrez un second terminal dans le dossier mini-cms pour la suite (VS Code : Terminal &gt; Nouveau terminal). Arrêtez le serveur avec Ctrl+C. Si une fenêtre du pare-feu Windows apparaît, « Annuler » suffit, car l'accès local fonctionne quand même.</p>
@@ -1128,7 +1134,7 @@ Route::get('/', function () {
                 </tbody>
               </table>
             </div>
-            <p class="text-gray-700 mt-4">Expérience : ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000/page-inexistante</code>. La page 404 montre que le routeur n'a trouvé aucune route correspondante.</p>
+            <p class="text-gray-700 mt-4">Expérience : ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/page-inexistante</code>. La page 404 montre que le routeur n'a trouvé aucune route correspondante.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1494,7 +1500,7 @@ touch notes/s01-cycle-de-vie.md</code></pre>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -v</code> affiche 8.3 ou plus et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan --version</code> affiche Laravel Framework 13.x.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan about</code> indique sqlite.</li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code>.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour-court</code> renvoient leur texte.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> affiche mon nom, mon groupe et le cours depuis une vue Blade.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/version</code> fonctionne et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> affiche l'heure de Tunis.</li>
