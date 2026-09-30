@@ -197,7 +197,7 @@
               <span class="marker-number">4</span>
               <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
             </span>
-            <span>1 - Chaîne d'outils</span>
+            <span>1 - Outils manquants</span>
           </a>
         </li>
         <li>
@@ -435,37 +435,25 @@ npm -v
 git --version</code></pre>
             </div>
 
-            <h4 class="text-sm font-medium text-gray-800 mb-2">Où sont installés les outils ?</h4>
-            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande Bash">Copier</button>
-              <pre><code class="language-bash">command -v php composer laravel node npm git</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande PowerShell">Copier</button>
-              <pre><code class="language-powershell">Get-Command php, composer, laravel, node, npm, git -ErrorAction SilentlyContinue | Format-Table Name, Source</code></pre>
-            </div>
-
             <div class="overflow-x-auto mb-4">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <thead class="bg-gray-50">
                   <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Outil</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Attendu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Si la commande échoue</th></tr>
                 </thead>
                 <tbody>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">php</td><td class="px-3 py-2">PHP 8.3 ou plus</td><td class="px-3 py-2">Étape 1</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">composer</td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2">Étape 1</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">laravel</td><td class="px-3 py-2">Laravel Installer (version récente)</td><td class="px-3 py-2">Étape 1</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">node</td><td class="px-3 py-2">Une version LTS paire (22 ou 24)</td><td class="px-3 py-2">Étape 1, partie Node.js (plan de secours possible à l'Étape 3)</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">npm</td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2">Idem node</td></tr>
-                  <tr><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2">Installer Git for Windows (<a href="https://git-scm.com/download/win" class="underline text-brand">https://git-scm.com/download/win</a>). Sans droits administrateur : sauvegardez le projet sur clé USB (dernière étape) et faites le commit chez vous avant S02.</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">php</td><td class="px-3 py-2">PHP 8.3 ou plus</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">composer</td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">laravel</td><td class="px-3 py-2">Laravel Installer (version récente)</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">node</td><td class="px-3 py-2">Une version LTS paire (22 ou 24)</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie B</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">npm</td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie B</a> (npm est installé avec Node.js)</td></tr>
+                  <tr><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie C</a></td></tr>
                 </tbody>
               </table>
             </div>
 
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">En PowerShell, le message « n'est pas reconnu comme nom d'applet de commande » signifie que l'outil n'est pas installé ou n'est pas dans le PATH. Si les six commandes fonctionnent, passez directement à <a href="#step-5" class="underline font-medium">l'Étape 2</a>.</p>
+              <p class="text-sm text-blue-900">En PowerShell, le message « n'est pas reconnu comme nom d'applet de commande » signifie que l'outil n'est pas installé ou n'est pas dans le PATH. Si les six commandes affichent une version, passez directement à <a href="#step-5" class="underline font-medium">l'Étape 2</a>. Sinon, faites uniquement les parties de l'Étape 1 indiquées dans le tableau.</p>
             </div>
           </div>
 
@@ -618,14 +606,14 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
         </section>
 
         <!-- Step 4 -->
-        <section id="step-4" class="step-panel" data-title="Étape 1 - Installer la chaîne d'outils (20 min)">
+        <section id="step-4" class="step-panel" data-title="Étape 1 - Installer les outils manquants (20 min)">
           <div class="md-card p-6">
             <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
               <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
               Objectif
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">Installer PHP 8.3+, Composer et l'installateur Laravel avec php.new, sans droits administrateur. Sautez cette étape si la vérification de l'environnement a réussi.</p>
+            <p class="text-gray-700 leading-relaxed">Installer uniquement les outils signalés comme absents à la vérification de l'environnement. Si les six commandes ont fonctionné, passez directement à <a href="#step-5" class="underline font-medium text-brand">l'Étape 2</a>.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -633,6 +621,9 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
               <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
               Commandes
             </h3>
+
+            <h4 class="font-medium mt-4 mb-2">A. PHP, Composer et l'installateur Laravel (si php, composer ou laravel manque)</h4>
+            <p class="text-gray-700 mb-3">php.new installe les trois outils avec une seule commande, sans droits administrateur.</p>
             <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
             <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
               <li>Ouvrir <a href="https://php.new" class="underline text-brand">https://php.new</a> dans le navigateur et choisir Windows.</li>
@@ -640,11 +631,25 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
               <li>Fermer TOUS les terminaux et TOUTES les fenêtres VS Code, puis rouvrir PowerShell, pour que le nouveau PATH soit chargé.</li>
             </ol>
             <p class="text-sm text-gray-600 mb-4">Remarque Bash : l'installateur Windows de php.new s'exécute dans PowerShell. Sur un ordinateur personnel macOS ou Linux, copiez la commande correspondant à votre système depuis la même page.</p>
-            <p class="text-gray-700 mb-4">Node.js : si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node</code> est absent et que vous avez les droits administrateur, installez la version LTS depuis <a href="https://nodejs.org" class="underline text-brand">https://nodejs.org</a> (ou depuis l'installateur fourni sur clé USB). Sans droits administrateur, continuez : le plan de secours 2 de l'Étape 3 couvre ce cas.</p>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-blue-900">Sur un ordinateur portable Windows personnel, Laravel Herd (<a href="https://herd.laravel.com" class="underline">https://herd.laravel.com</a>) est une alternative qui nécessite les droits administrateur.</p>
             </div>
+
+            <h4 class="font-medium mt-4 mb-2">B. Node.js et npm (si node ou npm manque)</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-3">
+              <li>Téléchargez l'installateur Windows (.msi) de la version LTS sur <a href="https://nodejs.org" class="underline text-brand">https://nodejs.org</a> (ou utilisez celui fourni sur clé USB).</li>
+              <li>Lancez-le en gardant les options par défaut ; npm est installé en même temps.</li>
+              <li>Fermez puis rouvrez tous les terminaux et VS Code.</li>
+            </ol>
+            <p class="text-gray-700 mb-4">Si l'installation est refusée faute de droits administrateur, continuez : à l'Étape 3, lancez l'application avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan serve</code> à la place de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">npm install</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code>.</p>
+
+            <h4 class="font-medium mt-4 mb-2">C. Git (si git manque)</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1">
+              <li>Téléchargez Git for Windows sur <a href="https://git-scm.com/download/win" class="underline text-brand">https://git-scm.com/download/win</a>.</li>
+              <li>Lancez l'installateur en gardant les options par défaut ; il installe aussi Git Bash.</li>
+              <li>Fermez puis rouvrez tous les terminaux.</li>
+            </ol>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -652,12 +657,15 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
               <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
               Code complet
             </h3>
-            <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <p class="text-sm text-gray-600 mb-3">Après installation, relancez la vérification (Bash et PowerShell, identique) :</p>
             <div class="code-block-wrapper">
               <button class="copy-btn" aria-label="Copier les commandes de vérification de l'installation">Copier</button>
               <pre><code class="language-bash">php -v
 composer -V
 laravel --version
+node -v
+npm -v
+git --version
 php -m</code></pre>
             </div>
           </div>
@@ -667,7 +675,7 @@ php -m</code></pre>
               <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
               Résultat attendu
             </h3>
-            <p class="text-gray-700">PHP 8.3 ou supérieur, Composer 2.x, une version de Laravel Installer, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code> dans la liste de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -m</code>.</p>
+            <p class="text-gray-700">Chaque commande affiche un numéro de version (PHP 8.3 ou plus, Composer 2.x), et la liste de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -m</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code>.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -691,17 +699,6 @@ php -m</code></pre>
               <p class="text-sm text-amber-900">« php n'est pas reconnu » juste après l'installation signifie que le terminal date d'avant l'installation. Fermez tout, y compris VS Code, puis rouvrez.</p>
             </div>
           </div>
-
-          <div class="md-card p-6 mt-6">
-            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
-              Plan de secours
-            </h3>
-            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3">
-              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900">Si PHP n'est toujours pas installé après 25 minutes, ne restez pas bloqué : lisez les Étapes 4 à 7 (tout le code y est affiché), terminez l'installation chez vous, puis refaites les Étapes 2 à 7 avant S02.</p>
-            </div>
-          </div>
         </section>
 
         <!-- Step 5 -->
@@ -712,7 +709,7 @@ php -m</code></pre>
               Objectif
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">Créer le projet <strong>mini-cms</strong> sans starter kit, avec Pest et SQLite, dans un dossier sans espace ni synchronisation OneDrive.</p>
+            <p class="text-gray-700 leading-relaxed">Créer le projet <strong>mini-cms</strong> sans starter kit (Blade), avec Pest et SQLite, dans un dossier sans espace ni synchronisation OneDrive.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -742,56 +739,22 @@ laravel new mini-cms</code></pre>
             <div class="overflow-x-auto mb-4">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <thead class="bg-gray-50">
-                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Question de l'installateur (approximative)</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Réponse</th></tr>
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Question de l'installateur</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Réponse</th></tr>
                 </thead>
                 <tbody>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Starter kit</td><td class="px-3 py-2">None</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Testing framework</td><td class="px-3 py-2">Pest</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Laravel Boost ou outils IA (si la question apparaît)</td><td class="px-3 py-2">No</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Database</td><td class="px-3 py-2">SQLite</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Exécuter les migrations par défaut (si demandé)</td><td class="px-3 py-2">Yes</td></tr>
-                  <tr><td class="px-3 py-2">npm install / npm run build</td><td class="px-3 py-2">No (fait à l'Étape 3)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Do you want to use a starter kit? (yes/no) [no]</td><td class="px-3 py-2">no (Entrée : c'est la valeur par défaut)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Which frontend stack do you want to build on? [Blade]</td><td class="px-3 py-2">blade (Entrée : c'est la valeur par défaut)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Testing framework (si demandé)</td><td class="px-3 py-2">Pest</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Database (si demandé)</td><td class="px-3 py-2">SQLite</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Laravel Boost ou outils IA (si demandé)</td><td class="px-3 py-2">No</td></tr>
+                  <tr><td class="px-3 py-2">npm install / npm run build (si demandé)</td><td class="px-3 py-2">No (fait à l'Étape 3)</td></tr>
                 </tbody>
               </table>
             </div>
-            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">La formulation exacte peut varier selon la version de l'installateur ; les trois réponses qui comptent sont None, Pest et SQLite.</p>
+              <p class="text-sm text-blue-900">Les réponses qui comptent : pas de starter kit, Blade, Pest et SQLite.</p>
             </div>
-            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
-              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-amber-900">Si le téléchargement est interrompu, relancez <code class="bg-white px-1 py-0.5 rounded text-xs">laravel new mini-cms --force</code> (cela supprime le dossier incomplet et recommence).</p>
-            </div>
-          </div>
-
-          <div class="md-card p-6 mt-6">
-            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
-              Plan de secours
-            </h3>
-            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
-              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900">Connexion trop lente (plus de 10 minutes sans progrès) : extrayez l'archive fournie pour la séance (clé USB ou dossier partagé), en remplaçant E: par la lettre de votre lecteur.</p>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Bash :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les commandes Bash du plan de secours">Copier</button>
-              <pre><code class="language-bash">cd /c/dev/prenom-nom
-tar -xzf /e/mini-cms-base.tar.gz
-cd mini-cms
-cp .env.example .env
-php artisan key:generate</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les commandes PowerShell du plan de secours">Copier</button>
-              <pre><code class="language-powershell">Set-Location C:\dev\prenom-nom
-tar -xzf E:\mini-cms-base.tar.gz
-Set-Location mini-cms
-copy .env.example .env
-php artisan key:generate</code></pre>
-            </div>
-            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">key:generate</code> crée la clé secrète de l'application dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> (détails en S02).</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -885,7 +848,7 @@ composer run dev</code></pre>
             </div>
             <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-amber-900">Si PowerShell affiche « l'exécution de scripts est désactivée sur ce système », utilisez <code class="bg-white px-1 py-0.5 rounded text-xs">npm.cmd install</code> (et <code class="bg-white px-1 py-0.5 rounded text-xs">npm.cmd run dev</code> dans le plan de secours).</p>
+              <p class="text-sm text-amber-900">Si PowerShell affiche « l'exécution de scripts est désactivée sur ce système », utilisez <code class="bg-white px-1 py-0.5 rounded text-xs">npm.cmd install</code>.</p>
             </div>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
@@ -895,66 +858,14 @@ composer run dev</code></pre>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
-              Plan de secours 1
-            </h3>
-            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
-              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900"><code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> échoue (par exemple sur le processus « logs » sous Windows) : terminal 1 lance le serveur PHP, terminal 2 lance Vite.</p>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Terminal 1 :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande du terminal 1">Copier</button>
-              <pre><code class="language-bash">php artisan serve</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Terminal 2 :</p>
-            <div class="code-block-wrapper">
-              <button class="copy-btn" aria-label="Copier la commande du terminal 2">Copier</button>
-              <pre><code class="language-bash">npm run dev</code></pre>
-            </div>
-          </div>
-
-          <div class="md-card p-6 mt-6">
-            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
-              Plan de secours 2
-            </h3>
-            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
-              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900">Node.js absent : <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan serve</code> seul suffit. La page d'accueil s'affiche toujours ; Vite et Tailwind ne sont nécessaires qu'à partir de S03.</p>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
-            <div class="code-block-wrapper">
-              <button class="copy-btn" aria-label="Copier la commande du plan de secours 2">Copier</button>
-              <pre><code class="language-bash">php artisan serve</code></pre>
-            </div>
-          </div>
-
-          <div class="md-card p-6 mt-6">
-            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
               Code complet
             </h3>
             <p class="text-sm text-gray-600 mb-2">Lancement normal :</p>
-            <div class="code-block-wrapper mb-4">
+            <div class="code-block-wrapper">
               <button class="copy-btn" aria-label="Copier le lancement normal">Copier</button>
               <pre><code class="language-bash">npm install
 composer run dev</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Plan de secours 1 - Terminal 1 :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier le plan de secours 1, terminal 1">Copier</button>
-              <pre><code class="language-bash">php artisan serve</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Plan de secours 1 - Terminal 2 :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier le plan de secours 1, terminal 2">Copier</button>
-              <pre><code class="language-bash">npm run dev</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Plan de secours 2 :</p>
-            <div class="code-block-wrapper">
-              <button class="copy-btn" aria-label="Copier le plan de secours 2">Copier</button>
-              <pre><code class="language-bash">php artisan serve</code></pre>
             </div>
           </div>
 
@@ -963,7 +874,7 @@ composer run dev</code></pre>
               <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
               Résultat attendu
             </h3>
-            <p class="text-gray-700">Le terminal affiche plusieurs processus dans des couleurs différentes et une ligne avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code>. Si le port 8000 est occupé, Laravel essaie le port suivant : lisez l'URL affichée.</p>
+            <p class="text-gray-700">Le terminal affiche plusieurs processus. Vite affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Local: http://localhost:5173/</code> : ce n'est PAS l'adresse du site. Ouvrez l'adresse de la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">APP_URL</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> (équivalente à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code>). Un avertissement <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">[laravel:fonts]</code> mentionnant le paquet « fontaine » peut apparaître : il est sans conséquence, ignorez-le.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -971,7 +882,7 @@ composer run dev</code></pre>
               <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
               Vérification
             </h3>
-            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> affiche la page d'accueil par défaut de Laravel, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000/up</code> affiche une page de santé confirmant que l'application fonctionne.</p>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> affiche la page d'accueil par défaut de Laravel, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/up</code> affiche une page de santé confirmant que l'application fonctionne.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -981,11 +892,11 @@ composer run dev</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Ouvrez <code class="bg-white px-1 py-0.5 rounded text-xs">composer.json</code> et cherchez l'entrée <code class="bg-white px-1 py-0.5 rounded text-xs">dev</code> dans la section <code class="bg-white px-1 py-0.5 rounded text-xs">scripts</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> lance simplement plusieurs commandes en parallèle, dont <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan serve</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">npm run dev</code>. Ce ne sont que des commandes que vous pourriez lancer une par une, comme dans les plans de secours.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Ouvrez <code class="bg-white px-1 py-0.5 rounded text-xs">composer.json</code> et cherchez l'entrée <code class="bg-white px-1 py-0.5 rounded text-xs">dev</code> dans la section <code class="bg-white px-1 py-0.5 rounded text-xs">scripts</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> lance simplement plusieurs commandes en parallèle, dont <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan serve</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">npm run dev</code>. Ce ne sont que des commandes que vous pourriez lancer une par une, dans des terminaux séparés.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Si une page ne se charge pas, lisez d'abord le terminal où tourne le serveur : l'erreur y est affichée. Si vous fermez ce terminal, le site s'arrête.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Si une page ne se charge pas, lisez d'abord le terminal où tourne le serveur : l'erreur y est affichée. Si vous fermez ce terminal, le site s'arrête. Ouvrir <code class="bg-white px-1 py-0.5 rounded text-xs">http://localhost:5173</code> au lieu de <code class="bg-white px-1 py-0.5 rounded text-xs">http://localhost:8000</code> affiche une page de Vite, pas votre application.</p>
             </div>
           </div>
         </section>
@@ -1579,18 +1490,18 @@ touch notes/s01-cycle-de-vie.md</code></pre>
               <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
               Grille d'auto-évaluation
             </h3>
+            <p class="text-sm text-gray-600 mb-3">Cochez mentalement chaque point avant de passer au livrable. Les captures et Git sont vérifiés à l'étape suivante.</p>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -v</code> affiche 8.3 ou plus et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan --version</code> affiche Laravel Framework 13.x.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan about</code> indique sqlite.</li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> (avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code> ou un plan de secours noté).</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code>.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour-court</code> renvoient leur texte.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> affiche mon nom, mon groupe et le cours depuis une vue Blade.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/version</code> fonctionne et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> affiche l'heure de Tunis.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list</code> liste au moins /, up, bonjour, bonjour-court, bienvenue, version et heure.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Je sais nommer, dans l'ordre, les fichiers traversés par une requête.</li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Je sais expliquer pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Kernel.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> n'existent pas.</li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/</code> contient mes trois captures.</li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.name</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.email</code> (locaux) correspondent à mon identité ; le commit lab-01 et le tag lab-01 existent ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> est propre.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s01-cycle-de-vie.md</code> est rédigé et comparé au corrigé.</li>
             </ul>
           </div>
         </section>
@@ -1629,15 +1540,12 @@ touch notes/s01-cycle-de-vie.md</code></pre>
               <button class="copy-btn" aria-label="Copier git status">Copier</button>
               <pre><code class="language-bash">git status</code></pre>
             </div>
-            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
-              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">Si Git répond « not a git repository », exécutez <code class="bg-white px-1 py-0.5 rounded text-xs">git init</code> et continuez.</p>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> affiche « not a git repository » :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier git init">Copier</button>
               <pre><code class="language-bash">git init</code></pre>
             </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la configuration de l'identité Git">Copier</button>
               <pre><code class="language-bash">git config user.name "Prenom Nom"
@@ -1646,13 +1554,14 @@ git log -1 --format="%an &lt;%ae&gt;"</code></pre>
             </div>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">Utilisez l'adresse de votre compte GitHub, ou celle avec laquelle vous le créerez avant S02 : c'est elle qui relie vos commits à votre profil. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal. S'il affiche une identité qui n'est pas la vôtre, exécutez la commande ci-dessous.</p>
+              <p class="text-sm text-blue-900">Utilisez l'adresse de votre compte GitHub, ou celle avec laquelle vous le créerez avant S02 : c'est elle qui relie vos commits à votre profil. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal.</p>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log</code> affiche une autre identité que la vôtre :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier git commit --amend --reset-author">Copier</button>
               <pre><code class="language-bash">git commit --amend --reset-author --no-edit</code></pre>
             </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper">
               <button class="copy-btn" aria-label="Copier les commandes de commit et de tag">Copier</button>
               <pre><code class="language-bash">git add -A
@@ -1696,6 +1605,17 @@ git tag lab-01</code></pre>
               <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
               Vérification
             </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash de vérification des captures">Copier</button>
+              <pre><code class="language-bash">ls screenshots</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de vérification des captures">Copier</button>
+              <pre><code class="language-powershell">Get-ChildItem screenshots</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Les trois captures <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s01-accueil.png</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s01-bienvenue.png</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s01-route-list.png</code> sont listées.</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier les commandes de vérification finale">Copier</button>
@@ -1703,6 +1623,7 @@ git tag lab-01</code></pre>
 git status
 git config user.email</code></pre>
             </div>
+            <p class="text-gray-700 mb-4"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> indique un arbre de travail propre, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.email</code> affiche votre adresse.</p>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-blue-900"><code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">node_modules/</code> n'apparaissent jamais dans <code class="bg-white px-1 py-0.5 rounded text-xs">git status</code>, car ils sont ignorés (S02 explique pourquoi).</p>
@@ -1711,12 +1632,12 @@ git config user.email</code></pre>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
-              Plan de secours
+              <i class="fa-solid fa-floppy-disk text-brand" aria-hidden="true"></i>
+              Sauvegarde sur clé USB (recommandé)
             </h3>
-            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
-              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900">Sauvegarde sur clé USB (recommandé) : arrêtez <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> avec Ctrl+C, puis (remplacez E: par la lettre de votre lecteur) :</p>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Arrêtez <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> avec Ctrl+C, puis (remplacez E: par la lettre de votre lecteur) :</p>
             </div>
             <p class="text-sm text-gray-600 mb-2">Bash :</p>
             <div class="code-block-wrapper mb-4">
