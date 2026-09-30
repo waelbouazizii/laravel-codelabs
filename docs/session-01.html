@@ -331,11 +331,11 @@
             <div class="overflow-x-auto">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <tbody>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50 w-1/3">Séance</td><td class="px-3 py-2">Séance 01</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50">Semaine</td><td class="px-3 py-2">Semaine 1</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50">Type</td><td class="px-3 py-2">Séance A (codelab guidé)</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50">Durée</td><td class="px-3 py-2">Environ 3h10</td></tr>
-                  <tr><td class="px-3 py-2 font-medium bg-gray-50">Livrable</td><td class="px-3 py-2">Tag Git <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">lab-01</code> en local (publié sur GitHub en séance 02)</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 w-1/3">Séance</th><td class="px-3 py-2">Séance 01</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Semaine</th><td class="px-3 py-2">Semaine 1</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Type</th><td class="px-3 py-2">Séance A (codelab guidé)</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Durée</th><td class="px-3 py-2">Environ 3h10</td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Livrable</th><td class="px-3 py-2">Tag Git <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">lab-01</code> en local (publié sur GitHub en séance 02)</td></tr>
                 </tbody>
               </table>
             </div>
@@ -876,14 +876,15 @@ composer run dev</code></pre>
               <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-emerald-900"><code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> échoue (par exemple sur le processus « logs » sous Windows) : terminal 1 lance le serveur PHP, terminal 2 lance Vite.</p>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <p class="text-sm text-gray-600 mb-2">Terminal 1 :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande du terminal 1">Copier</button>
+              <pre><code class="language-bash">php artisan serve</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Terminal 2 :</p>
             <div class="code-block-wrapper">
-              <button class="copy-btn" aria-label="Copier les commandes du plan de secours 1">Copier</button>
-              <pre><code class="language-bash"># Terminal 1
-php artisan serve
-
-# Terminal 2
-npm run dev</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande du terminal 2">Copier</button>
+              <pre><code class="language-bash">npm run dev</code></pre>
             </div>
           </div>
 
@@ -914,14 +915,15 @@ npm run dev</code></pre>
               <pre><code class="language-bash">npm install
 composer run dev</code></pre>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Plan de secours 1 :</p>
+            <p class="text-sm text-gray-600 mb-2">Plan de secours 1 - Terminal 1 :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier le plan de secours 1">Copier</button>
-              <pre><code class="language-bash"># Terminal 1
-php artisan serve
-
-# Terminal 2
-npm run dev</code></pre>
+              <button class="copy-btn" aria-label="Copier le plan de secours 1, terminal 1">Copier</button>
+              <pre><code class="language-bash">php artisan serve</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Plan de secours 1 - Terminal 2 :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le plan de secours 1, terminal 2">Copier</button>
+              <pre><code class="language-bash">npm run dev</code></pre>
             </div>
             <p class="text-sm text-gray-600 mb-2">Plan de secours 2 :</p>
             <div class="code-block-wrapper">
@@ -985,10 +987,10 @@ php artisan route:list</code></pre>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
-              Code complet
+              <i class="fa-solid fa-folder-tree text-brand" aria-hidden="true"></i>
+              Carte du squelette
             </h3>
-            <div class="overflow-x-auto mb-6">
+            <div class="overflow-x-auto">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <thead class="bg-gray-50">
                   <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Dossier ou fichier</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Rôle</th></tr>
@@ -1010,6 +1012,13 @@ php artisan route:list</code></pre>
                 </tbody>
               </table>
             </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-blue-900">Contenu d'un projet neuf. Si votre fichier diffère légèrement, c'est votre fichier qui fait foi.</p>
@@ -1116,15 +1125,15 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
-// Determine if the application is in maintenance mode
+// Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;
 }
 
-// Register the Composer autoloader
+// Register the Composer autoloader...
 require __DIR__.'/../vendor/autoload.php';
 
-// Bootstrap Laravel and handle the request
+// Bootstrap Laravel and handle the request...
 /** @var Application $app */
 $app = require_once __DIR__.'/../bootstrap/app.php';
 
@@ -1193,11 +1202,14 @@ Route::get('/', function () {
               Commandes
             </h3>
             <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande d'édition du fichier de routes">Copier</button>
+              <pre><code class="language-bash">code routes/web.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-2">Après avoir enregistré le fichier :</p>
             <div class="code-block-wrapper">
-              <button class="copy-btn" aria-label="Copier les commandes de l'étape 6">Copier</button>
-              <pre><code class="language-bash">code routes/web.php
-# apres avoir enregistre le fichier :
-php artisan route:list</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande route:list">Copier</button>
+              <pre><code class="language-bash">php artisan route:list</code></pre>
             </div>
           </div>
 
@@ -1449,17 +1461,17 @@ Rename-Item resources\views\bienvenu.blade.php bienvenue.blade.php</code></pre>
               Grille d'auto-évaluation
             </h3>
             <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -v</code> affiche 8.3 ou plus et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan --version</code> affiche Laravel Framework 13.x.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan about</code> indique sqlite.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> (avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code> ou un plan de secours noté).</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour-court</code> renvoient leur texte.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> affiche mon nom, mon groupe et le cours depuis une vue Blade.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/version</code> fonctionne et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> affiche l'heure de Tunis.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list</code> liste au moins /, up, bonjour, bonjour-court, bienvenue, version et heure.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Je sais nommer, dans l'ordre, les fichiers traversés par une requête.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Je sais expliquer pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Kernel.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> n'existent pas.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/</code> contient mes trois captures.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.name</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.email</code> (locaux) correspondent à mon identité ; le commit lab-01 et le tag lab-01 existent ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> est propre.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -v</code> affiche 8.3 ou plus et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan --version</code> affiche Laravel Framework 13.x.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan about</code> indique sqlite.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> (avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code> ou un plan de secours noté).</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour-court</code> renvoient leur texte.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> affiche mon nom, mon groupe et le cours depuis une vue Blade.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/version</code> fonctionne et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> affiche l'heure de Tunis.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list</code> liste au moins /, up, bonjour, bonjour-court, bienvenue, version et heure.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Je sais nommer, dans l'ordre, les fichiers traversés par une requête.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Je sais expliquer pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Kernel.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> n'existent pas.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> Le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/</code> contient mes trois captures.</li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.name</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.email</code> (locaux) correspondent à mon identité ; le commit lab-01 et le tag lab-01 existent ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> est propre.</li>
             </ul>
           </div>
         </section>
@@ -1502,6 +1514,11 @@ Rename-Item resources\views\bienvenu.blade.php bienvenue.blade.php</code></pre>
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-blue-900">Si Git répond « not a git repository », exécutez <code class="bg-white px-1 py-0.5 rounded text-xs">git init</code> et continuez.</p>
             </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier git init">Copier</button>
+              <pre><code class="language-bash">git init</code></pre>
+            </div>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la configuration de l'identité Git">Copier</button>
               <pre><code class="language-bash">git config user.name "Prenom Nom"
@@ -1510,7 +1527,12 @@ git log -1 --format="%an &lt;%ae&gt;"</code></pre>
             </div>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">Utilisez l'adresse que vous utiliserez sur GitHub en S02. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal. S'il affiche une identité qui n'est pas la vôtre, exécutez : <code class="bg-white px-1 py-0.5 rounded text-xs">git commit --amend --reset-author --no-edit</code></p>
+              <p class="text-sm text-blue-900">Utilisez l'adresse que vous utiliserez sur GitHub en S02. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal. S'il affiche une identité qui n'est pas la vôtre, exécutez la commande ci-dessous.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier git commit --amend --reset-author">Copier</button>
+              <pre><code class="language-bash">git commit --amend --reset-author --no-edit</code></pre>
             </div>
             <div class="code-block-wrapper">
               <button class="copy-btn" aria-label="Copier les commandes de commit et de tag">Copier</button>

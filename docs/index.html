@@ -109,21 +109,21 @@
   // as real session files are added.
   var sessions = [
     { num: 1,  title: 'Architecture MVC et premier projet Laravel 13' },
-    { num: 2,  title: 'Routing et controleurs' },
-    { num: 3,  title: 'Blade et vues' },
-    { num: 4,  title: 'Eloquent ORM - modeles' },
-    { num: 5,  title: 'Migrations et seeders' },
-    { num: 6,  title: 'Validation des formulaires' },
-    { num: 7,  title: 'Authentification' },
-    { num: 8,  title: 'Autorisation et policies' },
-    { num: 9,  title: 'Relations Eloquent' },
-    { num: 10, title: 'API REST avec Laravel' },
-    { num: 11, title: 'Middleware personnalise' },
-    { num: 12, title: 'Tests avec Pest' },
-    { num: 13, title: 'File jobs et queues' },
-    { num: 14, title: 'Upload et stockage de fichiers' },
-    { num: 15, title: 'Deploiement d\'une application Laravel' },
-    { num: 16, title: 'Projet de synthese' }
+    { num: 2,  title: 'Git, GitHub et publication du projet' },
+    { num: 3,  title: 'Routage, contrôleurs et layouts Blade' },
+    { num: 4,  title: 'Sprint : pages statiques et composants Blade' },
+    { num: 5,  title: 'Migrations, Eloquent et CRUD des articles' },
+    { num: 6,  title: 'Sprint : CRUD complet et tests Pest' },
+    { num: 7,  title: 'Relations Eloquent, factories et seeders' },
+    { num: 8,  title: 'Sprint : catégories, tags et chargement anticipé' },
+    { num: 9,  title: 'Form Requests, messages flash, middleware et exceptions' },
+    { num: 10, title: 'Sprint : validation et robustesse de l\'application' },
+    { num: 11, title: 'Authentification manuelle, Gates et Policies' },
+    { num: 12, title: 'Sprint : autorisations et comparaison avec le starter kit Livewire' },
+    { num: 13, title: 'Première API REST : install:api et API Resources' },
+    { num: 14, title: 'Sprint : API complète, tests et collection Postman' },
+    { num: 15, title: 'Authentification API par jetons Sanctum' },
+    { num: 16, title: 'Soutenance du projet final' }
   ];
 
   // Sessions whose docs/session-XX.html file actually exists yet.
@@ -151,7 +151,7 @@
 
     var weekLabel = document.createElement('span');
     weekLabel.className = 'text-xs uppercase tracking-wide text-gray-500';
-    weekLabel.textContent = 'Semaine ' + session.num;
+    weekLabel.textContent = 'Semaine ' + Math.ceil(session.num / 2);
     weekRow.appendChild(weekLabel);
 
     var status = document.createElement('span');
