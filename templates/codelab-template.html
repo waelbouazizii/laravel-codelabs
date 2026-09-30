@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<!--
+  Codelab skeleton template - Atelier Framework Cote Serveur (ISET Sidi Bouzid)
+
+  DO NOT edit the skeleton markup, the navigation JavaScript, or the pinned
+  asset versions below when authoring a session. Copy this file to
+  docs/session-XX.html and only touch:
+    - <title> and the header/course metadata in the sidebar
+    - the <section class="step-panel" ...> blocks (edit, add, remove)
+  See CLAUDE.md for the full rules.
+-->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Codelab Template - Atelier Framework Cote Serveur</title>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Roboto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.4.0 (pinned) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Prism 1.29.0 (pinned): core theme, language components load on demand via autoloader -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          sidebar: {
+            DEFAULT: '#1f2430',
+            hover: '#2a3040',
+          },
+          brand: {
+            DEFAULT: '#ff3d2e',
+            dark: '#e6291b',
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; }
+
+  /* Sidebar */
+  #sidebar {
+    transition: transform 0.25s ease-in-out;
+  }
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 4px; }
+
+  .step-link { position: relative; }
+  .step-link.is-active {
+    background-color: rgba(255, 61, 46, 0.15);
+    border-left: 3px solid #ff3d2e;
+    color: #ffffff;
+  }
+  .step-link .step-marker {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+  .step-link.is-completed .step-marker .marker-number { display: none; }
+  .step-link.is-completed .step-marker .marker-check { display: flex; }
+  .step-link .step-marker .marker-check { display: none; }
+
+  /* Progress bar */
+  #progress-track {
+    height: 4px;
+    background: #e5e7eb;
+  }
+  #progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff3d2e, #ff8a3d);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+
+  /* Content cards */
+  .md-card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Code blocks + copy button */
+  .code-block-wrapper { position: relative; }
+  .code-block-wrapper pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0.5rem;
+    max-height: 32rem;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: rgba(255,255,255,0.1);
+    color: #d4d4d4;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* Mobile sidebar */
+  @media (max-width: 767px) {
+    #sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transform: translateX(-100%);
+      width: 85vw;
+      max-width: 20rem;
+    }
+    #sidebar.is-open { transform: translateX(0); }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 30;
+    }
+    #sidebar-overlay.is-open { display: block; }
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="bg-sidebar text-gray-300 w-72 flex-shrink-0 flex flex-col overflow-y-auto">
+    <div class="px-5 py-5 border-b border-white/10">
+      <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
+      <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session Template</p>
+    </div>
+    <nav class="flex-1 py-2" aria-label="Etapes du codelab">
+      <ul id="step-nav-list">
+        <li>
+          <a href="#step-1" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-1">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">1</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Etape 1 - Presentation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-2" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-2">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">2</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Etape 2 - Mise en pratique</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-3" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-3">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">3</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Etape 3 - Verification</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="px-5 py-4 border-t border-white/10 text-xs text-gray-500">
+      <a href="index.html" class="hover:text-gray-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au sommaire</a>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4">
+      <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-900" aria-label="Ouvrir le menu des etapes">
+        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500">Codelab template</p>
+        <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Etape 1 - Presentation</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prev-step" class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2" aria-label="Etape precedente">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Precedent</span>
+        </button>
+        <button id="next-step" class="px-3 py-2 rounded-md bg-brand text-white hover:bg-brand-dark text-sm flex items-center gap-2" aria-label="Etape suivante">
+          <span class="hidden sm:inline">Suivant</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div id="progress-track" class="w-full">
+      <div id="progress-bar"></div>
+    </div>
+
+    <!-- Content -->
+    <main id="content" class="flex-1 overflow-y-auto">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
+
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel is-active" data-title="Etape 1 - Presentation">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Ceci est un modele de codelab. Chaque etape suit la meme structure :
+              objectif, commandes, code complet, resultat attendu et verification.
+              Remplacez ce contenu par celui de la vraie session avant publication.
+            </p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Bash / macOS / Linux :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande">Copier</button>
+              <pre><code class="language-bash">php artisan --version</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la commande">Copier</button>
+              <pre><code class="language-powershell">php artisan --version</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Resultat attendu
+            </h3>
+            <p class="text-gray-700">La commande affiche la version de Laravel installee, par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Laravel Framework 13.0.0</code>.</p>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" data-title="Etape 2 - Mise en pratique">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Exemple de bloc de code complet dans plusieurs langages, pour verifier
+              que la coloration syntaxique Prism se charge correctement.
+            </p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+
+            <p class="text-sm text-gray-600 mb-2">Modele Eloquent (PHP) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le code PHP">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    protected $fillable = [
+        'name',
+        'price',
+        'is_active',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_active' =&gt; 'boolean',
+            'price' =&gt; 'decimal:2',
+        ];
+    }
+}</code></pre>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-2">Route API (JSON de reponse) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le JSON">Copier</button>
+              <pre><code class="language-json">{
+  "data": [
+    {
+      "id": 1,
+      "name": "Clavier mecanique",
+      "price": "59.90",
+      "is_active": true
+    }
+  ]
+}</code></pre>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-2">Requete SQL equivalente :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la requete SQL">Copier</button>
+              <pre><code class="language-sql">SELECT id, name, price, is_active
+FROM products
+WHERE is_active = 1
+ORDER BY name ASC;</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" data-title="Etape 3 - Verification">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Verifier que le squelette fonctionne : navigation clavier (fleches
+              gauche/droite), barre de progression, marqueurs d'etapes completees,
+              et persistance de la position dans l'URL apres un rafraichissement.
+            </p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Liste de verification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Le clic sur une etape du menu lateral met a jour le contenu et l'URL.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Les fleches clavier changent d'etape.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Le bouton de copie fonctionne sur chaque bloc de code.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Un rafraichissement de la page conserve l'etape courante.</li>
+            </ul>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Prism core + autoloader (pinned 1.29.0) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+</script>
+
+<!-- Navigation JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.step-panel'));
+  var stepIds = panels.map(function (p) { return p.id; });
+  var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.step-link'));
+  var titleEl = document.getElementById('current-step-title');
+  var prevBtn = document.getElementById('prev-step');
+  var nextBtn = document.getElementById('next-step');
+  var progressBar = document.getElementById('progress-bar');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebar-overlay');
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+
+  var storageKey = 'codelab-progress:' + window.location.pathname;
+
+  function loadCompleted() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCompleted(list) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) {
+      /* localStorage unavailable: navigation still works without persistence */
+    }
+  }
+
+  var completed = loadCompleted();
+
+  function indexOfStep(id) {
+    var idx = stepIds.indexOf(id);
+    return idx === -1 ? 0 : idx;
+  }
+
+  function markCompleted(idx) {
+    var id = stepIds[idx];
+    if (completed.indexOf(id) === -1) {
+      completed.push(id);
+      saveCompleted(completed);
+    }
+  }
+
+  function updateSidebarState(activeId) {
+    sidebarLinks.forEach(function (link) {
+      var id = link.getAttribute('data-step');
+      link.classList.toggle('is-active', id === activeId);
+      link.classList.toggle('is-completed', completed.indexOf(id) !== -1 && id !== activeId);
+    });
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('is-open');
+  }
+
+  function showStep(idx, options) {
+    options = options || {};
+    if (idx < 0) idx = 0;
+    if (idx > panels.length - 1) idx = panels.length - 1;
+
+    var id = stepIds[idx];
+
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('is-active', i === idx);
+    });
+
+    if (titleEl) {
+      titleEl.textContent = panels[idx].getAttribute('data-title') || panels[idx].id;
+    }
+
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === panels.length - 1;
+
+    if (progressBar) {
+      var pct = ((idx + 1) / panels.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    if (idx > 0) {
+      for (var i = 0; i < idx; i++) {
+        markCompleted(i);
+      }
+    }
+
+    updateSidebarState(id);
+
+    if (!options.skipHash) {
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + id);
+      } else {
+        window.location.hash = id;
+      }
+    }
+
+    document.getElementById('content').scrollTop = 0;
+    closeMobileSidebar();
+  }
+
+  function currentIndex() {
+    var hash = window.location.hash.replace('#', '');
+    return indexOfStep(hash);
+  }
+
+  // Sidebar links: native anchor navigation updates location.hash, which
+  // fires 'hashchange'; we just react to that in one place.
+  window.addEventListener('hashchange', function () {
+    showStep(currentIndex(), { skipHash: true });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      showStep(currentIndex() - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      showStep(currentIndex() + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowLeft') {
+      showStep(currentIndex() - 1);
+    } else if (e.key === 'ArrowRight') {
+      showStep(currentIndex() + 1);
+    }
+  });
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.add('is-open');
+      sidebarOverlay.classList.add('is-open');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Copy-to-clipboard for every code block.
+  Array.prototype.slice.call(document.querySelectorAll('.copy-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrapper = btn.closest('.code-block-wrapper');
+      var codeEl = wrapper ? wrapper.querySelector('code') : null;
+      if (!codeEl) return;
+
+      var text = codeEl.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copie';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+  }
+
+  // Initial render.
+  showStep(currentIndex(), { skipHash: true });
+  if (window.location.hash) {
+    // Normalize the hash (e.g. redirect #foo -> #step-1 if invalid).
+    history.replaceState(null, '', '#' + stepIds[currentIndex()]);
+  }
+
+  if (window.Prism) {
+    Prism.highlightAll();
+  }
+})();
+</script>
+
+</body>
+</html>
