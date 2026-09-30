@@ -358,7 +358,7 @@
               <li>Connexion internet</li>
               <li>Clé USB optionnelle (sauvegarde en fin de séance)</li>
             </ul>
-            <p class="text-gray-700">Aucun compte GitHub requis aujourd'hui.</p>
+            <p class="text-gray-700">Pas de compte GitHub nécessaire pendant cette séance. Si vous en avez déjà un, utilisez son adresse e-mail à la dernière étape (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.email</code>). Sinon, créez-le avant S02 avec la même adresse que celle utilisée aujourd'hui. Ne vous connectez pas à GitHub sur le poste du laboratoire aujourd'hui.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -458,7 +458,7 @@ git --version</code></pre>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">laravel</td><td class="px-3 py-2">Laravel Installer (version récente)</td><td class="px-3 py-2">Étape 1</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">node</td><td class="px-3 py-2">Une version LTS paire (22 ou 24)</td><td class="px-3 py-2">Étape 1, partie Node.js (plan de secours possible à l'Étape 3)</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">npm</td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2">Idem node</td></tr>
-                  <tr><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2">Prévenir l'enseignant</td></tr>
+                  <tr><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2">Installer Git for Windows (<a href="https://git-scm.com/download/win" class="underline text-brand">https://git-scm.com/download/win</a>). Sans droits administrateur : sauvegardez le projet sur clé USB (dernière étape) et faites le commit chez vous avant S02.</td></tr>
                 </tbody>
               </table>
             </div>
@@ -482,7 +482,18 @@ git --version</code></pre>
               <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
               Vérification
             </h3>
-            <p class="text-gray-700">Chaque étudiant connaît son chemin (Étape 1 ou Étape 2) et le communique à l'enseignant.</p>
+            <p class="text-gray-700">Vous savez si vous devez faire l'Étape 1 ou passer directement à l'Étape 2.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le PATH est la liste des dossiers dans lesquels le terminal cherche les programmes. Le message « n'est pas reconnu » signifie presque toujours que le dossier du programme n'est pas dans le PATH, ou que le terminal a été ouvert avant l'installation.</p>
+            </div>
           </div>
         </section>
 
@@ -629,7 +640,7 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
               <li>Fermer TOUS les terminaux et TOUTES les fenêtres VS Code, puis rouvrir PowerShell, pour que le nouveau PATH soit chargé.</li>
             </ol>
             <p class="text-sm text-gray-600 mb-4">Remarque Bash : l'installateur Windows de php.new s'exécute dans PowerShell. Sur un ordinateur personnel macOS ou Linux, copiez la commande correspondant à votre système depuis la même page.</p>
-            <p class="text-gray-700 mb-4">Node.js : si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node</code> est absent et que vous avez les droits administrateur, installez la version LTS depuis <a href="https://nodejs.org" class="underline text-brand">https://nodejs.org</a> (ou depuis la clé USB de l'enseignant). Sans droits administrateur, prévenez l'enseignant et continuez, car le plan de secours de l'Étape 3 couvre ce cas.</p>
+            <p class="text-gray-700 mb-4">Node.js : si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node</code> est absent et que vous avez les droits administrateur, installez la version LTS depuis <a href="https://nodejs.org" class="underline text-brand">https://nodejs.org</a> (ou depuis l'installateur fourni sur clé USB). Sans droits administrateur, continuez : le plan de secours 2 de l'Étape 3 couvre ce cas.</p>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-blue-900">Sur un ordinateur portable Windows personnel, Laravel Herd (<a href="https://herd.laravel.com" class="underline">https://herd.laravel.com</a>) est une alternative qui nécessite les droits administrateur.</p>
@@ -688,7 +699,7 @@ php -m</code></pre>
             </h3>
             <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900">Si l'installation échoue encore après 25 minutes, travaillez en binôme avec un voisin et terminez l'installation chez vous. Prévenez l'enseignant.</p>
+              <p class="text-sm text-emerald-900">Si PHP n'est toujours pas installé après 25 minutes, ne restez pas bloqué : lisez les Étapes 4 à 7 (tout le code y est affiché), terminez l'installation chez vous, puis refaites les Étapes 2 à 7 avant S02.</p>
             </div>
           </div>
         </section>
@@ -760,7 +771,7 @@ laravel new mini-cms</code></pre>
             </h3>
             <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-emerald-900">Connexion trop lente (plus de 10 minutes sans progrès) : extrayez l'archive de l'enseignant (remplacez E: par la lettre de votre clé USB).</p>
+              <p class="text-sm text-emerald-900">Connexion trop lente (plus de 10 minutes sans progrès) : extrayez l'archive fournie pour la séance (clé USB ou dossier partagé), en remplaçant E: par la lettre de votre lecteur.</p>
             </div>
             <p class="text-sm text-gray-600 mb-2">Bash :</p>
             <div class="code-block-wrapper mb-4">
@@ -831,6 +842,21 @@ php artisan --version</code></pre>
             <div class="code-block-wrapper">
               <button class="copy-btn" aria-label="Copier la commande PowerShell de vérification du fichier sqlite">Copier</button>
               <pre><code class="language-powershell">Test-Path database\database.sqlite</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> SQLite stocke toute la base de données dans un seul fichier (<code class="bg-white px-1 py-0.5 rounded text-xs">database/database.sqlite</code>) : aucun serveur à installer ni à démarrer, ce qui est idéal pour apprendre. En production, on utilise souvent MySQL ou PostgreSQL, et Laravel permet de changer de base en modifiant <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>. Le fichier <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code> contient la configuration réelle de votre poste (clé secrète, base de données) et n'est jamais versionné. Le fichier <code class="bg-white px-1 py-0.5 rounded text-xs">.env.example</code> est le modèle versionné, sans secrets, que l'on copie pour créer <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">could not find driver</code> pendant l'installation : l'extension <code class="bg-white px-1 py-0.5 rounded text-xs">pdo_sqlite</code> est absente (vérifiez avec <code class="bg-white px-1 py-0.5 rounded text-xs">php -m</code>, voir l'Étape 1). Un dossier <code class="bg-white px-1 py-0.5 rounded text-xs">mini-cms</code> incomplet après une coupure réseau : relancez <code class="bg-white px-1 py-0.5 rounded text-xs">laravel new mini-cms --force</code>.</p>
             </div>
           </div>
         </section>
@@ -946,6 +972,21 @@ composer run dev</code></pre>
               Vérification
             </h3>
             <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> affiche la page d'accueil par défaut de Laravel, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000/up</code> affiche une page de santé confirmant que l'application fonctionne.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Ouvrez <code class="bg-white px-1 py-0.5 rounded text-xs">composer.json</code> et cherchez l'entrée <code class="bg-white px-1 py-0.5 rounded text-xs">dev</code> dans la section <code class="bg-white px-1 py-0.5 rounded text-xs">scripts</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> lance simplement plusieurs commandes en parallèle, dont <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan serve</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">npm run dev</code>. Ce ne sont que des commandes que vous pourriez lancer une par une, comme dans les plans de secours.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Si une page ne se charge pas, lisez d'abord le terminal où tourne le serveur : l'erreur y est affichée. Si vous fermez ce terminal, le site s'arrête.</p>
+            </div>
           </div>
         </section>
 
@@ -1074,6 +1115,17 @@ return Application::configure(basePath: dirname(__DIR__))
               </ol>
             </details>
           </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">artisan</code> est un simple fichier PHP à la racine du projet : <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan about</code> exécute ce script avec PHP. Le dossier <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> n'est jamais versionné, car on le reconstruit avec <code class="bg-white px-1 py-0.5 rounded text-xs">composer install</code> à partir de <code class="bg-white px-1 py-0.5 rounded text-xs">composer.json</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">composer.lock</code> (<code class="bg-white px-1 py-0.5 rounded text-xs">composer.lock</code> fige les versions exactes). Vous le ferez en S16 en clonant votre dépôt.</p>
+            </div>
+          </div>
         </section>
 
         <!-- Step 8 -->
@@ -1181,7 +1233,18 @@ Route::get('/', function () {
               <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
               Vérification
             </h3>
-            <p class="text-gray-700">Expliquez à un voisin, sans notes, le chemin d'une requête, en nommant les fichiers dans l'ordre.</p>
+            <p class="text-gray-700">Sans regarder la page, écrivez dans l'ordre les fichiers traversés par une requête, puis comparez avec le schéma de la section Concepts clés.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Toutes les requêtes passent par <code class="bg-white px-1 py-0.5 rounded text-xs">public/index.php</code> : c'est le patron front controller. Le serveur web doit exposer uniquement le dossier <code class="bg-white px-1 py-0.5 rounded text-xs">public/</code>, si bien que <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">app/</code> ou <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> ne sont jamais téléchargeables depuis le navigateur.</p>
+            </div>
           </div>
         </section>
 
@@ -1254,6 +1317,21 @@ Route::get('/bonjour-court', fn () =&gt; 'Même résultat, écrit avec une fonct
               Vérification
             </h3>
             <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bonjour-court</code>. Ctrl+U (code source de la page) montre uniquement le texte brut, sans HTML.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une route associe une méthode HTTP et une URL : <code class="bg-white px-1 py-0.5 rounded text-xs">Route::get</code> ne répond qu'aux requêtes GET (et HEAD). Une requête POST vers <code class="bg-white px-1 py-0.5 rounded text-xs">/bonjour</code> renverrait une erreur 405 Method Not Allowed.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Un point-virgule oublié provoque une erreur de syntaxe (ParseError) affichée dans la page. Si le fichier n'est pas enregistré, la route n'existe pas encore et vous obtenez une erreur 404.</p>
+            </div>
           </div>
         </section>
 
@@ -1369,6 +1447,21 @@ Route::get('/bienvenue', function () {
             </h3>
             <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bienvenue</code>. Ctrl+U montre du HTML brut, sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code>, car Blade est compilé côté serveur (les versions compilées se trouvent dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">storage/framework/views</code>).</p>
           </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">{{ }}</code> échappe la valeur avec <code class="bg-white px-1 py-0.5 rounded text-xs">htmlspecialchars</code>. La syntaxe <code class="bg-white px-1 py-0.5 rounded text-xs">{!! !!}</code> affiche sans échapper : elle ne s'utilise qu'avec un contenu dont vous êtes certain, et avec une justification de sécurité écrite.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">View [bienvenue] not found</code> : le nom du fichier ou l'extension <code class="bg-white px-1 py-0.5 rounded text-xs">.blade.php</code> est incorrect. <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined variable $groupe</code> : la clé correspondante manque dans le tableau passé à <code class="bg-white px-1 py-0.5 rounded text-xs">view()</code>.</p>
+            </div>
+          </div>
         </section>
 
         <!-- Step 11 -->
@@ -1433,10 +1526,25 @@ Rename-Item resources\views\bienvenu.blade.php bienvenue.blade.php</code></pre>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-comments text-brand" aria-hidden="true"></i>
-              D4 - À l'oral
+              <i class="fa-solid fa-pen-to-square text-brand" aria-hidden="true"></i>
+              D4 - Par écrit
             </h3>
-            <p class="text-gray-700">Expliquez à l'enseignant le chemin d'une requête vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code>, en nommant chaque fichier traversé.</p>
+            <p class="text-gray-700 mb-3">Dans un fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s01-cycle-de-vie.md</code>, décrivez en quelques lignes le chemin d'une requête vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code>, en nommant chaque fichier traversé dans l'ordre. Comparez ensuite avec le corrigé.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création du fichier de notes">Copier</button>
+              <pre><code class="language-bash">mkdir -p notes
+touch notes/s01-cycle-de-vie.md</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de création du fichier de notes">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType File -Force -Path notes\s01-cycle-de-vie.md</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <p class="text-sm text-gray-700 mt-2">Le navigateur envoie GET /heure. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">public/index.php</code>, seul point d'entrée, charge l'autoloader Composer puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">bootstrap/app.php</code>, qui crée l'application et déclare <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">routes/web.php</code>. Le routeur trouve la route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">/heure</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">routes/web.php</code> et exécute sa closure. La closure renvoie la vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">resources/views/heure.blade.php</code>, compilée en HTML, et Laravel renvoie cette réponse au navigateur.</p>
+            </details>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1448,8 +1556,19 @@ Rename-Item resources\views\bienvenu.blade.php bienvenue.blade.php</code></pre>
               <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">version</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure</code>.</li>
               <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> correspond à l'heure de Tunis.</li>
               <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bienvenue.blade.php</code> a été restaurée et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> fonctionne.</li>
-              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Explication orale donnée.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s01-cycle-de-vie.md</code> est rédigé et comparé au corrigé.</li>
             </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La page d'erreur détaillée de D3 s'affiche parce que <code class="bg-white px-1 py-0.5 rounded text-xs">APP_DEBUG=true</code> dans <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>. En production, <code class="bg-white px-1 py-0.5 rounded text-xs">APP_DEBUG</code> doit valoir <code class="bg-white px-1 py-0.5 rounded text-xs">false</code> : cette page révèle des chemins, du code et de la configuration.</p>
+            </div>
           </div>
         </section>
 
@@ -1527,7 +1646,7 @@ git log -1 --format="%an &lt;%ae&gt;"</code></pre>
             </div>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">Utilisez l'adresse que vous utiliserez sur GitHub en S02. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal. S'il affiche une identité qui n'est pas la vôtre, exécutez la commande ci-dessous.</p>
+              <p class="text-sm text-blue-900">Utilisez l'adresse de votre compte GitHub, ou celle avec laquelle vous le créerez avant S02 : c'est elle qui relie vos commits à votre profil. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal. S'il affiche une identité qui n'est pas la vôtre, exécutez la commande ci-dessous.</p>
             </div>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
@@ -1615,6 +1734,17 @@ tar --exclude=vendor --exclude=node_modules -czf E:\mini-cms-lab01.tar.gz mini-c
 
           <div class="md-card p-6 mt-6">
             <p class="text-gray-700"><strong>Séance suivante :</strong> S02 - Git, GitHub et publication du projet. Revenez si possible sur le même poste.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un tag marque un commit précis de façon permanente : l'évaluation retrouvera exactement l'état de votre projet à la fin de chaque séance, même si vous continuez à travailler ensuite.</p>
+            </div>
           </div>
         </section>
 
