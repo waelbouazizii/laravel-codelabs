@@ -1,0 +1,1817 @@
+<!DOCTYPE html>
+<!--
+  Codelab skeleton template - Atelier Framework Cote Serveur (ISET Sidi Bouzid)
+
+  DO NOT edit the skeleton markup, the navigation JavaScript, or the pinned
+  asset versions below when authoring a session. Copy this file to
+  docs/session-XX.html and only touch:
+    - <title> and the header/course metadata in the sidebar
+    - the <section class="step-panel" ...> blocks (edit, add, remove)
+  See CLAUDE.md for the full rules.
+-->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 01 - Architecture MVC et premier projet Laravel 13 - Atelier Framework Côté Serveur</title>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Roboto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.4.0 (pinned) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Prism 1.29.0 (pinned): core theme, language components load on demand via autoloader -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          sidebar: {
+            DEFAULT: '#1f2430',
+            hover: '#2a3040',
+          },
+          brand: {
+            DEFAULT: '#ff3d2e',
+            dark: '#e6291b',
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; }
+
+  /* Sidebar */
+  #sidebar {
+    transition: transform 0.25s ease-in-out;
+  }
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 4px; }
+
+  .step-link { position: relative; }
+  .step-link.is-active {
+    background-color: rgba(255, 61, 46, 0.15);
+    border-left: 3px solid #ff3d2e;
+    color: #ffffff;
+  }
+  .step-link .step-marker {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+  .step-link.is-completed .step-marker .marker-number { display: none; }
+  .step-link.is-completed .step-marker .marker-check { display: flex; }
+  .step-link .step-marker .marker-check { display: none; }
+
+  /* Progress bar */
+  #progress-track {
+    height: 4px;
+    background: #e5e7eb;
+  }
+  #progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff3d2e, #ff8a3d);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+
+  /* Content cards */
+  .md-card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Code blocks + copy button */
+  .code-block-wrapper { position: relative; }
+  .code-block-wrapper pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0.5rem;
+    max-height: 32rem;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: rgba(255,255,255,0.1);
+    color: #d4d4d4;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* Mobile sidebar */
+  @media (max-width: 767px) {
+    #sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transform: translateX(-100%);
+      width: 85vw;
+      max-width: 20rem;
+    }
+    #sidebar.is-open { transform: translateX(0); }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 30;
+    }
+    #sidebar-overlay.is-open { display: block; }
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="bg-sidebar text-gray-300 w-72 flex-shrink-0 flex flex-col overflow-y-auto">
+    <div class="px-5 py-5 border-b border-white/10">
+      <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
+      <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Séance 01 - Architecture MVC et premier projet Laravel 13</p>
+    </div>
+    <nav class="flex-1 py-2" aria-label="Etapes du codelab">
+      <ul id="step-nav-list">
+        <li>
+          <a href="#step-1" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-1">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">1</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Prérequis et objectifs</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-2" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-2">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">2</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Environnement (10 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-3" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-3">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">3</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Concepts clés (15 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-4" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-4">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">4</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>1 - Chaîne d'outils</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-5" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-5">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">5</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>2 - Créer le projet</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-6" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-6">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">6</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>3 - Lancer l'application</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-7" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-7">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">7</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>4 - Explorer le squelette</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-8" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-8">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">8</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>5 - Cycle de vie</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-9" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-9">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">9</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>6 - Première route</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-10" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-10">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">10</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>7 - Première vue Blade</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-11" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-11">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">11</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Défi autonome (30 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-12" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-12">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">12</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Auto-évaluation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-13" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-13">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">13</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Livrable lab-01</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="px-5 py-4 border-t border-white/10 text-xs text-gray-500">
+      <a href="index.html" class="hover:text-gray-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au sommaire</a>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4">
+      <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-900" aria-label="Ouvrir le menu des etapes">
+        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500">Séance 01 - Semaine 1 - Séance A</p>
+        <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prev-step" class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2" aria-label="Etape precedente">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Precedent</span>
+        </button>
+        <button id="next-step" class="px-3 py-2 rounded-md bg-brand text-white hover:bg-brand-dark text-sm flex items-center gap-2" aria-label="Etape suivante">
+          <span class="hidden sm:inline">Suivant</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div id="progress-track" class="w-full">
+      <div id="progress-bar"></div>
+    </div>
+
+    <!-- Content -->
+    <main id="content" class="flex-1 overflow-y-auto">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
+
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel is-active" data-title="Prérequis et objectifs">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days text-brand" aria-hidden="true"></i>
+              Séance
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50 w-1/3">Séance</td><td class="px-3 py-2">Séance 01</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50">Semaine</td><td class="px-3 py-2">Semaine 1</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50">Type</td><td class="px-3 py-2">Séance A (codelab guidé)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2 font-medium bg-gray-50">Durée</td><td class="px-3 py-2">Environ 3h10</td></tr>
+                  <tr><td class="px-3 py-2 font-medium bg-gray-50">Livrable</td><td class="px-3 py-2">Tag Git <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">lab-01</code> en local (publié sur GitHub en séance 02)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-ul text-brand" aria-hidden="true"></i>
+              Prérequis
+            </h3>
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Connaissances</h4>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li>Bases de PHP (variables, fonctions, tableaux associatifs)</li>
+              <li>HTML/CSS des années 1 et 2</li>
+              <li>Se déplacer dans des dossiers au terminal</li>
+            </ul>
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Matériel</h4>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li>Poste Windows du laboratoire</li>
+              <li>Connexion internet</li>
+              <li>Clé USB optionnelle (sauvegarde en fin de séance)</li>
+            </ul>
+            <p class="text-gray-700">Aucun compte GitHub requis aujourd'hui.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-bullseye text-brand" aria-hidden="true"></i>
+              Objectifs
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+              <li>Décrire le modèle MVC et le cycle de vie d'une requête Laravel (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">public/index.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code>, routage, closure, réponse).</li>
+              <li>Vérifier une chaîne d'outils PHP 8.3+, Composer, installateur Laravel, Node.js LTS et npm sous Windows.</li>
+              <li>Créer un projet Laravel 13 avec SQLite et Pest, et le lancer avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code>.</li>
+              <li>Se repérer dans le squelette Laravel 13 (pas de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Kernel.php</code>, pas de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code>, configuration dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code>).</li>
+              <li>Écrire une première route closure qui renvoie une chaîne, puis une vue Blade.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+              Déroulement
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Bloc</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Durée</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Vérification de l'environnement</td><td class="px-3 py-2">10 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Concepts clés</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Étapes guidées (7 étapes)</td><td class="px-3 py-2">120 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Défi autonome</td><td class="px-3 py-2">30 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Livrable</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr><td class="px-3 py-2 font-medium">Total</td><td class="px-3 py-2 font-medium">3h10</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-diagram-project text-brand" aria-hidden="true"></i>
+              Le projet fil rouge : mini-cms
+            </h3>
+            <p class="text-gray-700 leading-relaxed">
+              Chaque étudiant construit une seule application, <strong>mini-cms</strong>, de la séance 01 à la séance 16, dans un unique dépôt GitHub.
+              Elle démarre comme un ensemble de pages statiques, puis reçoit des articles (S05), des catégories et des tags (S07), l'authentification et les rôles (S11), une API JSON (S13) et l'authentification par jetons (S15).
+            </p>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" data-title="Vérification de l'environnement (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Vérifier quels outils sont déjà installés, pour décider si l'Étape 1 (installation de la chaîne d'outils) est nécessaire.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de vérification">Copier</button>
+              <pre><code class="language-bash">php -v
+composer -V
+laravel --version
+node -v
+npm -v
+git --version</code></pre>
+            </div>
+
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Où sont installés les outils ?</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash">Copier</button>
+              <pre><code class="language-bash">command -v php composer laravel node npm git</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell">Copier</button>
+              <pre><code class="language-powershell">Get-Command php, composer, laravel, node, npm, git -ErrorAction SilentlyContinue | Format-Table Name, Source</code></pre>
+            </div>
+
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Outil</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Attendu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Si la commande échoue</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">php</td><td class="px-3 py-2">PHP 8.3 ou plus</td><td class="px-3 py-2">Étape 1</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">composer</td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2">Étape 1</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">laravel</td><td class="px-3 py-2">Laravel Installer (version récente)</td><td class="px-3 py-2">Étape 1</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">node</td><td class="px-3 py-2">Une version LTS paire (22 ou 24)</td><td class="px-3 py-2">Étape 1, partie Node.js (plan de secours possible à l'Étape 3)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">npm</td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2">Idem node</td></tr>
+                  <tr><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2">Prévenir l'enseignant</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">En PowerShell, le message « n'est pas reconnu comme nom d'applet de commande » signifie que l'outil n'est pas installé ou n'est pas dans le PATH. Si les six commandes fonctionnent, passez directement à <a href="#step-5" class="underline font-medium">l'Étape 2</a>.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">Les six commandes affichent chacune un numéro de version.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700">Chaque étudiant connaît son chemin (Étape 1 ou Étape 2) et le communique à l'enseignant.</p>
+          </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" data-title="Concepts clés (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-brand" aria-hidden="true"></i>
+              Le modèle MVC
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Couche</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Rôle</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Dans Laravel</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Dans ce cours</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Modèle</td><td class="px-3 py-2">Données et règles métier</td><td class="px-3 py-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">app/Models</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">User.php</code> existe déjà)</td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Vue</td><td class="px-3 py-2">Présentation HTML</td><td class="px-3 py-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">resources/views/*.blade.php</code></td><td class="px-3 py-2">Aujourd'hui</td></tr>
+                  <tr><td class="px-3 py-2">Contrôleur</td><td class="px-3 py-2">Reçoit la requête, orchestre, renvoie la réponse</td><td class="px-3 py-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">app/Http/Controllers</code></td><td class="px-3 py-2">S03 ; aujourd'hui une closure joue ce rôle</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-route text-brand" aria-hidden="true"></i>
+              Cycle de vie d'une requête
+            </h3>
+            <div class="flex flex-col items-stretch gap-1">
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-globe text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">Navigateur</p><p class="text-sm text-gray-600">GET http://127.0.0.1:8000/bonjour</p></div>
+              </div>
+              <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-door-open text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">public/index.php</p><p class="text-sm text-gray-600">Seul point d'entrée web, charge l'autoloader Composer (<code class="bg-gray-100 px-1 py-0.5 rounded text-xs">vendor/autoload.php</code>)</p></div>
+              </div>
+              <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-gears text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">bootstrap/app.php</p><p class="text-sm text-gray-600">Crée l'application, déclare les fichiers de routes, le middleware et la gestion des exceptions</p></div>
+              </div>
+              <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-route text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">routes/web.php</p><p class="text-sm text-gray-600">Le routeur cherche une route correspondant à la méthode HTTP et à l'URL (sinon : erreur 404)</p></div>
+              </div>
+              <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-code text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">Closure (aujourd'hui) ou contrôleur (S03)</p><p class="text-sm text-gray-600">Exécute le code</p></div>
+              </div>
+              <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-file-code text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">Vue Blade (optionnelle)</p><p class="text-sm text-gray-600"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">resources/views</code>, compilée en HTML</p></div>
+              </div>
+              <div class="flex justify-center text-gray-400 py-1"><i class="fa-solid fa-arrow-down" aria-hidden="true"></i></div>
+              <div class="border border-gray-200 rounded-lg p-3 flex items-center gap-3">
+                <i class="fa-solid fa-reply text-brand w-5 text-center" aria-hidden="true"></i>
+                <div><p class="font-medium text-sm">Réponse HTTP</p><p class="text-sm text-gray-600">Renvoyée au navigateur</p></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-screwdriver-wrench text-brand" aria-hidden="true"></i>
+              La chaîne d'outils
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Outil</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Rôle</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">PHP</td><td class="px-3 py-2">Exécute le code</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Composer</td><td class="px-3 py-2">Dépendances PHP, dossier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">vendor/</code>, fichier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer.json</code></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Installateur Laravel</td><td class="px-3 py-2">Commande <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">laravel new</code></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Artisan</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan</code>, outil en ligne de commande du projet</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Node.js et npm</td><td class="px-3 py-2">Dépendances front-end, dossier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node_modules/</code>, fichier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">package.json</code></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Vite</td><td class="px-3 py-2">Compile CSS/JS et sert les fichiers en développement</td></tr>
+                  <tr><td class="px-3 py-2">SQLite</td><td class="px-3 py-2">La base de données est un simple fichier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">database/database.sqlite</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Rappel PHP : closures et fonctions fléchées
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Optionnel : enregistrez le code sous <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">closures.php</code> en dehors du projet et exécutez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">php closures.php</code> (identique dans les deux terminaux).</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier le code PHP des closures">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+$saluer = function (string $nom): string {
+    return 'Bonjour ' . $nom;
+};
+
+$saluerCourt = fn (string $nom): string =&gt; 'Bonjour ' . $nom;
+
+echo $saluer('MDW32') . PHP_EOL;
+echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mt-3">Résultat attendu : deux lignes, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">Bonjour MDW32</code> puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">Bonjour MDW33</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <div class="text-sm text-amber-900">
+                <p class="font-medium mb-1">Attention aux tutoriels anciens</p>
+                <p>Les tutoriels écrits avant Laravel 11 mentionnent <code class="bg-white px-1 py-0.5 rounded text-xs">app/Http/Kernel.php</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">app/Console/Kernel.php</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">RouteServiceProvider</code>, un fichier <code class="bg-white px-1 py-0.5 rounded text-xs">routes/api.php</code> présent par défaut, et Laravel Breeze. Rien de tout cela ne s'applique au projet Laravel 13 de ce cours. Le middleware et les exceptions se configurent dans <code class="bg-white px-1 py-0.5 rounded text-xs">bootstrap/app.php</code>, et <code class="bg-white px-1 py-0.5 rounded text-xs">routes/api.php</code> n'apparaît qu'après <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan install:api</code> (S13).</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 4 -->
+        <section id="step-4" class="step-panel" data-title="Étape 1 - Installer la chaîne d'outils (20 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Installer PHP 8.3+, Composer et l'installateur Laravel avec php.new, sans droits administrateur. Sautez cette étape si la vérification de l'environnement a réussi.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Ouvrir <a href="https://php.new" class="underline text-brand">https://php.new</a> dans le navigateur et choisir Windows.</li>
+              <li>Copier la commande PowerShell affichée sur la page et la coller dans une fenêtre PowerShell normale (pas en administrateur).</li>
+              <li>Fermer TOUS les terminaux et TOUTES les fenêtres VS Code, puis rouvrir PowerShell, pour que le nouveau PATH soit chargé.</li>
+            </ol>
+            <p class="text-sm text-gray-600 mb-4">Remarque Bash : l'installateur Windows de php.new s'exécute dans PowerShell. Sur un ordinateur personnel macOS ou Linux, copiez la commande correspondant à votre système depuis la même page.</p>
+            <p class="text-gray-700 mb-4">Node.js : si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node</code> est absent et que vous avez les droits administrateur, installez la version LTS depuis <a href="https://nodejs.org" class="underline text-brand">https://nodejs.org</a> (ou depuis la clé USB de l'enseignant). Sans droits administrateur, prévenez l'enseignant et continuez, car le plan de secours de l'Étape 3 couvre ce cas.</p>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur un ordinateur portable Windows personnel, Laravel Herd (<a href="https://herd.laravel.com" class="underline">https://herd.laravel.com</a>) est une alternative qui nécessite les droits administrateur.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier les commandes de vérification de l'installation">Copier</button>
+              <pre><code class="language-bash">php -v
+composer -V
+laravel --version
+php -m</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">PHP 8.3 ou supérieur, Composer 2.x, une version de Laravel Installer, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code> dans la liste de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -m</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash de vérification sqlite">Copier</button>
+              <pre><code class="language-bash">php -m | grep -i sqlite</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de vérification sqlite">Copier</button>
+              <pre><code class="language-powershell">php -m | Select-String sqlite</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Les deux doivent afficher <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code>.</p>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">« php n'est pas reconnu » juste après l'installation signifie que le terminal date d'avant l'installation. Fermez tout, y compris VS Code, puis rouvrez.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
+              Plan de secours
+            </h3>
+            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-emerald-900">Si l'installation échoue encore après 25 minutes, travaillez en binôme avec un voisin et terminez l'installation chez vous. Prévenez l'enseignant.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 5 -->
+        <section id="step-5" class="step-panel" data-title="Étape 2 - Créer le projet mini-cms (20 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Créer le projet <strong>mini-cms</strong> sans starter kit, avec Pest et SQLite, dans un dossier sans espace ni synchronisation OneDrive.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création du projet">Copier</button>
+              <pre><code class="language-bash">mkdir -p /c/dev/prenom-nom
+cd /c/dev/prenom-nom
+laravel new mini-cms</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création du projet">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force -Path C:\dev\prenom-nom
+Set-Location C:\dev\prenom-nom
+laravel new mini-cms</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Remplacez <code class="bg-white px-1 py-0.5 rounded text-xs">prenom-nom</code> par votre nom en minuscules, sans espace ni accent. Évitez les dossiers Bureau et Documents, souvent synchronisés par OneDrive, ce qui ralentit ou bloque des milliers de petits fichiers.</p>
+            </div>
+
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Question de l'installateur (approximative)</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Réponse</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Starter kit</td><td class="px-3 py-2">None</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Testing framework</td><td class="px-3 py-2">Pest</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Laravel Boost ou outils IA (si la question apparaît)</td><td class="px-3 py-2">No</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Database</td><td class="px-3 py-2">SQLite</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Exécuter les migrations par défaut (si demandé)</td><td class="px-3 py-2">Yes</td></tr>
+                  <tr><td class="px-3 py-2">npm install / npm run build</td><td class="px-3 py-2">No (fait à l'Étape 3)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">La formulation exacte peut varier selon la version de l'installateur ; les trois réponses qui comptent sont None, Pest et SQLite.</p>
+            </div>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Si le téléchargement est interrompu, relancez <code class="bg-white px-1 py-0.5 rounded text-xs">laravel new mini-cms --force</code> (cela supprime le dossier incomplet et recommence).</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
+              Plan de secours
+            </h3>
+            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-emerald-900">Connexion trop lente (plus de 10 minutes sans progrès) : extrayez l'archive de l'enseignant (remplacez E: par la lettre de votre clé USB).</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash du plan de secours">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom
+tar -xzf /e/mini-cms-base.tar.gz
+cd mini-cms
+cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell du plan de secours">Copier</button>
+              <pre><code class="language-powershell">Set-Location C:\dev\prenom-nom
+tar -xzf E:\mini-cms-base.tar.gz
+Set-Location mini-cms
+copy .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">key:generate</code> crée la clé secrète de l'application dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> (détails en S02).</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la séquence Bash complète">Copier</button>
+              <pre><code class="language-bash">mkdir -p /c/dev/prenom-nom
+cd /c/dev/prenom-nom
+laravel new mini-cms
+cd mini-cms
+php artisan --version</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la séquence PowerShell complète">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force -Path C:\dev\prenom-nom
+Set-Location C:\dev\prenom-nom
+laravel new mini-cms
+Set-Location mini-cms
+php artisan --version</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">L'installateur se termine par un message indiquant que l'application est prête, et le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> existe.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan --version</code> affiche « Laravel Framework 13.x.x ».</p>
+            <p class="text-sm text-gray-600 mb-2">Bash :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash de vérification du fichier sqlite">Copier</button>
+              <pre><code class="language-bash">ls database/database.sqlite</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de vérification du fichier sqlite">Copier</button>
+              <pre><code class="language-powershell">Test-Path database\database.sqlite</code></pre>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 6 -->
+        <section id="step-6" class="step-panel" data-title="Étape 3 - Lancer l'application (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Installer les dépendances front-end et démarrer le serveur de développement.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de lancement">Copier</button>
+              <pre><code class="language-bash">npm install
+composer run dev</code></pre>
+            </div>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Si PowerShell affiche « l'exécution de scripts est désactivée sur ce système », utilisez <code class="bg-white px-1 py-0.5 rounded text-xs">npm.cmd install</code> (et <code class="bg-white px-1 py-0.5 rounded text-xs">npm.cmd run dev</code> dans le plan de secours).</p>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900"><code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> reste en cours d'exécution. Laissez ce terminal ouvert, et ouvrez un second terminal dans le dossier mini-cms pour la suite (VS Code : Terminal &gt; Nouveau terminal). Arrêtez le serveur avec Ctrl+C. Si une fenêtre du pare-feu Windows apparaît, « Annuler » suffit, car l'accès local fonctionne quand même.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
+              Plan de secours 1
+            </h3>
+            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-emerald-900"><code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> échoue (par exemple sur le processus « logs » sous Windows) : terminal 1 lance le serveur PHP, terminal 2 lance Vite.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier les commandes du plan de secours 1">Copier</button>
+              <pre><code class="language-bash"># Terminal 1
+php artisan serve
+
+# Terminal 2
+npm run dev</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
+              Plan de secours 2
+            </h3>
+            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-emerald-900">Node.js absent : <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan serve</code> seul suffit. La page d'accueil s'affiche toujours ; Vite et Tailwind ne sont nécessaires qu'à partir de S03.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la commande du plan de secours 2">Copier</button>
+              <pre><code class="language-bash">php artisan serve</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Lancement normal :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le lancement normal">Copier</button>
+              <pre><code class="language-bash">npm install
+composer run dev</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Plan de secours 1 :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le plan de secours 1">Copier</button>
+              <pre><code class="language-bash"># Terminal 1
+php artisan serve
+
+# Terminal 2
+npm run dev</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Plan de secours 2 :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier le plan de secours 2">Copier</button>
+              <pre><code class="language-bash">php artisan serve</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">Le terminal affiche plusieurs processus dans des couleurs différentes et une ligne avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code>. Si le port 8000 est occupé, Laravel essaie le port suivant : lisez l'URL affichée.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> affiche la page d'accueil par défaut de Laravel, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000/up</code> affiche une page de santé confirmant que l'application fonctionne.</p>
+          </div>
+        </section>
+
+        <!-- Step 7 -->
+        <section id="step-7" class="step-panel" data-title="Étape 4 - Explorer le squelette Laravel 13 (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Se repérer dans les dossiers du projet et vérifier ce qui n'existe plus en Laravel 13.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes d'exploration">Copier</button>
+              <pre><code class="language-bash">code .
+php artisan about
+php artisan route:list</code></pre>
+            </div>
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Vérification des fichiers absents</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (attendu : trois « No such file or directory ») :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash des fichiers absents">Copier</button>
+              <pre><code class="language-bash">ls app/Http/Kernel.php app/Console/Kernel.php routes/api.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (attendu : False False False) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell des fichiers absents">Copier</button>
+              <pre><code class="language-powershell">Test-Path app\Http\Kernel.php, app\Console\Kernel.php, routes\api.php</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <div class="overflow-x-auto mb-6">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Dossier ou fichier</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Rôle</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">app/</code></td><td class="px-3 py-2">Code de l'application (Models/User.php, Http/Controllers/Controller.php, Providers/AppServiceProvider.php)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">bootstrap/app.php</code></td><td class="px-3 py-2">Configuration de l'application : routes, middleware, exceptions</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">config/</code></td><td class="px-3 py-2">Fichiers de configuration (app.php, database.php, ...)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">database/</code></td><td class="px-3 py-2">database.sqlite, migrations, factories, seeders</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">public/</code></td><td class="px-3 py-2">index.php, seul point d'entrée web, et fichiers publics</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">resources/views/</code></td><td class="px-3 py-2">Vues Blade (welcome.blade.php)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">routes/</code></td><td class="px-3 py-2">web.php (routes web), console.php (commandes et planification)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">storage/</code></td><td class="px-3 py-2">Logs, cache, vues compilées</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">tests/</code></td><td class="px-3 py-2">Tests Pest (S05)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">vendor/</code></td><td class="px-3 py-2">Dépendances Composer ; ne jamais modifier à la main, non versionné</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node_modules/</code></td><td class="px-3 py-2">Dépendances npm ; non versionné</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">.env</code></td><td class="px-3 py-2">Configuration locale et secrets ; jamais versionné (S02)</td></tr>
+                  <tr><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer.json</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">package.json</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">artisan</code></td><td class="px-3 py-2">Dépendances PHP, dépendances front-end, outil en ligne de commande</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Contenu d'un projet neuf. Si votre fichier diffère légèrement, c'est votre fichier qui fait foi.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">bootstrap/app.php</code> :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier bootstrap/app.php">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    -&gt;withRouting(
+        web: __DIR__.'/../routes/web.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    -&gt;withMiddleware(function (Middleware $middleware): void {
+        //
+    })
+    -&gt;withExceptions(function (Exceptions $exceptions): void {
+        //
+    })-&gt;create();</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan about</code> affiche Laravel Version 13.x, PHP Version 8.3 ou supérieur, Environment local, et sqlite sur la ligne Database. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche au moins <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET|HEAD /</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET|HEAD up</code> (d'autres routes peuvent apparaître).</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2 mb-4">
+              <li>Où sont déclarés les fichiers de routes chargés par l'application ?</li>
+              <li>Pourquoi n'y a-t-il pas de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> ?</li>
+              <li>Quel dossier n'est jamais modifié à la main, et pourquoi ?</li>
+            </ol>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir les réponses</summary>
+              <ol class="list-decimal list-inside text-gray-700 space-y-2 mt-2">
+                <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code>, dans l'appel à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withRouting</code>.</li>
+                <li>Il est créé par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan install:api</code>, en S13.</li>
+                <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> : Composer le gère et le régénère.</li>
+              </ol>
+            </details>
+          </div>
+        </section>
+
+        <!-- Step 8 -->
+        <section id="step-8" class="step-panel" data-title="Étape 5 - Suivre le cycle de vie d'une requête (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Suivre une requête à travers les fichiers qui la traitent.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de lecture">Copier</button>
+              <pre><code class="language-bash">cat public/index.php
+cat routes/web.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de lecture">Copier</button>
+              <pre><code class="language-powershell">Get-Content public\index.php
+Get-Content routes\web.php</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Contenu d'un projet neuf. Si votre fichier diffère légèrement, c'est votre fichier qui fait foi.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">public/index.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier public/index.php">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Http\Request;
+
+define('LARAVEL_START', microtime(true));
+
+// Determine if the application is in maintenance mode
+if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
+    require $maintenance;
+}
+
+// Register the Composer autoloader
+require __DIR__.'/../vendor/autoload.php';
+
+// Bootstrap Laravel and handle the request
+/** @var Application $app */
+$app = require_once __DIR__.'/../bootstrap/app.php';
+
+$app-&gt;handleRequest(Request::capture());</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier routes/web.php">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});</code></pre>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Élément</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Rôle dans le cycle</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">vendor/autoload.php</code></td><td class="px-3 py-2">Charge les classes Composer</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">require bootstrap/app.php</code></td><td class="px-3 py-2">Crée et configure l'application</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Request::capture()</code></td><td class="px-3 py-2">Transforme la requête HTTP en objet</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">handleRequest</code></td><td class="px-3 py-2">Routage, exécution, envoi de la réponse</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Route::get('/', $closure)</code></td><td class="px-3 py-2">Associe GET / à une closure</td></tr>
+                  <tr><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">view('welcome')</code></td><td class="px-3 py-2">Rend <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">resources/views/welcome.blade.php</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-gray-700 mt-4">Expérience : ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000/page-inexistante</code>. La page 404 montre que le routeur n'a trouvé aucune route correspondante.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">La page 404 s'affiche.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700">Expliquez à un voisin, sans notes, le chemin d'une requête, en nommant les fichiers dans l'ordre.</p>
+          </div>
+        </section>
+
+        <!-- Step 9 -->
+        <section id="step-9" class="step-panel" data-title="Étape 6 - Première route : renvoyer une chaîne (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Ajouter deux routes closures qui renvoient du texte.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier les commandes de l'étape 6">Copier</button>
+              <pre><code class="language-bash">code routes/web.php
+# apres avoir enregistre le fichier :
+php artisan route:list</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Contenu complet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier routes/web.php">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/bonjour', function () {
+    return 'Bonjour MDW3 ! Voici ma première route Laravel 13.';
+});
+
+Route::get('/bonjour-court', fn () =&gt; 'Même résultat, écrit avec une fonction fléchée.');</code></pre>
+            </div>
+            <p class="text-gray-700">
+              <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::get(url, closure)</code> : la chaîne renvoyée devient le corps de la réponse ; les deux routes ne diffèrent que par la syntaxe ; pas besoin de redémarrer le serveur, car PHP relit les fichiers à chaque requête.
+            </p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour-court</code> affichent chacune leur phrase.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bonjour-court</code>. Ctrl+U (code source de la page) montre uniquement le texte brut, sans HTML.</p>
+          </div>
+        </section>
+
+        <!-- Step 10 -->
+        <section id="step-10" class="step-panel" data-title="Étape 7 - Première vue Blade (20 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Renvoyer une vue Blade et lui transmettre des données.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash de création de la vue">Copier</button>
+              <pre><code class="language-bash">touch resources/views/bienvenue.blade.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de création de la vue">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType File -Path resources\views\bienvenue.blade.php</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">resources/views/bienvenue.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier bienvenue.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Bienvenue - Mini-CMS&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; color: #1f2937; line-height: 1.6; }
+        h1 { color: #e6291b; }
+        dt { font-weight: 600; }
+        dd { margin: 0 0 1rem 0; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Bienvenue sur Mini-CMS&lt;/h1&gt;
+    &lt;p&gt;Cette page est une vue Blade renvoyée par une route closure.&lt;/p&gt;
+    &lt;dl&gt;
+        &lt;dt&gt;Étudiant&lt;/dt&gt;
+        &lt;dd&gt;{{ $etudiant }}&lt;/dd&gt;
+        &lt;dt&gt;Groupe&lt;/dt&gt;
+        &lt;dd&gt;{{ $groupe }}&lt;/dd&gt;
+        &lt;dt&gt;Cours&lt;/dt&gt;
+        &lt;dd&gt;{{ $cours }}&lt;/dd&gt;
+    &lt;/dl&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Contenu complet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">routes/web.php</code> (mettez votre propre nom et groupe) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier routes/web.php avec la route bienvenue">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/bonjour', function () {
+    return 'Bonjour MDW3 ! Voici ma première route Laravel 13.';
+});
+
+Route::get('/bonjour-court', fn () =&gt; 'Même résultat, écrit avec une fonction fléchée.');
+
+Route::get('/bienvenue', function () {
+    return view('bienvenue', [
+        'etudiant' =&gt; 'Prenom Nom',
+        'groupe' =&gt; 'MDW32',
+        'cours' =&gt; 'Atelier Framework Côté Serveur',
+    ]);
+});</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">
+              <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">view('bienvenue')</code> charge <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/bienvenue.blade.php</code> ; chaque clé du tableau devient une variable dans la vue ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> affiche la valeur échappée (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">htmlspecialchars</code>), ce qui protège contre l'injection HTML/JavaScript.
+            </p>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Expérience d'échappement : mettez temporairement <code class="bg-white px-1 py-0.5 rounded text-xs">'etudiant' =&gt; '&lt;strong&gt;Test&lt;/strong&gt;'</code>. Les balises apparaissent comme du texte au lieu d'être en gras. Restaurez ensuite votre nom.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> affiche votre nom, votre groupe et le cours.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bienvenue</code>. Ctrl+U montre du HTML brut, sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code>, car Blade est compilé côté serveur (les versions compilées se trouvent dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">storage/framework/views</code>).</p>
+          </div>
+        </section>
+
+        <!-- Step 11 -->
+        <section id="step-11" class="step-panel" data-title="Défi autonome (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-puzzle-piece text-brand" aria-hidden="true"></i>
+              Introduction
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Aucun code n'est fourni : réutilisez les techniques des Étapes 6 et 7.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code-branch text-brand" aria-hidden="true"></i>
+              D1 - Route /version
+            </h3>
+            <p class="text-gray-700 mb-3">La route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/version</code> renvoie une chaîne du type « Laravel 13.x.x - PHP 8.x.x ».</p>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice</summary>
+              <p class="text-sm text-gray-700 mt-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">app()->version()</code> renvoie la version de Laravel ; la constante PHP <code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">PHP_VERSION</code> renvoie la version de PHP.</p>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+              D2 - Route /heure
+            </h3>
+            <p class="text-gray-700 mb-3">La route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> renvoie une vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure.blade.php</code> affichant l'heure (format H:i) et la date (format d/m/Y). Comparez avec l'horloge de la salle. En cas d'écart, ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config/app.php</code>, trouvez la clé timezone, mettez-la à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'Africa/Tunis'</code>, et rechargez.</p>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice</summary>
+              <p class="text-sm text-gray-700 mt-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-xs">now()->format('H:i')</code>.</p>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-triangle-exclamation text-brand" aria-hidden="true"></i>
+              D3 - Lire une page d'erreur
+            </h3>
+            <p class="text-gray-700 mb-3">Renommez temporairement la vue, rechargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code>, notez le titre du message d'erreur, puis restaurez.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash, macOS, Linux) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de renommage">Copier</button>
+              <pre><code class="language-bash"># Renommer
+mv resources/views/bienvenue.blade.php resources/views/bienvenu.blade.php
+
+# Restaurer
+mv resources/views/bienvenu.blade.php resources/views/bienvenue.blade.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de renommage">Copier</button>
+              <pre><code class="language-powershell"># Renommer
+Rename-Item resources\views\bienvenue.blade.php bienvenu.blade.php
+
+# Restaurer
+Rename-Item resources\views\bienvenu.blade.php bienvenue.blade.php</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-comments text-brand" aria-hidden="true"></i>
+              D4 - À l'oral
+            </h3>
+            <p class="text-gray-700">Expliquez à l'enseignant le chemin d'une requête vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code>, en nommant chaque fichier traversé.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Critères de réussite
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">version</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure</code>.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> correspond à l'heure de Tunis.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bienvenue.blade.php</code> a été restaurée et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> fonctionne.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Explication orale donnée.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Step 12 -->
+        <section id="step-12" class="step-panel" data-title="Grille d'auto-évaluation">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
+              Grille d'auto-évaluation
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -v</code> affiche 8.3 ou plus et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan --version</code> affiche Laravel Framework 13.x.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan about</code> indique sqlite.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> La page d'accueil s'affiche sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code> (avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code> ou un plan de secours noté).</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour-court</code> renvoient leur texte.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code> affiche mon nom, mon groupe et le cours depuis une vue Blade.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/version</code> fonctionne et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> affiche l'heure de Tunis.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list</code> liste au moins /, up, bonjour, bonjour-court, bienvenue, version et heure.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Je sais nommer, dans l'ordre, les fichiers traversés par une requête.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Je sais expliquer pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Kernel.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> n'existent pas.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> Le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/</code> contient mes trois captures.</li>
+              <li class="flex items-start gap-2"><i class="fa-solid fa-square-check text-brand mt-1" aria-hidden="true"></i> <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.name</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.email</code> (locaux) correspondent à mon identité ; le commit lab-01 et le tag lab-01 existent ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> est propre.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Step 13 -->
+        <section id="step-13" class="step-panel" data-title="Livrable : commit et tag lab-01 (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed mb-4">Capturer votre travail, l'enregistrer dans Git sous votre propre identité, et le marquer avec le tag lab-01.</p>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Git est expliqué en détail en S02 ; aujourd'hui les commandes sont à copier-coller uniquement.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Captures d'écran</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de création du dossier screenshots">Copier</button>
+              <pre><code class="language-bash">mkdir screenshots</code></pre>
+            </div>
+            <p class="text-gray-700 mb-6">Capturez avec Win+Shift+S et enregistrez trois fichiers : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/s01-accueil.png</code> (page d'accueil), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/s01-bienvenue.png</code> (page /bienvenue), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/s01-route-list.png</code> (sortie de route:list).</p>
+
+            <h4 class="text-sm font-medium text-gray-800 mb-2">Git (dans le dossier mini-cms, second terminal)</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier git status">Copier</button>
+              <pre><code class="language-bash">git status</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Si Git répond « not a git repository », exécutez <code class="bg-white px-1 py-0.5 rounded text-xs">git init</code> et continuez.</p>
+            </div>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la configuration de l'identité Git">Copier</button>
+              <pre><code class="language-bash">git config user.name "Prenom Nom"
+git config user.email "adresse@exemple.com"
+git log -1 --format="%an &lt;%ae&gt;"</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Utilisez l'adresse que vous utiliserez sur GitHub en S02. Pas d'option <code class="bg-white px-1 py-0.5 rounded text-xs">--global</code>, car les postes du laboratoire sont partagés. Si <code class="bg-white px-1 py-0.5 rounded text-xs">git log</code> affiche « does not have any commits yet », c'est normal. S'il affiche une identité qui n'est pas la vôtre, exécutez : <code class="bg-white px-1 py-0.5 rounded text-xs">git commit --amend --reset-author --no-edit</code></p>
+            </div>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier les commandes de commit et de tag">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "lab-01"
+git tag lab-01</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la séquence Git complète">Copier</button>
+              <pre><code class="language-bash">git status
+
+# git init   (seulement si "not a git repository")
+
+git config user.name "Prenom Nom"
+git config user.email "adresse@exemple.com"
+git log -1 --format="%an &lt;%ae&gt;"
+
+git add -A
+git commit -m "lab-01"
+git tag lab-01</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">Le commit est créé, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de vérification finale">Copier</button>
+              <pre><code class="language-bash">git tag
+git status
+git config user.email</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900"><code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">node_modules/</code> n'apparaissent jamais dans <code class="bg-white px-1 py-0.5 rounded text-xs">git status</code>, car ils sont ignorés (S02 explique pourquoi).</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-life-ring text-emerald-600" aria-hidden="true"></i>
+              Plan de secours
+            </h3>
+            <div class="border-l-4 border-emerald-500 bg-emerald-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-life-ring text-emerald-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-emerald-900">Sauvegarde sur clé USB (recommandé) : arrêtez <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> avec Ctrl+C, puis (remplacez E: par la lettre de votre lecteur) :</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la sauvegarde Bash">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom
+tar --exclude=vendor --exclude=node_modules -czf /e/mini-cms-lab01.tar.gz mini-cms</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper">
+              <button class="copy-btn" aria-label="Copier la sauvegarde PowerShell">Copier</button>
+              <pre><code class="language-powershell">Set-Location C:\dev\prenom-nom
+tar --exclude=vendor --exclude=node_modules -czf E:\mini-cms-lab01.tar.gz mini-cms</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <p class="text-gray-700"><strong>Séance suivante :</strong> S02 - Git, GitHub et publication du projet. Revenez si possible sur le même poste.</p>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Prism core + autoloader (pinned 1.29.0) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+</script>
+
+<!-- Navigation JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.step-panel'));
+  var stepIds = panels.map(function (p) { return p.id; });
+  var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.step-link'));
+  var titleEl = document.getElementById('current-step-title');
+  var prevBtn = document.getElementById('prev-step');
+  var nextBtn = document.getElementById('next-step');
+  var progressBar = document.getElementById('progress-bar');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebar-overlay');
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+
+  var storageKey = 'codelab-progress:' + window.location.pathname;
+
+  function loadCompleted() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCompleted(list) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) {
+      /* localStorage unavailable: navigation still works without persistence */
+    }
+  }
+
+  var completed = loadCompleted();
+
+  function indexOfStep(id) {
+    var idx = stepIds.indexOf(id);
+    return idx === -1 ? 0 : idx;
+  }
+
+  function markCompleted(idx) {
+    var id = stepIds[idx];
+    if (completed.indexOf(id) === -1) {
+      completed.push(id);
+      saveCompleted(completed);
+    }
+  }
+
+  function updateSidebarState(activeId) {
+    sidebarLinks.forEach(function (link) {
+      var id = link.getAttribute('data-step');
+      link.classList.toggle('is-active', id === activeId);
+      link.classList.toggle('is-completed', completed.indexOf(id) !== -1 && id !== activeId);
+    });
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('is-open');
+  }
+
+  function showStep(idx, options) {
+    options = options || {};
+    if (idx < 0) idx = 0;
+    if (idx > panels.length - 1) idx = panels.length - 1;
+
+    var id = stepIds[idx];
+
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('is-active', i === idx);
+    });
+
+    if (titleEl) {
+      titleEl.textContent = panels[idx].getAttribute('data-title') || panels[idx].id;
+    }
+
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === panels.length - 1;
+
+    if (progressBar) {
+      var pct = ((idx + 1) / panels.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    if (idx > 0) {
+      for (var i = 0; i < idx; i++) {
+        markCompleted(i);
+      }
+    }
+
+    updateSidebarState(id);
+
+    if (!options.skipHash) {
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + id);
+      } else {
+        window.location.hash = id;
+      }
+    }
+
+    document.getElementById('content').scrollTop = 0;
+    closeMobileSidebar();
+  }
+
+  function currentIndex() {
+    var hash = window.location.hash.replace('#', '');
+    return indexOfStep(hash);
+  }
+
+  // Sidebar links: native anchor navigation updates location.hash, which
+  // fires 'hashchange'; we just react to that in one place.
+  window.addEventListener('hashchange', function () {
+    showStep(currentIndex(), { skipHash: true });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      showStep(currentIndex() - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      showStep(currentIndex() + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowLeft') {
+      showStep(currentIndex() - 1);
+    } else if (e.key === 'ArrowRight') {
+      showStep(currentIndex() + 1);
+    }
+  });
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.add('is-open');
+      sidebarOverlay.classList.add('is-open');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Copy-to-clipboard for every code block.
+  Array.prototype.slice.call(document.querySelectorAll('.copy-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrapper = btn.closest('.code-block-wrapper');
+      var codeEl = wrapper ? wrapper.querySelector('code') : null;
+      if (!codeEl) return;
+
+      var text = codeEl.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copie';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+  }
+
+  // Initial render.
+  showStep(currentIndex(), { skipHash: true });
+  if (window.location.hash) {
+    // Normalize the hash (e.g. redirect #foo -> #step-1 if invalid).
+    history.replaceState(null, '', '#' + stepIds[currentIndex()]);
+  }
+
+  if (window.Prism) {
+    Prism.highlightAll();
+  }
+})();
+</script>
+
+</body>
+</html>
