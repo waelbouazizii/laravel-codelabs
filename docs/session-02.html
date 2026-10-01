@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<!--
+  Codelab skeleton template - Atelier Framework Cote Serveur (ISET Sidi Bouzid)
+
+  DO NOT edit the skeleton markup, the navigation JavaScript, or the pinned
+  asset versions below when authoring a session. Copy this file to
+  docs/session-XX.html and only touch:
+    - <title> and the header/course metadata in the sidebar
+    - the <section class="step-panel" ...> blocks (edit, add, remove)
+  See CLAUDE.md for the full rules.
+-->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 02 - Git, GitHub et publication du projet - Atelier Framework Côté Serveur</title>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Roboto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.4.0 (pinned) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Prism 1.29.0 (pinned): core theme, language components load on demand via autoloader -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          sidebar: {
+            DEFAULT: '#1f2430',
+            hover: '#2a3040',
+          },
+          brand: {
+            DEFAULT: '#ff3d2e',
+            dark: '#e6291b',
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; }
+
+  /* Sidebar */
+  #sidebar {
+    transition: transform 0.25s ease-in-out;
+  }
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 4px; }
+
+  .step-link { position: relative; }
+  .step-link.is-active {
+    background-color: rgba(255, 61, 46, 0.15);
+    border-left: 3px solid #ff3d2e;
+    color: #ffffff;
+  }
+  .step-link .step-marker {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+  .step-link.is-completed .step-marker .marker-number { display: none; }
+  .step-link.is-completed .step-marker .marker-check { display: flex; }
+  .step-link .step-marker .marker-check { display: none; }
+
+  /* Progress bar */
+  #progress-track {
+    height: 4px;
+    background: #e5e7eb;
+  }
+  #progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff3d2e, #ff8a3d);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+
+  /* Content cards */
+  .md-card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Code blocks + copy button */
+  .code-block-wrapper { position: relative; }
+  .code-block-wrapper pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0.5rem;
+    max-height: 32rem;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: rgba(255,255,255,0.1);
+    color: #d4d4d4;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* Mobile sidebar */
+  @media (max-width: 767px) {
+    #sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transform: translateX(-100%);
+      width: 85vw;
+      max-width: 20rem;
+    }
+    #sidebar.is-open { transform: translateX(0); }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 30;
+    }
+    #sidebar-overlay.is-open { display: block; }
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="bg-sidebar text-gray-300 w-72 flex-shrink-0 flex flex-col overflow-y-auto">
+    <div class="px-5 py-5 border-b border-white/10">
+      <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
+      <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session 02 - Git, GitHub et publication du projet</p>
+    </div>
+    <nav class="flex-1 py-2" aria-label="Etapes du codelab">
+      <ul id="step-nav-list">
+        <li>
+          <a href="#step-1" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-1">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">1</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Prérequis et objectifs</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-2" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-2">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">2</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Vérification de l'environnement</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-3" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-3">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">3</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Notions clés</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-4" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-4">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">4</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 1 - Compte GitHub et e-mail</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-5" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-5">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">5</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 2 - Récupérer le projet</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-6" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-6">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">6</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 3 - Identité et .gitignore</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-7" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-7">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">7</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 4 - Premier push</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-8" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-8">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">8</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 5 - Page /a-propos</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-9" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-9">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">9</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 6 - README et captures</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-10" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-10">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">10</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 7 - Publier le sprint</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-11" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-11">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">11</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Défi</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-12" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-12">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">12</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Checklist d'évaluation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-13" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-13">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">13</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Livrable</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="px-5 py-4 border-t border-white/10 text-xs text-gray-500">
+      <a href="index.html" class="hover:text-gray-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au sommaire</a>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4">
+      <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-900" aria-label="Ouvrir le menu des etapes">
+        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500">Session 02 - Semaine 1 - Session B</p>
+        <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prev-step" class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2" aria-label="Etape precedente">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Precedent</span>
+        </button>
+        <button id="next-step" class="px-3 py-2 rounded-md bg-brand text-white hover:bg-brand-dark text-sm flex items-center gap-2" aria-label="Etape suivante">
+          <span class="hidden sm:inline">Suivant</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div id="progress-track" class="w-full">
+      <div id="progress-bar"></div>
+    </div>
+
+    <!-- Content -->
+    <main id="content" class="flex-1 overflow-y-auto">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
+
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel is-active" data-title="Prérequis et objectifs">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectifs
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+              <li>Expliquer le modèle Git : répertoire de travail, index, commit, tag, dépôt distant ; lire <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline --decorate</code>.</li>
+              <li>Justifier pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node_modules/</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/*.sqlite</code> ne sont jamais publiés, et le prouver avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git check-ignore</code>.</li>
+              <li>Relier vos commits à votre compte GitHub grâce à une adresse e-mail vérifiée.</li>
+              <li>Publier le projet en HTTPS avec Git Credential Manager, pousser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> et les tags <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, puis nettoyer le poste partagé.</li>
+              <li>Livrer un sprint en petits commits : page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code>, README avec installation Bash et PowerShell et captures d'écran.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Prérequis
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li>Session 01 terminée : dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">C:\dev\prenom-nom\mini-cms</code>, commit et tag local <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>.</li>
+              <li>Un compte GitHub créé avec la même adresse que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.email</code> (sinon : <a href="#step-4" class="underline text-brand">Étape 1, partie A</a>).</li>
+              <li>Votre téléphone, avec accès à votre messagerie, pour lire les codes envoyés par GitHub sans ouvrir votre messagerie sur le poste partagé.</li>
+              <li>Si vous changez de poste : votre clé USB avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms-lab01.tar.gz</code>.</li>
+            </ul>
+            <p class="text-gray-700 mb-4">Dans toute la page, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de dossier choisi en session 01 (minuscules, sans espace ni accent).</p>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Pas encore de compte GitHub ? Ouvrez <a href="#step-4" class="underline font-medium">l'Étape 1, partie A</a>, dès maintenant : la réception du code de vérification peut prendre plusieurs minutes.</p>
+            </div>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Poste partagé : avant de quitter la salle, même si vous n'avez pas terminé, faites <a href="#step-13" class="underline font-medium">la partie C du Livrable</a> (suppression de l'identifiant GitHub et déconnexion du navigateur).</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+              Déroulement
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Partie</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Durée</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Vérification de l'environnement</td><td class="px-3 py-2">10 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Notions clés</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Étapes 1 à 7</td><td class="px-3 py-2">120 min (15, 15, 10, 25, 15, 30, 10)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Défi</td><td class="px-3 py-2">30 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Livrable</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr><td class="px-3 py-2 font-medium">Total</td><td class="px-3 py-2 font-medium">3h10</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-scale-balanced text-brand" aria-hidden="true"></i>
+              Évaluation
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Session B notée sur 20 : checklist 16 points + livrable 4 points.</li>
+              <li>La note porte sur l'état du dépôt au tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code> sur GitHub.</li>
+              <li>L'historique Git est évalué : petits commits, un changement par commit, messages explicites, commits à votre nom.</li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" data-title="Vérification de l'environnement (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Vérifier que Git, Git Credential Manager, PHP, Composer, Node.js, VS Code et l'accès à GitHub fonctionnent avant d'en dépendre.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Ces commandes s'exécutent depuis n'importe quel dossier.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de vérification de l&#x27;environnement">Copier</button>
+              <pre><code class="language-bash">git --version
+git credential-manager --version
+git config --get-all credential.helper
+php -v
+composer -V
+node -v
+npm -v
+code --version
+git ls-remote https://github.com/laravel/laravel.git HEAD</code></pre>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Commande</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Résultat attendu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Si la commande échoue</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git --version</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git version 2.x.windows.N</code></td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie C</a> (installer Git)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git credential-manager --version</code></td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git: 'credential-manager' is not a git command</code> signifie que Git for Windows a été installé sans Git Credential Manager : <a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie C</a>, réinstallez avec les options par défaut.</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git config --get-all credential.helper</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">manager</code> (ou <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">manager-core</code> sur une installation plus ancienne)</td><td class="px-3 py-2">Si la ligne est vide : <a href="#step-7" class="underline text-brand">Étape 4, partie B</a>, bloc « Seulement si credential.helper est vide ».</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php -v</code></td><td class="px-3 py-2">PHP 8.3 ou plus récent</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A</a> (php.new)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer -V</code></td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A</a> (php.new)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node -v</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">npm -v</code></td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie B</a>. Sans Node.js, lancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan serve</code> au lieu de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code> (<a href="#step-5" class="underline text-brand">Étape 2, partie C</a>).</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">code --version</code></td><td class="px-3 py-2">Un numéro de version de VS Code</td><td class="px-3 py-2">Ouvrez VS Code depuis le menu Démarrer, puis Fichier &gt; Ouvrir le dossier, et ouvrez les fichiers depuis l'explorateur de VS Code au lieu de la commande <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">code</code>.</td></tr>
+                  <tr><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git ls-remote</code></td><td class="px-3 py-2">Un identifiant de 40 caractères suivi de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">HEAD</code></td><td class="px-3 py-2">En cas d'attente puis d'échec (timeout) : le réseau est lent : relancez la commande.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette partie vérifie uniquement les outils.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">Chaque commande affiche le résultat de la deuxième colonne du tableau.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Les neuf commandes répondent comme dans le tableau.</li>
+              <li>Pour chaque ligne en échec, vous avez suivi le lien de la dernière colonne.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Git Credential Manager (GCM) est ce qui permet à <code class="bg-white px-1 py-0.5 rounded text-xs">git push</code> de fonctionner en HTTPS sans mot de passe : GitHub refuse les mots de passe pour Git. La ligne <code class="bg-white px-1 py-0.5 rounded text-xs">git ls-remote</code> prouve que GitHub est joignable depuis ce poste avant que vous en dépendiez.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">git: 'credential-manager' is not a git command</code> : GCM n'a pas été installé avec Git for Windows. <code class="bg-white px-1 py-0.5 rounded text-xs">Could not resolve host: github.com</code> : problème de réseau ; vérifiez la connexion du poste et relancez la commande.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-brand" aria-hidden="true"></i>
+              Les zones de Git
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <div class="flex flex-col md:flex-row items-stretch gap-2 mb-6">
+              <div class="flex-1 border border-gray-200 rounded-lg p-3 text-center">
+                <i class="fa-solid fa-folder-open text-brand" aria-hidden="true"></i>
+                <p class="font-medium text-sm mt-1">Répertoire de travail</p>
+              </div>
+              <div class="flex flex-col items-center justify-center text-gray-500 px-1">
+                <i class="fa-solid fa-arrow-down md:hidden" aria-hidden="true"></i>
+                <i class="fa-solid fa-arrow-right hidden md:inline" aria-hidden="true"></i>
+                <span class="text-xs mt-1"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git add</code></span>
+              </div>
+              <div class="flex-1 border border-gray-200 rounded-lg p-3 text-center">
+                <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+                <p class="font-medium text-sm mt-1">Index (staging)</p>
+              </div>
+              <div class="flex flex-col items-center justify-center text-gray-500 px-1">
+                <i class="fa-solid fa-arrow-down md:hidden" aria-hidden="true"></i>
+                <i class="fa-solid fa-arrow-right hidden md:inline" aria-hidden="true"></i>
+                <span class="text-xs mt-1"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git commit</code></span>
+              </div>
+              <div class="flex-1 border border-gray-200 rounded-lg p-3 text-center">
+                <i class="fa-solid fa-database text-brand" aria-hidden="true"></i>
+                <p class="font-medium text-sm mt-1">Dépôt local</p>
+              </div>
+              <div class="flex flex-col items-center justify-center text-gray-500 px-1">
+                <i class="fa-solid fa-arrow-down md:hidden" aria-hidden="true"></i>
+                <i class="fa-solid fa-arrow-right hidden md:inline" aria-hidden="true"></i>
+                <span class="text-xs mt-1"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git push</code></span>
+              </div>
+              <div class="flex-1 border border-gray-200 rounded-lg p-3 text-center">
+                <i class="fa-brands fa-github text-brand" aria-hidden="true"></i>
+                <p class="font-medium text-sm mt-1">GitHub (origin)</p>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Zone</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Contenu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Commande pour y entrer</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Commande pour l'inspecter</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Répertoire de travail</th><td class="px-3 py-2">Vos fichiers</td><td class="px-3 py-2">(édition)</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git status</code></td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Index</th><td class="px-3 py-2">Changements préparés</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git add</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git status</code></td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Dépôt local</th><td class="px-3 py-2">Commits</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git commit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git log --oneline</code></td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Dépôt distant</th><td class="px-3 py-2">Copie sur GitHub</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git push</code></td><td class="px-3 py-2">Page du dépôt sur github.com</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code-branch text-brand" aria-hidden="true"></i>
+              Branche, tag et dépôt distant
+            </h3>
+            <p class="text-gray-700 leading-relaxed mb-3">Une <strong>branche</strong> (ici <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code>) est une étiquette mobile : à chaque commit, elle avance pour désigner le nouveau commit.</p>
+            <p class="text-gray-700 leading-relaxed mb-3">Un <strong>tag</strong> (par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>) reste fixé sur un seul commit, pour toujours. C'est pourquoi chaque session se termine par un tag : il désigne l'état exact du projet à la fin de la session.</p>
+            <p class="text-gray-700 leading-relaxed mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">origin</code> est le nom conventionnel du dépôt distant, ici votre dépôt GitHub.</p>
+            <p class="text-gray-700 leading-relaxed">Ce cours utilise HTTPS avec Git Credential Manager plutôt que des clés SSH, car une clé SSH laissée sur un poste partagé est plus difficile à nettoyer.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-ban text-brand" aria-hidden="true"></i>
+              Ce qui ne part jamais sur GitHub
+            </h3>
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Chemin</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Pourquoi</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Comment le reconstruire</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">.env</code></th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">APP_KEY</code> et réglages propres au poste, secrets en production</td><td class="px-3 py-2">Copier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">.env.example</code> puis <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan key:generate</code></td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">vendor/</code></th><td class="px-3 py-2">Dépendances PHP, des milliers de fichiers générés</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer install</code> (versions exactes de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer.lock</code>)</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node_modules/</code></th><td class="px-3 py-2">Dépendances JavaScript</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">npm install</code> (<code class="bg-gray-100 px-1 py-0.5 rounded text-xs">package-lock.json</code>)</td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">database/database.sqlite</code></th><td class="px-3 py-2">Données locales, fichier binaire</td><td class="px-3 py-2">Nouveau fichier vide, puis création des tables (session 05)</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-gray-700">Le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.gitignore</code> à la racine du projet couvre les trois premiers ; le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/.gitignore</code> couvre le fichier SQLite.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-id-card text-brand" aria-hidden="true"></i>
+              Votre identité dans l'historique
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+              <li>Chaque commit enregistre le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.name</code> et le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.email</code> configurés au moment du commit.</li>
+              <li>GitHub relie un commit à votre profil uniquement si cette adresse fait partie des adresses <strong>vérifiées</strong> de votre compte. Sinon, il affiche un nom gris, sans avatar.</li>
+              <li>L'historique est évalué : des commits sans lien avec votre compte ne peuvent pas vous être attribués.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-key text-brand" aria-hidden="true"></i>
+              S'authentifier sur un poste partagé
+            </h3>
+            <p class="text-gray-700 leading-relaxed mb-3">Au premier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push</code>, Git Credential Manager ouvre le navigateur ; vous autorisez l'accès ; GCM range alors un jeton dans le Gestionnaire d'identification Windows (entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>).</p>
+            <p class="text-gray-700 leading-relaxed">Ce jeton reste après votre départ : toute personne qui utilise ensuite la même session Windows pourrait pousser en votre nom. D'où le nettoyage obligatoire dans <a href="#step-13" class="underline text-brand">le Livrable</a>, avec la déconnexion de github.com dans le navigateur.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-brand" aria-hidden="true"></i>
+              Auto-vérification
+            </h3>
+            <p class="text-gray-700 mb-3">Créez le fichier de notes de la session et ouvrez-le dans VS Code. Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de votre dossier de la session 01.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash d&#x27;ouverture du fichier de notes">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+code notes/s02-git.md</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell d&#x27;ouverture du fichier de notes">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+code notes\s02-git.md</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Si vous changez de poste aujourd'hui, créez ce fichier après <a href="#step-5" class="underline text-brand">l'Étape 2, partie A</a>.</p>
+            <p class="text-sm text-gray-600 mb-2">Contenu complet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le contenu du fichier de notes">Copier</button>
+              <pre><code class="language-markdown"># Session 02 - Git et GitHub
+
+Réponses rédigées avec mes propres mots, puis comparées au corrigé de la page.
+
+## 1. Index et commit
+
+Réponse :
+
+## 2. Branche et tag
+
+Réponse :
+
+## 3. Le fichier .env
+
+Réponse :
+
+## 4. Le dossier vendor/
+
+Réponse :
+
+## 5. Git Credential Manager
+
+Réponse :</code></pre>
+            </div>
+            <p class="text-gray-700 mb-2">Répondez dans le fichier, enregistrez, puis seulement ensuite comparez avec le corrigé :</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2 mb-4">
+              <li>Quelle commande fait passer un fichier du répertoire de travail à l'index, et laquelle de l'index au dépôt local ?</li>
+              <li>Quelle différence entre une branche et un tag ?</li>
+              <li>Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> ne doit jamais être poussé, et comment un autre développeur obtient-il son propre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> ?</li>
+              <li>Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> n'est-il pas versionné, et quel fichier permet de le reconstruire à l'identique ?</li>
+              <li>Où Git Credential Manager range-t-il votre jeton GitHub, et pourquoi faut-il le supprimer en fin de séance ?</li>
+            </ol>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <ol class="list-decimal list-inside text-gray-700 space-y-2 mt-2">
+                <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git add</code> (du répertoire de travail vers l'index), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git commit</code> (de l'index vers le dépôt local) ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push</code> envoie ensuite au dépôt distant.</li>
+                <li>Une branche avance à chaque commit ; un tag reste fixé sur un commit (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> désigne toujours la fin de la session 01).</li>
+                <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">APP_KEY</code> et les réglages propres au poste (et des secrets en production). On copie <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env.example</code> puis on lance <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan key:generate</code>.</li>
+                <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> est volumineux et entièrement généré ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer install</code> le reconstruit avec les versions exactes de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.lock</code>.</li>
+                <li>Dans le Gestionnaire d'identification Windows (entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>). Toute personne qui utilise ensuite la même session Windows pourrait pousser en votre nom.</li>
+              </ol>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Rédiger vos réponses avant d'ouvrir le corrigé vous oblige à vérifier ce que vous avez réellement compris. Comparer ensuite révèle précisément les notions à revoir, ce qu'une simple relecture ne fait pas.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Confondre <code class="bg-white px-1 py-0.5 rounded text-xs">git add</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">git commit</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">git add</code> prépare seulement les changements dans l'index, rien n'est enregistré dans l'historique avant <code class="bg-white px-1 py-0.5 rounded text-xs">git commit</code>. Croire qu'un tag avance avec les commits : c'est la branche qui avance, le tag reste sur son commit.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 4 -->
+        <section id="step-4" class="step-panel" data-title="Étape 1 - Compte GitHub et adresse e-mail (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Disposer d'un compte GitHub dont les adresses vérifiées contiennent exactement l'adresse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.email</code>, et s'assurer que GitHub ne refusera pas le push à cause de la confidentialité de l'adresse.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Affichez d'abord l'adresse que vos commits utilisent. Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de votre dossier de la session 01.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash d&#x27;affichage de l&#x27;adresse Git">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+git config --local user.email</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell d&#x27;affichage de l&#x27;adresse Git">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+git config --local user.email</code></pre>
+            </div>
+            <p class="text-gray-700 mb-6">Si vous changez de poste, le projet n'est pas encore restauré : utilisez l'adresse de la session 01, elle sera contrôlée à l'Étape 2.</p>
+
+            <h4 class="font-medium mt-4 mb-2">A. Seulement si vous n'avez pas encore de compte GitHub</h4>
+            <p class="text-sm text-gray-600 mb-2">Les écrans peuvent différer légèrement.</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-6">
+              <li>Ouvrez <a href="https://github.com/signup" class="underline text-brand">https://github.com/signup</a>.</li>
+              <li>Saisissez exactement l'adresse affichée par la commande ci-dessus.</li>
+              <li>Choisissez un mot de passe et un nom d'utilisateur sobre (par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code>) : il apparaîtra dans l'URL de votre portfolio.</li>
+              <li>Résolvez la vérification visuelle, puis saisissez le code reçu par e-mail en le lisant sur votre téléphone.</li>
+              <li>Passez les écrans de personnalisation (offre gratuite).</li>
+              <li>Si le navigateur propose d'enregistrer le mot de passe, refusez.</li>
+            </ol>
+
+            <h4 class="font-medium mt-4 mb-2">B. Tout le monde</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2 mb-4">
+              <li>Connectez-vous sur <a href="https://github.com/login" class="underline text-brand">https://github.com/login</a>. Si GitHub demande un code de vérification de l'appareil, lisez-le dans votre messagerie sur votre téléphone.</li>
+              <li>Ouvrez <a href="https://github.com/settings/emails" class="underline text-brand">https://github.com/settings/emails</a>.</li>
+              <li><strong>Contrôle 1 :</strong> votre adresse Git doit apparaître dans la liste, sans la mention « Unverified ». Si elle est absente, cliquez sur « Add email address », ajoutez-la, puis ouvrez le lien de vérification reçu par e-mail. Vos commits seront alors reliés automatiquement à votre profil : aucun commit n'a besoin de changer. Si l'adresse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config</code> n'est pas la vôtre (faute de frappe), elle sera corrigée à <a href="#step-6" class="underline text-brand">l'Étape 3</a>.</li>
+              <li><strong>Contrôle 2 :</strong> regardez les deux cases « Keep my email addresses private » et « Block command line pushes that expose my email ». Si les DEUX sont cochées, décochez « Block command line pushes that expose my email ». Sinon, votre push sera refusé avec l'erreur GH007.</li>
+            </ol>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Vos commits portent votre adresse réelle : elle est lisible dans l'historique de tout dépôt public. Beaucoup de développeurs utilisent une adresse dédiée à GitHub. Dans ce cours, l'adresse de <code class="bg-white px-1 py-0.5 rounded text-xs">git config</code> doit être celle de votre compte.</p>
+            </div>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : état par défaut des cases « Keep my email addresses private » et « Block command line pushes that expose my email » pour un compte créé en octobre 2026 -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire dans cette étape : les réglages se font sur github.com.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Vous êtes connecté à GitHub.</li>
+              <li>L'adresse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config</code> apparaît comme vérifiée dans Settings &gt; Emails.</li>
+              <li>« Block command line pushes that expose my email » n'est pas cochée (ou « Keep my email addresses private » n'est pas cochée).</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>L'adresse affichée par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config --local user.email</code> est identique, caractère par caractère, à une adresse de Settings &gt; Emails.</li>
+              <li>Cette adresse ne porte pas la mention « Unverified ».</li>
+              <li>L'état des deux cases est celui décrit au Contrôle 2.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> GitHub relie un commit à un profil grâce à l'adresse e-mail du commit, pas grâce à la personne qui le pousse. L'option de confidentialité protège votre adresse, mais elle bloque tout push dont les commits contiennent cette adresse.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Compte créé avec une autre adresse : ajoutez l'adresse de <code class="bg-white px-1 py-0.5 rounded text-xs">git config</code> dans Settings &gt; Emails, ne recréez pas de compte. Lien de vérification jamais reçu : regardez dans les courriers indésirables sur votre téléphone, puis cliquez sur « Resend verification email ».</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 5 -->
+        <section id="step-5" class="step-panel" data-title="Étape 2 - Récupérer et vérifier le projet (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Confirmer que le projet, le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> et l'identité Git locale sont toujours là, ou les restaurer depuis la clé USB, puis démarrer l'application.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Seulement si vous travaillez sur un autre poste qu'en session 01</h4>
+            <p class="text-gray-700 mb-3">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">E:</code> par la lettre de votre clé USB (dans Git Bash, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/e/</code> correspond à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">E:</code>), et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de votre dossier de la session 01.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de restauration depuis la clé USB">Copier</button>
+              <pre><code class="language-bash">mkdir -p /c/dev/prenom-nom
+cd /c/dev/prenom-nom
+tar -xzf /e/mini-cms-lab01.tar.gz
+cd mini-cms
+composer install
+npm install</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de restauration depuis la clé USB">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force C:\dev\prenom-nom
+cd C:\dev\prenom-nom
+tar -xzf E:\mini-cms-lab01.tar.gz
+cd mini-cms
+composer install
+npm install</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Pendant que <code class="bg-white px-1 py-0.5 rounded text-xs">composer install</code> s'exécute, vous pouvez faire <a href="#step-4" class="underline font-medium">l'Étape 1</a> dans le navigateur.</p>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> ne contient pas de fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création du fichier .env">Copier</button>
+              <pre><code class="language-bash">cp .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> ne contient pas de fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création du fichier .env">Copier</button>
+              <pre><code class="language-powershell">copy .env.example .env
+php artisan key:generate</code></pre>
+            </div>
+
+            <p class="text-gray-700 mb-3">La seconde ligne des deux blocs ci-dessous lance les migrations. Cette commande crée les tables internes de Laravel (sessions, cache) ; les migrations sont étudiées en session 05.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code> n'existe pas, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création de la base SQLite">Copier</button>
+              <pre><code class="language-bash">touch database/database.sqlite
+php artisan migrate</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code> n'existe pas, PowerShell :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création de la base SQLite">Copier</button>
+              <pre><code class="language-powershell">New-Item database\database.sqlite -ItemType File
+php artisan migrate</code></pre>
+            </div>
+
+            <h4 class="font-medium mt-4 mb-2">B. Tout le monde, dans le Terminal 2</h4>
+            <p class="text-gray-700 mb-3">À partir d'ici, vous utilisez deux terminaux ouverts à la racine du projet (VS Code : Terminal &gt; Nouveau terminal) : le <strong>Terminal 1</strong> fait tourner l'application (partie C), le <strong>Terminal 2</strong> sert à toutes les autres commandes. Si vous venez de restaurer le projet, vous êtes déjà dans le bon dossier : la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cd</code> est sans effet. Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de votre dossier.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de contrôle du dépôt">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+git config --local user.name
+git config --local user.email
+git branch --show-current
+git tag
+git log --oneline --decorate
+git status</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de contrôle du dépôt">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+git config --local user.name
+git config --local user.email
+git branch --show-current
+git tag
+git log --oneline --decorate
+git status</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Si une sortie de Git s'arrête sur une ligne <code class="bg-white px-1 py-0.5 rounded text-xs">:</code> ou <code class="bg-white px-1 py-0.5 rounded text-xs">(END)</code>, Git affiche la suite page par page : appuyez sur <code class="bg-white px-1 py-0.5 rounded text-xs">q</code> pour revenir à l'invite de commande.</p>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si Git répond <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">fatal: not a git repository</code> (Bash et PowerShell, identique) :</p>
+            <p class="text-gray-700 mb-2">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> par votre prénom et votre nom, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">votre.adresse@exemple.com</code> par l'adresse de votre compte GitHub.</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de création du dépôt et du tag lab-01">Copier</button>
+              <pre><code class="language-bash">git init
+git config user.name "Prenom Nom"
+git config user.email "votre.adresse@exemple.com"
+git add -A
+git commit -m "lab-01"
+git tag lab-01</code></pre>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config --local user.name</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user.email</code> n'affiche rien (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de configuration de l&#x27;identité locale">Copier</button>
+              <pre><code class="language-bash">git config user.name "Prenom Nom"
+git config user.email "votre.adresse@exemple.com"</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">N'utilisez jamais <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--global</code> sur un poste partagé : l'identité doit rester propre à ce dépôt.</p>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag</code> n'affiche pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de création du tag lab-01">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "lab-01"
+git tag lab-01</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Si Git répond <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">nothing to commit</code>, c'est normal : le tag est posé sur le dernier commit.</p>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> liste encore des fichiers (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de commit du travail restant de la session 01">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Completer le travail de la session 01"</code></pre>
+            </div>
+
+            <h4 class="font-medium mt-4 mb-2">C. Démarrer l'application, dans le Terminal 1</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de démarrage de l&#x27;application">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+composer run dev</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de démarrage de l&#x27;application">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+composer run dev</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Node.js est absent, à la place du bloc précédent, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de démarrage sans Node.js">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+php artisan serve</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Node.js est absent, à la place du bloc précédent, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de démarrage sans Node.js">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+php artisan serve</code></pre>
+            </div>
+            <p class="text-gray-700">Ouvrez ensuite <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/heure</code> dans le navigateur. Laissez le Terminal 1 ouvert jusqu'à la fin de la séance.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette étape restaure et contrôle l'état lab-01.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Sortie de la partie B (exemple ; vos identifiants de commit diffèrent) :</p>
+            <div class="code-block-wrapper mb-4">
+              <pre><code class="language-bash">Prenom Nom
+votre.adresse@exemple.com
+master
+lab-01
+a1b2c3d (HEAD -&gt; master, tag: lab-01) lab-01</code></pre>
+            </div>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>La branche peut déjà s'appeler <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> au lieu de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">master</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log</code> peut afficher, sous le commit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>, un commit plus ancien créé par l'installateur Laravel.</li>
+              <li>Selon le poste, les messages de Git peuvent être en anglais ou en français (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">working tree clean</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">la copie de travail est propre</code>).</li>
+              <li>La page Laravel s'ouvre sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> fonctionne.</li>
+            </ul>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : laravel new initialise-t-il le dépôt Git et fait-il un premier commit, avec quelle identité ? -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>L'adresse locale est identique à celle contrôlée à l'Étape 1.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> indique une copie de travail propre.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> répond.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> L'identité Git est configurée en <code class="bg-white px-1 py-0.5 rounded text-xs">--local</code> parce que les postes sont partagés : elle ne vaut que pour ce dépôt. L'archive ne contient ni <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> ni <code class="bg-white px-1 py-0.5 rounded text-xs">node_modules/</code>, car <code class="bg-white px-1 py-0.5 rounded text-xs">composer.lock</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">package-lock.json</code> permettent de les reconstruire à l'identique.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">fatal: detected dubious ownership in repository</code> : exécutez la commande <code class="bg-white px-1 py-0.5 rounded text-xs">git config --global --add safe.directory</code> que Git affiche lui-même ; elle n'enregistre aucune identité. <code class="bg-white px-1 py-0.5 rounded text-xs">Could not open input file: artisan</code> : vous n'êtes pas dans le dossier <code class="bg-white px-1 py-0.5 rounded text-xs">mini-cms</code>. Dans Git Bash, <code class="bg-white px-1 py-0.5 rounded text-xs">tar: Cannot connect to E: resolve failed</code> : écrivez <code class="bg-white px-1 py-0.5 rounded text-xs">/e/</code> et non <code class="bg-white px-1 py-0.5 rounded text-xs">E:</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">No application encryption key has been specified.</code> : exécutez le bloc du fichier <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 6 -->
+        <section id="step-6" class="step-panel" data-title="Étape 3 - Identité des commits et .gitignore (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Prouver que chaque commit porte votre identité et que rien de privé ne sera publié, AVANT le premier push.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Dans le Terminal 2 :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de contrôle de l&#x27;identité et des fichiers ignorés">Copier</button>
+              <pre><code class="language-bash">git log --format="%h %an &lt;%ae&gt; %s"
+git check-ignore -v .env vendor node_modules database/database.sqlite
+git ls-files .env vendor node_modules database/database.sqlite</code></pre>
+            </div>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si votre adresse locale (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config --local user.email</code>) contient une faute (Bash et PowerShell, identique) :</p>
+            <p class="text-gray-700 mb-2">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">votre.adresse@exemple.com</code> par l'adresse exacte de votre compte GitHub.</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de correction de l&#x27;adresse locale">Copier</button>
+              <pre><code class="language-bash">git config user.email "votre.adresse@exemple.com"</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Vos anciens commits portent encore l'adresse fautive : le bloc suivant s'applique alors à vous.</p>
+
+            <p class="text-sm text-gray-600 mb-2">Seulement si une ligne de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log</code> affiche un nom ou une adresse qui ne sont pas les vôtres, et uniquement avant votre premier push (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de réécriture de l&#x27;auteur des commits">Copier</button>
+              <pre><code class="language-bash">git rebase -r --root --exec "git commit --amend --no-edit --reset-author"
+git log --oneline --decorate</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Relevez l'identifiant à 7 caractères du commit dont le message est lab-01 (il ne porte plus l'étiquette <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tag: lab-01</code>), remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a1b2c3d</code> ci-dessous, puis exécutez :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez exécuté le bloc précédent (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de déplacement du tag lab-01">Copier</button>
+              <pre><code class="language-bash">git tag -f lab-01 a1b2c3d</code></pre>
+            </div>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-6">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">C'est la seule réécriture d'historique de tout le cours. Elle est autorisée uniquement parce que rien n'a encore été publié : après le premier push, on ne réécrit plus jamais l'historique.</p>
+            </div>
+
+            <p class="text-gray-700 mb-3">Complétez et enregistrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code> si ce n'est pas fait, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit des notes">Copier</button>
+              <pre><code class="language-bash">git add notes/s02-git.md
+git commit -m "Ajouter les notes Git de la session 02"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : le fichier de notes a été créé dans <a href="#step-3" class="underline text-brand">Notions clés</a>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log</code> : chaque ligne affiche votre nom et votre adresse.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git check-ignore -v</code> : quatre lignes de la forme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">fichier:ligne:motif chemin</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-files</code> : aucune sortie (aucun de ces chemins n'est suivi par Git).</li>
+            </ul>
+            <p class="text-sm text-gray-600 mb-2">Exemple indicatif de sortie de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git check-ignore -v</code> (les numéros de ligne peuvent différer) :</p>
+            <div class="code-block-wrapper mb-4">
+              <pre><code class="language-bash">.gitignore:3:.env	.env
+.gitignore:19:/vendor	vendor
+.gitignore:14:/node_modules	node_modules
+database/.gitignore:1:*.sqlite*	database/database.sqlite</code></pre>
+            </div>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : contenu exact des fichiers .gitignore et database/.gitignore d'un projet Laravel 13 (numéros de ligne et motifs) -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Aucune identité étrangère dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log</code>.</li>
+              <li>Quatre lignes affichées par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git check-ignore -v</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-files</code> n'affiche rien.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline</code> montre le commit des notes en haut de la liste.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une fois l'historique poussé, le réécrire impose de forcer le push et de déplacer des tags publiés : c'est source de confusion, et ce cours l'évite. Les fichiers ignorés se contrôlent avant le premier push, car un <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code> poussé reste dans l'historique même si vous le supprimez ensuite.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">error: cannot rebase: You have unstaged changes.</code> : revenez à l'Étape 2, dernier bloc « Seulement si » de la partie B, puis relancez. <code class="bg-white px-1 py-0.5 rounded text-xs">git check-ignore</code> n'affiche rien pour <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code> : le fichier <code class="bg-white px-1 py-0.5 rounded text-xs">.gitignore</code> a été modifié ; rétablissez la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">.env</code> avant de continuer.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 7 -->
+        <section id="step-7" class="step-panel" data-title="Étape 4 - Dépôt GitHub et premier push (25 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 25 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed mb-4">Créer le dépôt public vide, pousser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> avec Git Credential Manager, et vérifier le résultat sur GitHub.</p>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Le nettoyage de <a href="#step-13" class="underline font-medium">la partie C du Livrable</a> est obligatoire avant de quitter la salle, même si vous n'avez pas terminé.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Créer le dépôt sur github.com</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-6">
+              <li>Ouvrez <a href="https://github.com/new" class="underline text-brand">https://github.com/new</a>.</li>
+              <li>Repository name : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> ; Public.</li>
+              <li>Pas de README, .gitignore « No .gitignore », licence « No license » : le dépôt doit être vide.</li>
+              <li>Create repository.</li>
+              <li>Copiez l'URL HTTPS affichée (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">https://github.com/VOTRE-UTILISATEUR/mini-cms.git</code>).</li>
+            </ol>
+
+            <h4 class="font-medium mt-4 mb-2">B. Identifiants laissés par une autre personne</h4>
+            <p class="text-gray-700 mb-3">Dans Git Bash, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MSYS_NO_PATHCONV=1</code> empêche Git Bash de transformer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/list</code> en chemin de fichier.</p>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : nom exact de l'entrée créée par GCM dans le Gestionnaire d'identification (git:https://github.com) et fonctionnement de MSYS_NO_PATHCONV=1 avec cmdkey dans Git Bash -->
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash de recherche d&#x27;identifiants GitHub">Copier</button>
+              <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /list | grep -i github</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de recherche d&#x27;identifiants GitHub">Copier</button>
+              <pre><code class="language-powershell">cmdkey /list | Select-String github</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Attendu : aucune sortie.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si une ligne contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash de suppression de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /delete:git:https://github.com</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si une ligne contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de suppression de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-powershell">cmdkey /delete:git:https://github.com</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">credential.helper</code> est vide (vérification de l'environnement), configuration locale uniquement (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier la commande de configuration de credential.helper">Copier</button>
+              <pre><code class="language-bash">git config --local credential.helper manager</code></pre>
+            </div>
+
+            <h4 class="font-medium mt-4 mb-2">C. Relier le dépôt et pousser, dans le Terminal 2</h4>
+            <p class="text-gray-700 mb-3">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">VOTRE-UTILISATEUR</code> par votre nom d'utilisateur GitHub, ou collez l'URL copiée en partie A.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes d&#x27;ajout du dépôt distant">Copier</button>
+              <pre><code class="language-bash">git branch -M main
+git remote add origin https://github.com/VOTRE-UTILISATEUR/mini-cms.git
+git remote -v</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Git répond <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">error: remote origin already exists.</code> (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de correction de l&#x27;URL du dépôt distant">Copier</button>
+              <pre><code class="language-bash">git remote set-url origin https://github.com/VOTRE-UTILISATEUR/mini-cms.git</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande du premier push">Copier</button>
+              <pre><code class="language-bash">git push -u origin main</code></pre>
+            </div>
+            <p class="text-gray-700 mb-2">Au premier push, l'authentification peut se dérouler ainsi :</p>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : écrans exacts de Git Credential Manager et de la page d'autorisation GitHub -->
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Une fenêtre « Git Credential Manager » peut demander comment vous connecter : si c'est le cas, choisissez l'option navigateur (« Sign in with your browser »).</li>
+              <li>Le navigateur par défaut s'ouvre. Si vous n'êtes pas connecté à GitHub dans CE navigateur, connectez-vous.</li>
+              <li>Cliquez sur le bouton vert d'autorisation.</li>
+              <li>Fermez l'onglet de confirmation et revenez au terminal.</li>
+            </ol>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de push du tag lab-01">Copier</button>
+              <pre><code class="language-bash">git push origin lab-01
+git ls-remote --tags origin</code></pre>
+            </div>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> reste sur le commit de la session 01 : le commit des notes se trouve donc après le tag, c'est normal.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette étape publie l'existant.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Extraits de sortie attendus :</p>
+            <div class="code-block-wrapper mb-4">
+              <pre><code class="language-bash"> * [new branch]      main -&gt; main
+branch 'main' set up to track 'origin/main'.
+ * [new tag]         lab-01 -&gt; lab-01</code></pre>
+            </div>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> affiche une ligne se terminant par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700 mb-2">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">VOTRE-UTILISATEUR</code> par votre nom d'utilisateur GitHub dans les adresses ci-dessous.</p>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">https://github.com/VOTRE-UTILISATEUR/mini-cms</code> affiche les fichiers du projet, sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> et sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">https://github.com/VOTRE-UTILISATEUR/mini-cms/tags</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">https://github.com/VOTRE-UTILISATEUR/mini-cms/commits/main</code> affiche votre avatar sur chaque commit. Un nom gris sans avatar signifie : revenez à <a href="#step-4" class="underline text-brand">l'Étape 1, partie B, contrôle 1</a>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> L'option <code class="bg-white px-1 py-0.5 rounded text-xs">-u</code> enregistre <code class="bg-white px-1 py-0.5 rounded text-xs">origin/main</code> comme branche amont : ensuite, un simple <code class="bg-white px-1 py-0.5 rounded text-xs">git push</code> suffit. Les tags ne partent pas avec la branche : on les pousse explicitement.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">remote: error: GH007: Your push would publish a private email address.</code> : Étape 1, partie B, contrôle 2, puis relancez le même push ; aucun commit ne change. <code class="bg-white px-1 py-0.5 rounded text-xs">! [rejected] main -&gt; main (fetch first)</code> : le dépôt a été créé avec un README ; supprimez-le (Settings, Danger Zone, Delete this repository) et recréez-le vide. <code class="bg-white px-1 py-0.5 rounded text-xs">remote: Permission to VOTRE-UTILISATEUR/mini-cms.git denied to autre-compte.</code> suivi de 403 : identifiant d'un autre compte, voir la partie B. <code class="bg-white px-1 py-0.5 rounded text-xs">remote: Repository not found.</code> : faute dans l'URL, utilisez le bloc <code class="bg-white px-1 py-0.5 rounded text-xs">set-url</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">remote: Support for password authentication was removed</code> : utilisez le bloc <code class="bg-white px-1 py-0.5 rounded text-xs">credential.helper</code> de la partie B.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 8 -->
+        <section id="step-8" class="step-panel" data-title="Étape 5 - Page /a-propos (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Ajouter une route closure <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code> qui renvoie une vue et lui transmet des données. Pas de nom de route ni de contrôleur pour l'instant : ils arrivent en session 03.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Dans le Terminal 2, ouvrez les deux fichiers :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash d&#x27;ouverture des fichiers de la page a-propos">Copier</button>
+              <pre><code class="language-bash">code resources/views/a-propos.blade.php
+code routes/web.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell d&#x27;ouverture des fichiers de la page a-propos">Copier</button>
+              <pre><code class="language-powershell">code resources\views\a-propos.blade.php
+code routes\web.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Collez le code ci-dessous dans les deux fichiers et enregistrez, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list">Copier</button>
+              <pre><code class="language-bash">php artisan route:list</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> et vérifiez la page et ses liens, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de la page a-propos">Copier</button>
+              <pre><code class="language-bash">git add routes/web.php resources/views/a-propos.blade.php
+git commit -m "Ajouter la page a-propos"
+git show --stat HEAD</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code> (même squelette HTML que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bienvenue.blade.php</code> en session 01) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier a-propos.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;À propos - Mini-CMS&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; color: #1f2937; line-height: 1.6; }
+        h1 { color: #e6291b; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;À propos de Mini-CMS&lt;/h1&gt;
+    &lt;p&gt;Mini-CMS est le projet fil rouge de l'Atelier Framework Côté Serveur (Laravel 13).&lt;/p&gt;
+    &lt;p&gt;Auteur : {{ $auteur }}&lt;/p&gt;
+    &lt;p&gt;Groupe : {{ $groupe }}&lt;/p&gt;
+    &lt;p&gt;
+        &lt;a href="/"&gt;Accueil&lt;/a&gt; |
+        &lt;a href="/bienvenue"&gt;Bienvenue&lt;/a&gt; |
+        &lt;a href="/heure"&gt;Heure&lt;/a&gt;
+    &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Contenu complet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier routes/web.php avec la route a-propos">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return view('welcome');
+});
+
+Route::get('/bonjour', function () {
+    return 'Bonjour MDW3 ! Voici ma première route Laravel 13.';
+});
+
+Route::get('/bonjour-court', fn () =&gt; 'Même résultat, écrit avec une fonction fléchée.');
+
+Route::get('/bienvenue', function () {
+    return view('bienvenue', [
+        'etudiant' =&gt; 'Prenom Nom',
+        'groupe' =&gt; 'MDW32',
+        'cours' =&gt; 'Atelier Framework Côté Serveur',
+    ]);
+});
+
+Route::get('/version', function () {
+    return 'Laravel ' . app()-&gt;version() . ' - PHP ' . PHP_VERSION;
+});
+
+Route::get('/heure', function () {
+    return view('heure', [
+        'heure' =&gt; now()-&gt;format('H:i'),
+        'date' =&gt; now()-&gt;format('d/m/Y'),
+    ]);
+});
+
+Route::get('/a-propos', function () {
+    return view('a-propos', [
+        'auteur' =&gt; 'Prenom Nom',
+        'groupe' =&gt; 'MDW32',
+    ]);
+});</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> par votre prénom et votre nom, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MDW32</code> par votre groupe (MDW32 ou MDW33).</p>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Les routes <code class="bg-white px-1 py-0.5 rounded text-xs">/version</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">/heure</code> ci-dessus sont un corrigé du défi de la session 01. Si les vôtres sont écrites autrement et fonctionnent, gardez-les (votre vue <code class="bg-white px-1 py-0.5 rounded text-xs">heure.blade.php</code> peut attendre d'autres variables) : ajoutez seulement la route <code class="bg-white px-1 py-0.5 rounded text-xs">/a-propos</code> à la fin de votre fichier.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> (équivalent : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000/a-propos</code>) affiche le titre, votre nom et votre groupe.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list</code> contient une ligne avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET|HEAD</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos</code>, sans nom.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git show --stat HEAD</code> liste exactement 2 fichiers.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>La page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code> affiche le titre, votre nom et votre groupe.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos</code> sans nom.</li>
+              <li>Le dernier commit contient exactement 2 fichiers.</li>
+              <li>Les liens Accueil, Bienvenue et Heure de la page fonctionnent.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le tableau passé à <code class="bg-white px-1 py-0.5 rounded text-xs">view()</code> devient un ensemble de variables Blade, et <code class="bg-white px-1 py-0.5 rounded text-xs">{{ }}</code> les échappe. Les liens sont écrits à la main aujourd'hui ; en session 03, ils seront générés à partir de routes nommées.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">View [a-propos] not found.</code> : nom du fichier ou dossier incorrect. <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined variable $auteur</code> : la clé manque dans le tableau passé à la vue. Erreur 404 : <code class="bg-white px-1 py-0.5 rounded text-xs">routes/web.php</code> n'est pas enregistré, ou l'URI contient une faute.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 9 -->
+        <section id="step-9" class="step-panel" data-title="Étape 6 - README et captures (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Remplacer le README par défaut de Laravel par celui de votre projet, avec l'installation en Bash et en PowerShell et quatre captures d'écran, en deux commits séparés.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Capture d'écran</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> et capturez la fenêtre, comme en session 01 (Win+Shift+S).</li>
+              <li>Enregistrez-la sous <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">C:\dev\prenom-nom\mini-cms\screenshots\s02-a-propos.png</code>, tout en minuscules (remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de votre dossier).</li>
+            </ol>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de la capture">Copier</button>
+              <pre><code class="language-bash">git add screenshots/s02-a-propos.png
+git commit -m "Ajouter la capture de la page a-propos"</code></pre>
+            </div>
+
+            <h4 class="font-medium mt-4 mb-2">B. README</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande d&#x27;ouverture du README">Copier</button>
+              <pre><code class="language-bash">code README.md</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez tout le contenu par le texte ci-dessous, adaptez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> (votre prénom et votre nom), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MDW32</code> (votre groupe) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">VOTRE-UTILISATEUR</code> (votre nom d'utilisateur GitHub), enregistrez, puis ouvrez l'aperçu avec Ctrl+Shift+V.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit du README">Copier</button>
+              <pre><code class="language-bash">git add README.md
+git commit -m "Ajouter le README du projet"
+git log --oneline lab-01..HEAD</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Contenu complet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le contenu du README">Copier</button>
+              <pre><code class="language-markdown"># Mini-CMS
+
+Projet fil rouge de l'Atelier Framework Côté Serveur (Laravel 13, PHP 8.3+), 3e année MDW, ISET Sidi Bouzid.
+
+Auteur : Prenom Nom, groupe MDW32.
+
+Mini-CMS évoluera au fil du semestre vers une petite plateforme de publication : pages publiques, back-office authentifié, API JSON et tests Pest. Chaque session se termine par un tag Git (`lab-01`, `lab-01b`, puis un tag par session).
+
+## État actuel (tag lab-01b)
+
+- Routes en closures : `/`, `/bonjour`, `/bonjour-court`, `/bienvenue`, `/version`, `/heure` et `/a-propos`.
+- Vues Blade : `bienvenue`, `heure` et `a-propos`.
+- Base de données SQLite locale (`database/database.sqlite`, non versionnée).
+
+## Prérequis
+
+- PHP 8.3 ou plus récent, Composer et l'installateur Laravel (https://php.new ou Laravel Herd).
+- Node.js LTS et npm.
+- Git.
+
+## Installation
+
+### Bash (Git Bash, macOS, Linux)
+
+```bash
+git clone https://github.com/VOTRE-UTILISATEUR/mini-cms.git
+cd mini-cms
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate
+composer run dev
+```
+
+### PowerShell (Windows)
+
+```powershell
+git clone https://github.com/VOTRE-UTILISATEUR/mini-cms.git
+cd mini-cms
+composer install
+npm install
+copy .env.example .env
+php artisan key:generate
+New-Item database\database.sqlite -ItemType File
+php artisan migrate
+composer run dev
+```
+
+Ouvrir ensuite http://localhost:8000 (adresse de l'application, différente de l'adresse de Vite sur le port 5173).
+
+## Captures d'écran
+
+### Page d'accueil
+
+![Page d'accueil de Mini-CMS](screenshots/s01-accueil.png)
+
+### Page Bienvenue
+
+![Page Bienvenue](screenshots/s01-bienvenue.png)
+
+### Liste des routes
+
+![Sortie de php artisan route:list](screenshots/s01-route-list.png)
+
+### Page À propos
+
+![Page A propos](screenshots/s02-a-propos.png)</code></pre>
+            </div>
+            <p class="text-gray-700">L'avant-dernière ligne de chaque bloc d'installation du README lance les migrations. Cette commande crée les tables internes de Laravel (sessions, cache) ; les migrations sont étudiées en session 05.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700 mb-3">L'aperçu de VS Code affiche les quatre images. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-01..HEAD</code> liste au moins ces quatre commits, du plus récent au plus ancien (vos identifiants diffèrent) :</p>
+            <div class="code-block-wrapper mb-4">
+              <pre><code class="language-bash">Ajouter le README du projet
+Ajouter la capture de la page a-propos
+Ajouter la page a-propos
+Ajouter les notes Git de la session 02</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Les quatre images s'affichent dans l'aperçu.</li>
+              <li>Les deux blocs d'installation (Bash et PowerShell) sont complets.</li>
+              <li>Au moins quatre commits depuis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>, chacun avec un seul changement.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le README est la porte d'entrée d'un dépôt de portfolio. Ses étapes d'installation sont exactement celles que vous suivrez dès la session 03 pour récupérer votre projet sur n'importe quel poste avec <code class="bg-white px-1 py-0.5 rounded text-xs">git clone</code>. Des commits séparés rendent l'historique lisible et évaluable.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Une image s'affiche dans VS Code mais pas sur GitHub : différence de casse (<code class="bg-white px-1 py-0.5 rounded text-xs">S01-accueil.PNG</code> au lieu de <code class="bg-white px-1 py-0.5 rounded text-xs">s01-accueil.png</code>) ; GitHub distingue majuscules et minuscules, Windows non. Un espace dans un nom de fichier casse le chemin de l'image.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 10 -->
+        <section id="step-10" class="step-panel" data-title="Étape 7 - Publier le sprint (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Pousser les commits du sprint et relire l'historique entre les deux tags.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Dans le Terminal 2 :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de publication du sprint">Copier</button>
+              <pre><code class="language-bash">git push
+git log --oneline --decorate --graph
+git tag -n
+git diff --stat lab-01 HEAD</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette étape publie et relit l'historique.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Le push se termine sans ouvrir le navigateur : GCM réutilise l'identifiant enregistré.</li>
+              <li>Le graphe montre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> plus bas, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">origin/main</code> en haut.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag -n</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> suivi de son message.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git diff --stat</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/s02-a-propos.png</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>La page d'accueil du dépôt sur GitHub affiche le README.</li>
+              <li>La page des commits affiche votre avatar sur chaque nouveau commit.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Pousser souvent, c'est votre sauvegarde : un poste peut être réinstallé, GitHub garde votre travail. Un historique régulier, en petits commits, fait partie de l'évaluation.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">fatal: The current branch main has no upstream branch.</code> : exécutez <code class="bg-white px-1 py-0.5 rounded text-xs">git push -u origin main</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">! [rejected] main -&gt; main (non-fast-forward)</code> après une modification faite sur github.com : exécutez <code class="bg-white px-1 py-0.5 rounded text-xs">git pull --rebase origin main</code>, puis <code class="bg-white px-1 py-0.5 rounded text-xs">git push</code> ; dans ce cours, ne modifiez jamais le dépôt directement sur github.com.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 11 -->
+        <section id="step-11" class="step-panel" data-title="Défi (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Documenter toutes les routes dans le README et analyser l'historique, en deux commits, puis pousser. Vous vous corrigez vous-même grâce aux corrigés masqués.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-table text-brand" aria-hidden="true"></i>
+              Partie 1 - Routes disponibles
+            </h3>
+            <p class="text-gray-700 mb-3">Ajoutez la section ci-dessous dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>, juste après la section « État actuel », puis complétez le tableau avec les six routes de la session 01. Les routes ajoutées par le framework lui-même (comme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">up</code>) ne sont pas listées.</p>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : routes ajoutées par le framework et affichées par php artisan route:list dans un projet Laravel 13 neuf (up, storage/{path}) -->
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la section Routes disponibles">Copier</button>
+              <pre><code class="language-markdown">## Routes disponibles
+
+| Méthode | URI | Réponse |
+|---|---|---|
+| GET | `/a-propos` | Vue `a-propos` avec le nom de l'auteur et le groupe |</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Pour vous aider (Terminal 2) :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list du défi">Copier</button>
+              <pre><code class="language-bash">php artisan route:list</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Enregistrez le README, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de la documentation des routes">Copier</button>
+              <pre><code class="language-bash">git add README.md
+git commit -m "Documenter les routes dans le README"</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le corrigé du tableau des routes">Copier</button>
+              <pre><code class="language-markdown">## Routes disponibles
+
+| Méthode | URI | Réponse |
+|---|---|---|
+| GET | `/` | Vue `welcome` (page d'accueil par défaut de Laravel) |
+| GET | `/bonjour` | Chaîne de texte « Bonjour MDW3 ! Voici ma première route Laravel 13. » |
+| GET | `/bonjour-court` | Chaîne de texte, écrite avec une fonction fléchée |
+| GET | `/bienvenue` | Vue `bienvenue` avec le nom de l'étudiant, le groupe et le cours |
+| GET | `/version` | Chaîne avec la version de Laravel et celle de PHP |
+| GET | `/heure` | Vue `heure` avec l'heure (format H:i) et la date (format d/m/Y) |
+| GET | `/a-propos` | Vue `a-propos` avec le nom de l'auteur et le groupe |</code></pre>
+            </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock-rotate-left text-brand" aria-hidden="true"></i>
+              Partie 2 - Historique depuis lab-01
+            </h3>
+            <p class="text-gray-700 mb-3">Ajoutez cette section à la fin de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la section 6 des notes">Copier</button>
+              <pre><code class="language-markdown">## 6. Historique depuis lab-01
+
+Nombre de commits depuis lab-01 :
+
+Fichiers modifiés depuis lab-01 :
+
+Ce que git tag -n affiche pour lab-01 :</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Répondez à l'aide de ces commandes :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes d&#x27;analyse de l&#x27;historique">Copier</button>
+              <pre><code class="language-bash">git log --oneline lab-01..HEAD
+git diff --stat lab-01 HEAD
+git tag -n</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Enregistrez les notes, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit et de push des notes">Copier</button>
+              <pre><code class="language-bash">git add notes/s02-git.md
+git commit -m "Ajouter l'historique aux notes de la session 02"
+git push</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <ul class="list-disc list-inside text-gray-700 space-y-2 mt-2">
+                <li>Nombre de commits : 5 avant ce dernier commit (6 si le commit « Completer le travail de la session 01 » existe).</li>
+                <li>Fichiers modifiés : les 5 fichiers listés à l'Étape 7 (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/s02-a-propos.png</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code> ayant été modifié une deuxième fois par la partie 1, plus les fichiers éventuels du commit « Completer le travail de la session 01 ».</li>
+                <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag -n</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> suivi du message du commit qu'il désigne (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>).</li>
+              </ul>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">Votre tableau de routes et vos réponses de la section 6 correspondent aux corrigés, et les deux commits sont poussés.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Le tableau « Routes disponibles » contient 7 lignes et s'affiche comme un tableau dans l'aperçu.</li>
+              <li>Les réponses de la section 6 correspondent au corrigé.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> indique une copie de travail propre après le push.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">lab-01..HEAD</code> se lit « les commits accessibles depuis HEAD mais pas depuis lab-01 » : c'est exactement le travail de cette session. La même notation servira à chaque session pour relire le travail entre deux tags.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Un tableau Markdown qui s'affiche comme du texte brut : la ligne de séparation <code class="bg-white px-1 py-0.5 rounded text-xs">|---|---|---|</code> manque sous la ligne d'en-tête, ou le tableau n'est pas précédé d'une ligne vide.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 12 -->
+        <section id="step-12" class="step-panel" data-title="Checklist d'évaluation (16 points)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
+              Checklist d'évaluation (16 points)
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Contrôlez chaque point sur GitHub avant de passer au livrable. Le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code> et le nettoyage du poste sont vérifiés à l'étape suivante.</p>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le dépôt <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> est public et sa branche par défaut est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code>. (2 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> est visible sur GitHub et désigne le commit de fin de session 01. (2 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Tous les commits affichent votre avatar et votre nom d'utilisateur GitHub. (2 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code>, ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node_modules/</code>, ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code> ne figurent sur GitHub. (2 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code> : route en closure sans nom ni contrôleur, vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos.blade.php</code> affichant votre nom et votre groupe. (3 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>README : description, auteur, prérequis, installation en Bash et en PowerShell. (2 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Au moins quatre commits depuis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>, un changement par commit, messages explicites. (1 pt)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code> : sections 1 à 5 complétées et poussées. (1 pt)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Défi : tableau « Routes disponibles » et section 6 des notes, poussés. (1 pt)</span></li>
+            </ul>
+            <p class="text-gray-700 font-medium mt-4">Total : 16 points.</p>
+          </div>
+        </section>
+
+        <!-- Step 13 -->
+        <section id="step-13" class="step-panel" data-title="Livrable : tag lab-01b et nettoyage du poste (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Poser le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, le pousser, le vérifier, puis nettoyer le poste partagé.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Contrôler l'état du projet, dans le Terminal 2</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier git status">Copier</button>
+              <pre><code class="language-bash">git status</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> liste des fichiers (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de commit final">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Finaliser la session 02"</code></pre>
+            </div>
+
+            <h4 class="font-medium mt-4 mb-2">B. Poser et pousser le tag</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de tag et de push du livrable">Copier</button>
+              <pre><code class="language-bash">git tag lab-01b
+git push origin main
+git push origin --tags
+git ls-remote --tags origin</code></pre>
+            </div>
+
+            <h4 class="font-medium mt-4 mb-2">C. Nettoyage obligatoire du poste</h4>
+            <div class="border-l-4 border-red-600 bg-red-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-red-900">Faites cette partie avant de quitter la salle, même si vous n'avez pas terminé le reste de la séance. Sans elle, la personne suivante sur ce poste peut pousser en votre nom et accéder à votre compte GitHub.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /delete:git:https://github.com
+MSYS_NO_PATHCONV=1 cmdkey /list | grep -i github</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-powershell">cmdkey /delete:git:https://github.com
+cmdkey /list | Select-String github</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Alternative à la première commande : Panneau de configuration, Gestionnaire d'identification, Informations d'identification Windows, entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, Supprimer.</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1">
+              <li>Sur github.com, avatar en haut à droite, Sign out, puis confirmez.</li>
+              <li>Faites de même dans chaque navigateur ouvert par Git Credential Manager.</li>
+              <li>Si vous avez accepté d'enregistrer votre mot de passe dans le navigateur, supprimez-le dans ses paramètres.</li>
+              <li>Fermez toutes les fenêtres du navigateur.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : le livrable est le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code> publié.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Le push des tags affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">* [new tag]         lab-01b -&gt; lab-01b</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01b</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /delete</code> affiche un message de confirmation. Un message indiquant que l'élément est introuvable signifie qu'il avait déjà été supprimé.</li>
+              <li>La dernière commande <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /list</code> n'affiche rien.</li>
+              <li>github.com affiche le bouton « Sign in ».</li>
+            </ul>
+            <!-- A VERIFIER SUR UN POSTE DU LABO : texte exact (et langue) des messages de cmdkey /delete en cas de succès et lorsque l'élément est introuvable -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <p class="text-gray-700 mb-2">Barème du livrable (4 points) :</p>
+            <ul class="space-y-2 text-gray-700 mb-4">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code> désigne le dernier commit de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code>. (2 pts)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La page Tags du dépôt liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>. (1 pt)</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La page d'accueil du dépôt affiche le README avec ses quatre images. (1 pt)</span></li>
+            </ul>
+            <p class="text-gray-700 mb-2">Contrôles obligatoires, non notés :</p>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /list</code> n'affiche plus aucune entrée GitHub.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vous êtes déconnecté de github.com dans tous les navigateurs.</span></li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le jeton enregistré donne le droit de pousser à toute personne qui utilise cette session Windows ; la session du navigateur donne un accès complet à votre compte. Dès la session 03, si vous changez de poste, vous récupérez le projet avec les étapes d'installation de votre README.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Updates were rejected because the tag already exists in the remote</code> : vous avez recréé un tag déjà publié ; ne déplacez jamais un tag publié. Oublier le nettoyage permet au groupe suivant de pousser en votre nom.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Prism core + autoloader (pinned 1.29.0) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+</script>
+
+<!-- Navigation JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.step-panel'));
+  var stepIds = panels.map(function (p) { return p.id; });
+  var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.step-link'));
+  var titleEl = document.getElementById('current-step-title');
+  var prevBtn = document.getElementById('prev-step');
+  var nextBtn = document.getElementById('next-step');
+  var progressBar = document.getElementById('progress-bar');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebar-overlay');
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+
+  var storageKey = 'codelab-progress:' + window.location.pathname;
+
+  function loadCompleted() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCompleted(list) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) {
+      /* localStorage unavailable: navigation still works without persistence */
+    }
+  }
+
+  var completed = loadCompleted();
+
+  function indexOfStep(id) {
+    var idx = stepIds.indexOf(id);
+    return idx === -1 ? 0 : idx;
+  }
+
+  function markCompleted(idx) {
+    var id = stepIds[idx];
+    if (completed.indexOf(id) === -1) {
+      completed.push(id);
+      saveCompleted(completed);
+    }
+  }
+
+  function updateSidebarState(activeId) {
+    sidebarLinks.forEach(function (link) {
+      var id = link.getAttribute('data-step');
+      link.classList.toggle('is-active', id === activeId);
+      link.classList.toggle('is-completed', completed.indexOf(id) !== -1 && id !== activeId);
+    });
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('is-open');
+  }
+
+  function showStep(idx, options) {
+    options = options || {};
+    if (idx < 0) idx = 0;
+    if (idx > panels.length - 1) idx = panels.length - 1;
+
+    var id = stepIds[idx];
+
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('is-active', i === idx);
+    });
+
+    if (titleEl) {
+      titleEl.textContent = panels[idx].getAttribute('data-title') || panels[idx].id;
+    }
+
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === panels.length - 1;
+
+    if (progressBar) {
+      var pct = ((idx + 1) / panels.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    if (idx > 0) {
+      for (var i = 0; i < idx; i++) {
+        markCompleted(i);
+      }
+    }
+
+    updateSidebarState(id);
+
+    if (!options.skipHash) {
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + id);
+      } else {
+        window.location.hash = id;
+      }
+    }
+
+    document.getElementById('content').scrollTop = 0;
+    closeMobileSidebar();
+  }
+
+  function currentIndex() {
+    var hash = window.location.hash.replace('#', '');
+    return indexOfStep(hash);
+  }
+
+  // Sidebar links: native anchor navigation updates location.hash, which
+  // fires 'hashchange'; we just react to that in one place.
+  window.addEventListener('hashchange', function () {
+    showStep(currentIndex(), { skipHash: true });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      showStep(currentIndex() - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      showStep(currentIndex() + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowLeft') {
+      showStep(currentIndex() - 1);
+    } else if (e.key === 'ArrowRight') {
+      showStep(currentIndex() + 1);
+    }
+  });
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.add('is-open');
+      sidebarOverlay.classList.add('is-open');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Copy-to-clipboard for every code block.
+  Array.prototype.slice.call(document.querySelectorAll('.copy-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrapper = btn.closest('.code-block-wrapper');
+      var codeEl = wrapper ? wrapper.querySelector('code') : null;
+      if (!codeEl) return;
+
+      var text = codeEl.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copie';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+  }
+
+  // Initial render.
+  showStep(currentIndex(), { skipHash: true });
+  if (window.location.hash) {
+    // Normalize the hash (e.g. redirect #foo -> #step-1 if invalid).
+    history.replaceState(null, '', '#' + stepIds[currentIndex()]);
+  }
+
+  if (window.Prism) {
+    Prism.highlightAll();
+  }
+})();
+</script>
+
+</body>
+</html>
