@@ -8,6 +8,7 @@ Checks every docs/*.html file for three things:
      file — i.e. a sidebar/step link pointing nowhere.
   3. A literal "..." inside a <code> block, which means the code sample is
      incomplete instead of the full, runnable snippet CLAUDE.md requires.
+     A comment line ending with "..." is allowed (literal file content).
 
 No third-party dependencies: only the Python 3 standard library is used.
 
@@ -28,6 +29,20 @@ EMOJI_PATTERN = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DOCS_DIR = os.path.join(REPO_ROOT, "docs")
+
+
+def is_literal_comment_ellipsis(code_line):
+    """True when '...' ends the line and sits inside a comment.
+
+    CLAUDE.md (Copy blocks): file content shown for reading is reproduced
+    literally, including comments that end with "...".
+    """
+    stripped = code_line.strip()
+    if not stripped.endswith("..."):
+        return False
+    if stripped.startswith(("//", "#", "*", "/*")):
+        return True
+    return " // " in code_line[:code_line.rfind("...")]
 
 
 class PageChecker(HTMLParser):
@@ -75,9 +90,10 @@ class PageChecker(HTMLParser):
             self._code_depth -= 1
             line = self._code_line_stack.pop()
             text = "".join(self._code_text_stack.pop())
-            if "..." in text:
-                snippet = " ".join(text.strip().split())[:80]
-                self.code_issues.append((line, snippet))
+            for offset, code_line in enumerate(text.split("\n")):
+                if "..." in code_line and not is_literal_comment_ellipsis(code_line):
+                    snippet = " ".join(code_line.strip().split())[:80]
+                    self.code_issues.append((line + offset, snippet))
 
     def handle_data(self, data):
         if self._code_depth > 0:
