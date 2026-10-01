@@ -32,13 +32,15 @@ DOCS_DIR = os.path.join(REPO_ROOT, "docs")
 
 
 def is_literal_comment_ellipsis(code_line):
-    """True when '...' ends the line and sits inside a comment.
+    """True when a comment line ends with a word immediately followed by '...'.
 
     CLAUDE.md (Copy blocks): file content shown for reading is reproduced
     literally, including comments that end with "...".
+    A bare placeholder such as '// ...' or '// TODO ...' is still flagged.
     """
     stripped = code_line.strip()
-    if not stripped.endswith("..."):
+    # A letter (accented letters included) directly before the final '...'.
+    if not re.search(r"[^\W\d_]\.\.\.$", stripped):
         return False
     if stripped.startswith(("//", "#", "*", "/*")):
         return True
@@ -172,5 +174,34 @@ def main():
         return 1
 
 
+SELF_TEST_CASES = [
+    # (code line, expected is_literal_comment_ellipsis result)
+    ("// Register the Composer autoloader...", True),
+    ("// Determine if the application is in maintenance mode...", True),
+    ("// Étape suivante détaillée en séance 05 : à créer...", True),
+    ("$x = 1; // tables créées...", True),
+    ("// ...", False),
+    ("# ...", False),
+    ("// TODO ...", False),
+    ("* ...", False),
+    ("$x = foo(...);", False),
+    ("return view(...)", False),
+]
+
+
+def self_test():
+    failures = 0
+    for line, expected in SELF_TEST_CASES:
+        got = is_literal_comment_ellipsis(line)
+        if got != expected:
+            failures += 1
+            print("FAIL: %r -> %s (expected %s)" % (line, got, expected))
+    total = len(SELF_TEST_CASES)
+    print("Self-test: %d/%d passed" % (total - failures, total))
+    return 1 if failures else 0
+
+
 if __name__ == "__main__":
+    if "--self-test" in sys.argv[1:]:
+        sys.exit(self_test())
     sys.exit(main())
