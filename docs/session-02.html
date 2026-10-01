@@ -725,7 +725,7 @@ git config --local user.email</code></pre>
               <li>Connectez-vous sur <a href="https://github.com/login" class="underline text-brand">https://github.com/login</a>. Si GitHub demande un code de vérification de l'appareil, lisez-le dans votre messagerie sur votre téléphone.</li>
               <li>Ouvrez <a href="https://github.com/settings/emails" class="underline text-brand">https://github.com/settings/emails</a>.</li>
               <li><strong>Contrôle 1 :</strong> votre adresse Git doit apparaître dans la liste, sans la mention « Unverified ». Si elle est absente, cliquez sur « Add email address », ajoutez-la, puis ouvrez le lien de vérification reçu par e-mail. Vos commits seront alors reliés automatiquement à votre profil : aucun commit n'a besoin de changer. Si l'adresse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config</code> n'est pas la vôtre (faute de frappe), elle sera corrigée à <a href="#step-6" class="underline text-brand">l'Étape 3</a>.</li>
-              <li><strong>Contrôle 2 :</strong> regardez les deux cases « Keep my email addresses private » et « Block command line pushes that expose my email ». Si les DEUX sont cochées, décochez « Block command line pushes that expose my email ». Sinon, votre push sera refusé avec l'erreur GH007.</li>
+              <li><strong>Contrôle 2 :</strong> regardez les deux cases « Keep my email addresses private » et « Block command line pushes that expose my email ». Si les DEUX sont cochées, décochez « Block command line pushes that expose my email ». Si vous ne le faites pas, votre push sera refusé avec l'erreur GH007.</li>
             </ol>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
@@ -881,8 +881,8 @@ git status</code></pre>
               <p class="text-sm text-blue-900">Si une sortie de Git s'arrête sur une ligne <code class="bg-white px-1 py-0.5 rounded text-xs">:</code> ou <code class="bg-white px-1 py-0.5 rounded text-xs">(END)</code>, Git affiche la suite page par page : appuyez sur <code class="bg-white px-1 py-0.5 rounded text-xs">q</code> pour revenir à l'invite de commande.</p>
             </div>
 
-            <p class="text-sm text-gray-600 mb-2">Seulement si Git répond <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">fatal: not a git repository</code> (Bash et PowerShell, identique) :</p>
             <p class="text-gray-700 mb-2">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> par votre prénom et votre nom, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">votre.adresse@exemple.com</code> par l'adresse de votre compte GitHub.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Git répond <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">fatal: not a git repository</code> (Bash et PowerShell, identique) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier les commandes de création du dépôt et du tag lab-01">Copier</button>
               <pre><code class="language-bash">git init
@@ -1051,8 +1051,9 @@ git log --oneline --decorate</code></pre>
             </div>
             <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-6">
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-amber-900">C'est la seule réécriture d'historique de tout le cours. Elle est autorisée uniquement parce que rien n'a encore été publié : après le premier push, on ne réécrit plus jamais l'historique.</p>
+              <p class="text-sm text-amber-900">C'est la seule réécriture d'historique de tout le cours. Elle est autorisée uniquement parce que rien n'a encore été publié : après le premier push, on ne réécrit plus jamais l'historique. Les commits réécrits prennent la date d'aujourd'hui, y compris celui du tag lab-01 : c'est attendu.</p>
             </div>
+            <!-- Pour l'enseignant : lab-01 daté du jour de la session 02 = étudiant passé par ce bloc, pas un retard. -->
 
             <p class="text-gray-700 mb-3">Complétez et enregistrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s02-git.md</code> si ce n'est pas fait, puis :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
@@ -1084,11 +1085,11 @@ git commit -m "Ajouter les notes Git de la session 02"</code></pre>
             <p class="text-sm text-gray-600 mb-2">Exemple indicatif de sortie de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git check-ignore -v</code> (les numéros de ligne peuvent différer) :</p>
             <div class="code-block-wrapper mb-4">
               <pre><code class="language-bash">.gitignore:3:.env	.env
-.gitignore:19:/vendor	vendor
-.gitignore:14:/node_modules	node_modules
+.gitignore:23:/vendor	vendor
+.gitignore:16:/node_modules	node_modules
 database/.gitignore:1:*.sqlite*	database/database.sqlite</code></pre>
             </div>
-            <!-- A VERIFIER SUR UN POSTE DU LABO : contenu exact des fichiers .gitignore et database/.gitignore d'un projet Laravel 13 (numéros de ligne et motifs) -->
+            <!-- Vérifié sur laravel/laravel v13.10.1 (squelette installé le 30/09/2026) -->
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1295,7 +1296,7 @@ code routes/web.php</code></pre>
               <pre><code class="language-powershell">code resources\views\a-propos.blade.php
 code routes\web.php</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Collez le code ci-dessous dans les deux fichiers et enregistrez, puis :</p>
+            <p class="text-gray-700 mb-3">Collez la vue ci-dessous dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos.blade.php</code> et ajoutez la route à la fin de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code>, enregistrez, puis :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande route:list">Copier</button>
@@ -1343,7 +1344,24 @@ git show --stat HEAD</code></pre>
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Contenu complet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <p class="text-sm text-gray-600 mb-2">À ajouter à la fin de votre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> (ne remplacez pas le fichier) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la route a-propos">Copier</button>
+              <pre><code class="language-php">Route::get('/a-propos', function () {
+    return view('a-propos', [
+        'auteur' =&gt; 'Prenom Nom',
+        'groupe' =&gt; 'MDW32',
+    ]);
+});</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> par votre prénom et votre nom, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MDW32</code> par votre groupe (MDW32 ou MDW33).</p>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Ne remplacez pas tout le fichier : vos routes /version et /heure de la session 01 doivent rester telles quelles, car votre vue heure.blade.php peut attendre d'autres variables.</p>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet de référence</summary>
+              <div class="mt-2">
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier routes/web.php avec la route a-propos">Copier</button>
               <pre><code class="language-php">&lt;?php
@@ -1386,11 +1404,8 @@ Route::get('/a-propos', function () {
     ]);
 });</code></pre>
             </div>
-            <p class="text-gray-700 mb-4">Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> par votre prénom et votre nom, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MDW32</code> par votre groupe (MDW32 ou MDW33).</p>
-            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
-              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">Les routes <code class="bg-white px-1 py-0.5 rounded text-xs">/version</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">/heure</code> ci-dessus sont un corrigé du défi de la session 01. Si les vôtres sont écrites autrement et fonctionnent, gardez-les (votre vue <code class="bg-white px-1 py-0.5 rounded text-xs">heure.blade.php</code> peut attendre d'autres variables) : ajoutez seulement la route <code class="bg-white px-1 py-0.5 rounded text-xs">/a-propos</code> à la fin de votre fichier.</p>
-            </div>
+              </div>
+            </details>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1717,21 +1732,21 @@ git commit -m "Documenter les routes dans le README"</code></pre>
             </div>
             <details>
               <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
-              <div class="mt-2">
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier le corrigé du tableau des routes">Copier</button>
-              <pre><code class="language-markdown">## Routes disponibles
-
-| Méthode | URI | Réponse |
-|---|---|---|
-| GET | `/` | Vue `welcome` (page d'accueil par défaut de Laravel) |
-| GET | `/bonjour` | Chaîne de texte « Bonjour MDW3 ! Voici ma première route Laravel 13. » |
-| GET | `/bonjour-court` | Chaîne de texte, écrite avec une fonction fléchée |
-| GET | `/bienvenue` | Vue `bienvenue` avec le nom de l'étudiant, le groupe et le cours |
-| GET | `/version` | Chaîne avec la version de Laravel et celle de PHP |
-| GET | `/heure` | Vue `heure` avec l'heure (format H:i) et la date (format d/m/Y) |
-| GET | `/a-propos` | Vue `a-propos` avec le nom de l'auteur et le groupe |</code></pre>
-            </div>
+              <div class="overflow-x-auto mt-2">
+                <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                  <thead class="bg-gray-50">
+                    <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Méthode</th><th class="px-3 py-2 border-b border-gray-200 font-medium">URI</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Réponse</th></tr>
+                  </thead>
+                  <tbody>
+                    <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/</code></td><td class="px-3 py-2">Vue <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">welcome</code> (page d'accueil par défaut de Laravel)</td></tr>
+                    <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/bonjour</code></td><td class="px-3 py-2">Chaîne de texte « Bonjour MDW3 ! Voici ma première route Laravel 13. »</td></tr>
+                    <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/bonjour-court</code></td><td class="px-3 py-2">Chaîne de texte, écrite avec une fonction fléchée</td></tr>
+                    <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/bienvenue</code></td><td class="px-3 py-2">Vue <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">bienvenue</code> avec le nom de l'étudiant, le groupe et le cours</td></tr>
+                    <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/version</code></td><td class="px-3 py-2">Chaîne avec la version de Laravel et celle de PHP</td></tr>
+                    <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/heure</code></td><td class="px-3 py-2">Vue <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">heure</code> avec l'heure (format H:i) et la date (format d/m/Y)</td></tr>
+                    <tr><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/a-propos</code></td><td class="px-3 py-2">Vue <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">a-propos</code> avec le nom de l'auteur et le groupe</td></tr>
+                  </tbody>
+                </table>
               </div>
             </details>
           </div>
