@@ -332,7 +332,7 @@
               <li>Expliquer le modèle Git : répertoire de travail, index, commit, tag, dépôt distant ; lire <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline --decorate</code>.</li>
               <li>Justifier pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">node_modules/</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/*.sqlite</code> ne sont jamais publiés, et le prouver avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git check-ignore</code>.</li>
               <li>Relier vos commits à votre compte GitHub grâce à une adresse e-mail vérifiée.</li>
-              <li>Publier le projet en HTTPS avec Git Credential Manager, pousser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> et les tags <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, puis nettoyer le poste partagé.</li>
+              <li>Publier le projet en HTTPS avec Git Credential Manager, pousser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> et les tags <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, puis, sur un poste de l'université, nettoyer le poste.</li>
               <li>Livrer un sprint en petits commits : page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code>, README avec installation Bash et PowerShell et captures d'écran.</li>
             </ol>
           </div>
@@ -345,7 +345,7 @@
             <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
               <li>Session 01 terminée : dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">C:\dev\prenom-nom\mini-cms</code>, commit et tag local <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>.</li>
               <li>Un compte GitHub créé avec la même adresse que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config user.email</code> (sinon : <a href="#step-4" class="underline text-brand">Étape 1, partie A</a>).</li>
-              <li>Votre téléphone, avec accès à votre messagerie, pour lire les codes envoyés par GitHub sans ouvrir votre messagerie sur le poste partagé.</li>
+              <li>Un accès à votre messagerie pour lire les codes envoyés par GitHub : sur votre ordinateur, ou sur votre téléphone si vous travaillez sur un poste de l'université.</li>
               <li>Si vous changez de poste : votre clé USB avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms-lab01.tar.gz</code>.</li>
             </ul>
             <p class="text-gray-700 mb-4">Dans toute la page, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de dossier choisi en session 01 (minuscules, sans espace ni accent).</p>
@@ -355,7 +355,7 @@
             </div>
             <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-amber-900">Poste partagé : avant de quitter la salle, même si vous n'avez pas terminé, faites <a href="#step-13" class="underline font-medium">la partie C du Livrable</a> (suppression de l'identifiant GitHub et déconnexion du navigateur).</p>
+              <p class="text-sm text-amber-900">Poste de l'université : avant de quitter la salle, même si vous n'avez pas terminé, faites <a href="#step-13" class="underline font-medium">la partie C du Livrable</a> (suppression de l'identifiant GitHub et déconnexion du navigateur). Sur votre ordinateur personnel, cette partie ne s'applique pas.</p>
             </div>
           </div>
 
@@ -553,7 +553,7 @@ git ls-remote https://github.com/laravel/laravel.git HEAD</code></pre>
             <p class="text-gray-700 leading-relaxed mb-3">Une <strong>branche</strong> (ici <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code>) est une étiquette mobile : à chaque commit, elle avance pour désigner le nouveau commit.</p>
             <p class="text-gray-700 leading-relaxed mb-3">Un <strong>tag</strong> (par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>) reste fixé sur un seul commit, pour toujours. C'est pourquoi chaque session se termine par un tag : il désigne l'état exact du projet à la fin de la session.</p>
             <p class="text-gray-700 leading-relaxed mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">origin</code> est le nom conventionnel du dépôt distant, ici votre dépôt GitHub.</p>
-            <p class="text-gray-700 leading-relaxed">Ce cours utilise HTTPS avec Git Credential Manager plutôt que des clés SSH, car une clé SSH laissée sur un poste partagé est plus difficile à nettoyer.</p>
+            <p class="text-gray-700 leading-relaxed">Ce cours utilise HTTPS avec Git Credential Manager plutôt que des clés SSH : Git Credential Manager ne demande aucune configuration et s'efface facilement sur un poste de l'université.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -592,10 +592,13 @@ git ls-remote https://github.com/laravel/laravel.git HEAD</code></pre>
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-key text-brand" aria-hidden="true"></i>
-              S'authentifier sur un poste partagé
+              S'authentifier avec Git Credential Manager
             </h3>
             <p class="text-gray-700 leading-relaxed mb-3">Au premier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push</code>, Git Credential Manager ouvre le navigateur ; vous autorisez l'accès ; GCM range alors un jeton dans le Gestionnaire d'identification Windows (entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>).</p>
-            <p class="text-gray-700 leading-relaxed">Ce jeton reste après votre départ : toute personne qui utilise ensuite la même session Windows pourrait pousser en votre nom. D'où le nettoyage obligatoire dans <a href="#step-13" class="underline text-brand">le Livrable</a>, avec la déconnexion de github.com dans le navigateur.</p>
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+              <li>Sur votre ordinateur personnel, gardez ce jeton : vos prochains push ne vous demanderont plus de vous connecter.</li>
+              <li>Sur un poste de l'université, toute personne qui utilise la même session Windows pourrait pousser en votre nom : <a href="#step-13" class="underline text-brand">la partie C du Livrable</a> supprime donc ce jeton, et vous déconnecte de github.com dans le navigateur.</li>
+            </ul>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -650,7 +653,7 @@ Réponse :</code></pre>
               <li>Quelle différence entre une branche et un tag ?</li>
               <li>Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> ne doit jamais être poussé, et comment un autre développeur obtient-il son propre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> ?</li>
               <li>Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> n'est-il pas versionné, et quel fichier permet de le reconstruire à l'identique ?</li>
-              <li>Où Git Credential Manager range-t-il votre jeton GitHub, et pourquoi faut-il le supprimer en fin de séance ?</li>
+              <li>Où Git Credential Manager range-t-il votre jeton GitHub, et dans quel cas faut-il le supprimer en fin de séance ?</li>
             </ol>
             <details>
               <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
@@ -659,7 +662,7 @@ Réponse :</code></pre>
                 <li>Une branche avance à chaque commit ; un tag reste fixé sur un commit (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> désigne toujours la fin de la session 01).</li>
                 <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">APP_KEY</code> et les réglages propres au poste (et des secrets en production). On copie <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env.example</code> puis on lance <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan key:generate</code>.</li>
                 <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> est volumineux et entièrement généré ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer install</code> le reconstruit avec les versions exactes de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.lock</code>.</li>
-                <li>Dans le Gestionnaire d'identification Windows (entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>). Toute personne qui utilise ensuite la même session Windows pourrait pousser en votre nom.</li>
+                <li>Dans le Gestionnaire d'identification Windows (entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>). On le supprime sur un poste de l'université, car la personne suivante pourrait pousser en votre nom ; on le garde sur son ordinateur personnel.</li>
               </ol>
             </details>
           </div>
@@ -717,14 +720,14 @@ git config --local user.email</code></pre>
               <li>Ouvrez <a href="https://github.com/signup" class="underline text-brand">https://github.com/signup</a>.</li>
               <li>Saisissez exactement l'adresse affichée par la commande ci-dessus.</li>
               <li>Choisissez un mot de passe et un nom d'utilisateur sobre (par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code>) : il apparaîtra dans l'URL de votre portfolio.</li>
-              <li>Résolvez la vérification visuelle, puis saisissez le code reçu par e-mail en le lisant sur votre téléphone.</li>
+              <li>Résolvez la vérification visuelle, puis saisissez le code reçu par e-mail, en le lisant dans votre messagerie (sur votre téléphone si vous êtes sur un poste de l'université).</li>
               <li>Passez les écrans de personnalisation (offre gratuite).</li>
-              <li>Si le navigateur propose d'enregistrer le mot de passe, refusez.</li>
+              <li>Sur un poste de l'université, si le navigateur propose d'enregistrer le mot de passe, refusez.</li>
             </ol>
 
             <h4 class="font-medium mt-4 mb-2">B. Tout le monde</h4>
             <ol class="list-decimal list-inside text-gray-700 space-y-2 mb-4">
-              <li>Connectez-vous sur <a href="https://github.com/login" class="underline text-brand">https://github.com/login</a>. Si GitHub demande un code de vérification de l'appareil, lisez-le dans votre messagerie sur votre téléphone.</li>
+              <li>Connectez-vous sur <a href="https://github.com/login" class="underline text-brand">https://github.com/login</a>. Si GitHub demande un code de vérification de l'appareil, lisez-le dans votre messagerie (sur votre téléphone si vous êtes sur un poste de l'université).</li>
               <li>Ouvrez <a href="https://github.com/settings/emails" class="underline text-brand">https://github.com/settings/emails</a>.</li>
               <li><strong>Contrôle 1 :</strong> votre adresse Git doit apparaître dans la liste, sans la mention « Unverified ». Si elle est absente, cliquez sur « Add email address », ajoutez-la, puis ouvrez le lien de vérification reçu par e-mail. Vos commits seront alors reliés automatiquement à votre profil : aucun commit n'a besoin de changer. Si l'adresse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git config</code> n'est pas la vôtre (faute de frappe), elle sera corrigée à <a href="#step-6" class="underline text-brand">l'Étape 3</a>.</li>
               <li><strong>Contrôle 2 :</strong> regardez les deux cases « Keep my email addresses private » et « Block command line pushes that expose my email ». Si les DEUX sont cochées, décochez « Block command line pushes that expose my email ». Si vous ne le faites pas, votre push sera refusé avec l'erreur GH007.</li>
@@ -779,7 +782,7 @@ git config --local user.email</code></pre>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Compte créé avec une autre adresse : ajoutez l'adresse de <code class="bg-white px-1 py-0.5 rounded text-xs">git config</code> dans Settings &gt; Emails, ne recréez pas de compte. Lien de vérification jamais reçu : regardez dans les courriers indésirables sur votre téléphone, puis cliquez sur « Resend verification email ».</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Compte créé avec une autre adresse : ajoutez l'adresse de <code class="bg-white px-1 py-0.5 rounded text-xs">git config</code> dans Settings &gt; Emails, ne recréez pas de compte. Lien de vérification jamais reçu : regardez dans les courriers indésirables de votre messagerie (sur votre téléphone si vous êtes sur un poste de l'université), puis cliquez sur « Resend verification email ».</p>
             </div>
           </div>
         </section>
@@ -901,7 +904,7 @@ git tag lab-01</code></pre>
               <pre><code class="language-bash">git config user.name "Prenom Nom"
 git config user.email "votre.adresse@exemple.com"</code></pre>
             </div>
-            <p class="text-gray-700 mb-4">N'utilisez jamais <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--global</code> sur un poste partagé : l'identité doit rester propre à ce dépôt.</p>
+            <p class="text-gray-700 mb-4">N'utilisez jamais <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--global</code> ici : l'identité doit rester propre à ce dépôt.</p>
 
             <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag</code> n'affiche pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> (Bash et PowerShell, identique) :</p>
             <div class="code-block-wrapper mb-4">
@@ -997,7 +1000,7 @@ a1b2c3d (HEAD -&gt; master, tag: lab-01) lab-01</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> L'identité Git est configurée en <code class="bg-white px-1 py-0.5 rounded text-xs">--local</code> parce que les postes sont partagés : elle ne vaut que pour ce dépôt. L'archive ne contient ni <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> ni <code class="bg-white px-1 py-0.5 rounded text-xs">node_modules/</code>, car <code class="bg-white px-1 py-0.5 rounded text-xs">composer.lock</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">package-lock.json</code> permettent de les reconstruire à l'identique.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> L'identité est <code class="bg-white px-1 py-0.5 rounded text-xs">--local</code> : elle ne vaut que pour ce dépôt, ce qui est indispensable sur un poste de l'université et sans inconvénient sur votre ordinateur. L'archive ne contient ni <code class="bg-white px-1 py-0.5 rounded text-xs">vendor/</code> ni <code class="bg-white px-1 py-0.5 rounded text-xs">node_modules/</code>, car <code class="bg-white px-1 py-0.5 rounded text-xs">composer.lock</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">package-lock.json</code> permettent de les reconstruire à l'identique.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
@@ -1134,7 +1137,7 @@ database/.gitignore:1:*.sqlite*	database/database.sqlite</code></pre>
             <p class="text-gray-700 leading-relaxed mb-4">Créer le dépôt public vide, pousser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> avec Git Credential Manager, et vérifier le résultat sur GitHub.</p>
             <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-amber-900">Le nettoyage de <a href="#step-13" class="underline font-medium">la partie C du Livrable</a> est obligatoire avant de quitter la salle, même si vous n'avez pas terminé.</p>
+              <p class="text-sm text-amber-900">Poste de l'université : <a href="#step-13" class="underline font-medium">la partie C du Livrable</a> est obligatoire avant de quitter la salle, même si vous n'avez pas terminé.</p>
             </div>
           </div>
 
@@ -1152,7 +1155,8 @@ database/.gitignore:1:*.sqlite*	database/database.sqlite</code></pre>
               <li>Copiez l'URL HTTPS affichée (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">https://github.com/VOTRE-UTILISATEUR/mini-cms.git</code>).</li>
             </ol>
 
-            <h4 class="font-medium mt-4 mb-2">B. Identifiants laissés par une autre personne</h4>
+            <h4 class="font-medium mt-4 mb-2">B. Identifiant GitHub déjà enregistré</h4>
+            <p class="text-gray-700 mb-3">Un identifiant GitHub déjà enregistré peut appartenir à une autre personne (poste de l'université) ou à un autre de vos comptes GitHub (ordinateur personnel). Dans les deux cas, supprimez-le : GitHub vous demandera simplement de vous connecter au premier push.</p>
             <p class="text-gray-700 mb-3">Dans Git Bash, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MSYS_NO_PATHCONV=1</code> empêche Git Bash de transformer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/list</code> en chemin de fichier.</p>
             <!-- A VERIFIER SUR UN POSTE DU LABO : nom exact de l'entrée créée par GCM dans le Gestionnaire d'identification (git:https://github.com) et fonctionnement de MSYS_NO_PATHCONV=1 avec cmdkey dans Git Bash -->
             <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
@@ -1862,7 +1866,7 @@ git push</code></pre>
               Objectif
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">Poser le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, le pousser, le vérifier, puis nettoyer le poste partagé.</p>
+            <p class="text-gray-700 leading-relaxed">Poser le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, le pousser et le vérifier ; sur un poste de l'université, nettoyer ensuite le poste.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1893,24 +1897,29 @@ git push origin --tags
 git ls-remote --tags origin</code></pre>
             </div>
 
-            <h4 class="font-medium mt-4 mb-2">C. Nettoyage obligatoire du poste</h4>
+            <h4 class="font-medium mt-4 mb-2">C. Seulement si vous avez travaillé sur un poste de l'université : nettoyer le poste</h4>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur votre ordinateur personnel, ne supprimez rien : Git Credential Manager garde votre identifiant et vos prochains push se feront sans reconnexion.</p>
+            </div>
             <div class="border-l-4 border-red-600 bg-red-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-red-900">Faites cette partie avant de quitter la salle, même si vous n'avez pas terminé le reste de la séance. Sans elle, la personne suivante sur ce poste peut pousser en votre nom et accéder à votre compte GitHub.</p>
+              <p class="text-sm text-red-900">Poste de l'université : faites cette partie avant de quitter la salle, même si vous n'avez pas terminé le reste de la séance. Sans elle, la personne suivante sur ce poste peut pousser en votre nom et accéder à votre compte GitHub.</p>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, Bash (Git Bash) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier les commandes Bash de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
               <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /delete:git:https://github.com
 MSYS_NO_PATHCONV=1 cmdkey /list | grep -i github</code></pre>
             </div>
-            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, PowerShell :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier les commandes PowerShell de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
               <pre><code class="language-powershell">cmdkey /delete:git:https://github.com
 cmdkey /list | Select-String github</code></pre>
             </div>
             <p class="text-gray-700 mb-3">Alternative à la première commande : Panneau de configuration, Gestionnaire d'identification, Informations d'identification Windows, entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, Supprimer.</p>
+            <p class="text-gray-700 mb-2">Toujours sur un poste de l'université :</p>
             <ol class="list-decimal list-inside text-gray-700 space-y-1">
               <li>Sur github.com, avatar en haut à droite, Sign out, puis confirmez.</li>
               <li>Faites de même dans chaque navigateur ouvert par Git Credential Manager.</li>
@@ -1935,9 +1944,9 @@ cmdkey /list | Select-String github</code></pre>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
               <li>Le push des tags affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">* [new tag]         lab-01b -&gt; lab-01b</code>.</li>
               <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01b</code>.</li>
-              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /delete</code> affiche un message de confirmation. Un message indiquant que l'élément est introuvable signifie qu'il avait déjà été supprimé.</li>
-              <li>La dernière commande <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /list</code> n'affiche rien.</li>
-              <li>github.com affiche le bouton « Sign in ».</li>
+              <li>Poste de l'université uniquement : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /delete</code> affiche un message de confirmation. Un message indiquant que l'élément est introuvable signifie qu'il avait déjà été supprimé.</li>
+              <li>Poste de l'université uniquement : la dernière commande <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /list</code> n'affiche rien.</li>
+              <li>Poste de l'université uniquement : github.com affiche le bouton « Sign in ».</li>
             </ul>
             <!-- A VERIFIER SUR UN POSTE DU LABO : texte exact (et langue) des messages de cmdkey /delete en cas de succès et lorsque l'élément est introuvable -->
           </div>
@@ -1955,8 +1964,8 @@ cmdkey /list | Select-String github</code></pre>
             </ul>
             <p class="text-gray-700 mb-2">Contrôles obligatoires, non notés :</p>
             <ul class="space-y-2 text-gray-700">
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /list</code> n'affiche plus aucune entrée GitHub.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vous êtes déconnecté de github.com dans tous les navigateurs.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cmdkey /list</code> n'affiche plus aucune entrée GitHub.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : vous êtes déconnecté de github.com dans tous les navigateurs.</span></li>
             </ul>
           </div>
 
@@ -1967,11 +1976,11 @@ cmdkey /list | Select-String github</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le jeton enregistré donne le droit de pousser à toute personne qui utilise cette session Windows ; la session du navigateur donne un accès complet à votre compte. Dès la session 03, si vous changez de poste, vous récupérez le projet avec les étapes d'installation de votre README.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le jeton enregistré par GCM donne le droit de pousser à toute personne qui utilise la même session Windows : à effacer sur un poste de l'université, pratique à garder sur votre ordinateur. Dès la session 03, si vous changez de poste, vous récupérez le projet avec les étapes d'installation de votre README.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Updates were rejected because the tag already exists in the remote</code> : vous avez recréé un tag déjà publié ; ne déplacez jamais un tag publié. Oublier le nettoyage permet au groupe suivant de pousser en votre nom.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Updates were rejected because the tag already exists in the remote</code> : vous avez recréé un tag déjà publié ; ne déplacez jamais un tag publié. Sur un poste de l'université, oublier le nettoyage permet au groupe suivant de pousser en votre nom.</p>
             </div>
           </div>
         </section>

@@ -53,7 +53,7 @@ Awesome 6.4.0**. Decorative icons get `aria-hidden="true"`. Icon-only buttons
 
 ## Student pages are self-guided
 
-- A student alone at a lab PC must be able to finish the page without asking
+- A student alone at a PC must be able to finish the page without asking
   anyone: no "prévenez l'enseignant", no peer or oral tasks. Use written
   self-checks with a hidden model answer instead.
 - No "Plan de secours" cards. Instructor contingencies belong in the session
@@ -109,11 +109,15 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
 6. Assessment Checklist
 7. Deliverable — commit, tag `lab-XX`, README with screenshots (10-15 min)
 
-## Windows lab PCs
+## Windows PCs
 
-Students work on Windows lab machines. Wherever a command differs between
-bash and PowerShell, give both — do not assume bash-only students can adapt
-PowerShell-only commands, or vice versa.
+Most students work on their own Windows laptops; a few use the university's
+shared Windows lab PCs. Pages must work on both. Shared-PC hygiene (credential
+cleanup, browser sign-out) is a part labelled "Seulement si vous travaillez
+sur un poste de l'université".
+
+Wherever a command differs between bash and PowerShell, give both — do not
+assume bash-only students can adapt PowerShell-only commands, or vice versa.
 
 The Assessment Checklist covers only work done before it. Screenshots, commit
 and tag are verified in the Deliverable's own Vérification card.

@@ -24,7 +24,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Session A (odd numbers) = guided codelab. Session B (even numbers) = applied sprint + assessment on the same repository. B sessions keep the 7-part structure from CLAUDE.md; in a B session, "Guided Steps" are sprint tasks with checkpoints, and the Assessment Checklist is graded.
 - Git tags: Session A of week W produces `lab-0W`, Session B produces `lab-0Wb` (week 1: `lab-01`, `lab-01b`; week 8: `lab-08`, `lab-08b`).
 - Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`.
-- Windows lab PCs: every command that differs between bash and PowerShell is given in both.
+- Windows PCs (mostly personal laptops, some university lab PCs): every command that differs between bash and PowerShell is given in both.
 - Repositories are public (portfolio). To limit copying, the Git history is graded: small meaningful commits between tags, one tag per session, commits authored with the student's own identity.
 - Toolchain: PHP 8.3+, Composer, Laravel installer (composer global require laravel/installer), Node.js LTS + npm (required by Vite / `composer run dev`, installed separately from PHP), Git for Windows, VS Code (the `code` command is used from S01).
 
@@ -75,7 +75,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
   4. Write a README with setup instructions and screenshots.
 - Key commands: `git status`, `git log --oneline --decorate`, `git branch -M main`, `git remote add origin <url>`, `git push -u origin main`, `git push origin --tags`, `git tag -n`.
 - Sprint: add a second closure route `/a-propos` returning a view (closure routes only, as in S01), README (project description, install steps bash + PowerShell, screenshots in `screenshots/`), push `lab-01` and `lab-01b`.
-- End-of-session hygiene (mandatory on shared lab PCs): remove the `git:https://github.com` entry from Windows Credential Manager (`cmdkey /delete:git:https://github.com` or Control Panel > Credential Manager) so the next group cannot push to the student's repository.
+- End-of-session hygiene (mandatory on shared lab PCs): remove the `git:https://github.com` entry from Windows Credential Manager (`cmdkey /delete:git:https://github.com` or Control Panel > Credential Manager) so the next group cannot push to the student's repository; not needed on personal laptops, which keep the credential.
 - Assessment focus: public repository reachable, both tags on GitHub, `.env` not committed, README renders with screenshots, commits authored with the student's own identity.
 - Reuses: S01 project, the local `lab-01` tag.
 

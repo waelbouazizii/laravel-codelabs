@@ -66,11 +66,12 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - Screenshots, the commit and the tag are verified in the Vérification card of the Deliverable (part 7).
 - Checklist items use empty boxes: `fa-regular fa-square`.
 
-### Git on shared lab PCs
+### Git identity and credentials
 
-- Run `git config user.name` / `user.email` without `--global`.
+- Run `git config user.name` / `user.email` without `--global`: a local identity works on both laptops and shared PCs.
 - The email must be the student's GitHub account email, or the email they will create the account with before S02.
-- No GitHub login on lab PCs before S02's credential hygiene.
+- No GitHub login on university PCs before S02's credential hygiene.
+- Credential cleanup (cmdkey, browser sign-out) only applies to university PCs, and personal laptops keep the GCM credential.
 - Offer `git commit --amend --reset-author --no-edit` as a conditional block, for when the installer's commit carries another identity.
 
 ### Screenshots
