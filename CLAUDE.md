@@ -20,6 +20,10 @@ Bouaziz. Groups: MDW32, MDW33.
 - The reusable skeleton lives in `templates/codelab-template.html`.
 - Every session is **one self-contained file**: `docs/session-XX.html`, where
   `XX` is a two-digit number from `01` to `16`.
+- Exception: screenshots. They live in `docs/img/sXX/`, are referenced with a
+  relative path, and are kept to steps that are hard to do or hard to fix.
+  Every image has a French alt text, `width` and `height` attributes,
+  `loading="lazy"`, and a `figcaption` (see `session-guidelines.md`).
 - A new session is created by copying `templates/codelab-template.html` to
   `docs/session-XX.html` and filling in the step panels. **Never change the
   skeleton markup, the navigation JavaScript, or the pinned asset versions**
