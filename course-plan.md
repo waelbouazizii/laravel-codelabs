@@ -26,7 +26,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`.
 - Windows lab PCs: every command that differs between bash and PowerShell is given in both.
 - Repositories are public (portfolio). To limit copying, the Git history is graded: small meaningful commits between tags, one tag per session, commits authored with the student's own identity.
-- Toolchain: PHP 8.3+, Composer, Laravel installer (php.new or Herd), Node.js LTS + npm (required by Vite / `composer run dev`, not installed by php.new), Git for Windows, VS Code (the `code` command is used from S01).
+- Toolchain: PHP 8.3+, Composer, Laravel installer (composer global require laravel/installer), Node.js LTS + npm (required by Vite / `composer run dev`, installed separately from PHP), Git for Windows, VS Code (the `code` command is used from S01).
 
 ## Overview
 
@@ -57,11 +57,11 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Week: W1 — Type: A — Tag: `lab-01` (local only; pushed in S02)
 - Learning outcomes:
   1. Describe the MVC pattern and the Laravel request lifecycle (`public/index.php` -> `bootstrap/app.php` -> routing -> controller/closure -> response).
-  2. Verify a working PHP 8.3+ / Composer / Laravel installer toolchain (php.new or Laravel Herd) and Node.js LTS + npm on Windows. Fallback if Node is missing: `php artisan serve` without Vite (no Tailwind in S01).
+  2. Verify a working PHP 8.3+ / Composer / Laravel installer toolchain (official PHP for Windows with php.ini extensions enabled, Composer-Setup.exe, composer global require laravel/installer) and Node.js LTS + npm on Windows. Fallback if Node is missing: `php artisan serve` without Vite (no Tailwind in S01).
   3. Create a Laravel 13 project with SQLite and Pest, and run it with `composer run dev`.
   4. Navigate the Laravel 13 skeleton (no `app/Http/Kernel.php`, no `routes/api.php`, configuration in `bootstrap/app.php`).
   5. Write a first closure route returning a string and a view.
-- Key commands: `php -v`, `composer -V`, `laravel --version`, `node -v`, `npm -v`, `git --version`, `laravel new mini-cms`, `composer run dev`, `php artisan --version`, `php artisan route:list`, `php artisan about`.
+- Key commands: `php -v`, `php --ini`, `where.exe php`, `composer -V`, `composer global require laravel/installer`, `laravel --version`, `node -v`, `npm -v`, `git --version`, `laravel new mini-cms`, `composer run dev`, `php artisan --version`, `php artisan route:list`, `php artisan about`.
 - Git (copy-paste only, explained in S02): `git config user.name` and `git config user.email` run inside the project (local, not `--global`, because lab PCs are shared), `git init` (only if the installer did not create the repository), `git add -A`, `git commit -m "lab-01"`, `git tag lab-01`. The email is the student's GitHub account email, or the one they will create the account with before S02. No GitHub account is needed in S01, and students do not log into GitHub on lab PCs.
 - Reuses: nothing (first session). Assumes PHP basics and HTML/CSS from years 1-2.
 
@@ -285,6 +285,7 @@ A session must not use a concept listed here with a later session number.
 - Node.js and Git for Windows installers runnable with the lab accounts' rights.
 - S07 add-column migration with foreign keys (`foreignId()->nullable()->constrained()->nullOnDelete()`) runs cleanly on SQLite.
 - `cmdkey /delete:git:https://github.com` removes the stored GitHub credential on the lab PCs.
+- Where the official php.net PowerShell command installs PHP, and whether Composer-Setup.exe adds the Composer global vendorin folder to the PATH.
 
 ## Calendar buffer
 

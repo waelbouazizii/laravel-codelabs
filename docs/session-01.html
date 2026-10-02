@@ -432,7 +432,8 @@ composer -V
 laravel --version
 node -v
 npm -v
-git --version</code></pre>
+git --version
+php -m</code></pre>
             </div>
 
             <div class="overflow-x-auto mb-4">
@@ -441,19 +442,20 @@ git --version</code></pre>
                   <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Outil</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Attendu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Si la commande échoue</th></tr>
                 </thead>
                 <tbody>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">php</td><td class="px-3 py-2">PHP 8.3 ou plus</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A</a></td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">composer</td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A</a></td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">laravel</td><td class="px-3 py-2">Laravel Installer (version récente)</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">php</td><td class="px-3 py-2">PHP 8.3 ou plus</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A (A1 à A5)</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">composer</td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, parties A4 et A5</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">laravel</td><td class="px-3 py-2">Laravel Installer (version récente)</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A5</a></td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">node</td><td class="px-3 py-2">Une version LTS paire (22 ou 24)</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie B</a></td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">npm</td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie B</a> (npm est installé avec Node.js)</td></tr>
-                  <tr><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie C</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">git</td><td class="px-3 py-2">git version 2.x</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie C</a></td></tr>
+                  <tr><td class="px-3 py-2">extensions PHP (php -m)</td><td class="px-3 py-2">La liste contient curl, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3 et zip</td><td class="px-3 py-2"><a href="#step-4" class="underline text-brand">Étape 1, partie A3</a></td></tr>
                 </tbody>
               </table>
             </div>
 
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">En PowerShell, le message « n'est pas reconnu comme nom d'applet de commande » signifie que l'outil n'est pas installé ou n'est pas dans le PATH. Si les six commandes affichent une version, passez directement à <a href="#step-5" class="underline font-medium">l'Étape 2</a>. Sinon, faites uniquement les parties de l'Étape 1 indiquées dans le tableau.</p>
+              <p class="text-sm text-blue-900">En PowerShell, le message « n'est pas reconnu comme nom d'applet de commande » signifie que l'outil n'est pas installé ou n'est pas dans le PATH. Si toutes les vérifications sont correctes, passez directement à <a href="#step-5" class="underline font-medium">l'Étape 2</a>. Sinon, faites uniquement les parties de l'Étape 1 indiquées dans le tableau.</p>
             </div>
           </div>
 
@@ -462,7 +464,7 @@ git --version</code></pre>
               <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
               Résultat attendu
             </h3>
-            <p class="text-gray-700">Les six commandes affichent chacune un numéro de version.</p>
+            <p class="text-gray-700">Les six premières commandes affichent chacune un numéro de version, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -m</code> affiche la liste des extensions PHP chargées.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -613,7 +615,7 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
               Objectif
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">Installer uniquement les outils signalés comme absents à la vérification de l'environnement. Si les six commandes ont fonctionné, passez directement à <a href="#step-5" class="underline font-medium text-brand">l'Étape 2</a>.</p>
+            <p class="text-gray-700 leading-relaxed">Installer uniquement les outils signalés comme absents à la vérification de l'environnement. Si toutes les vérifications de l'environnement sont correctes, passez directement à <a href="#step-5" class="underline font-medium text-brand">l'Étape 2</a>.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -622,19 +624,95 @@ echo $saluerCourt('MDW33') . PHP_EOL;</code></pre>
               Commandes
             </h3>
 
-            <h4 class="font-medium mt-4 mb-2">A. PHP, Composer et l'installateur Laravel (si php, composer ou laravel manque)</h4>
-            <p class="text-gray-700 mb-3">php.new installe les trois outils avec une seule commande, sans droits administrateur.</p>
-            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
-            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
-              <li>Ouvrir <a href="https://php.new" class="underline text-brand">https://php.new</a> dans le navigateur et choisir Windows.</li>
-              <li>Copier la commande PowerShell affichée sur la page et la coller dans une fenêtre PowerShell normale (pas en administrateur).</li>
-              <li>Fermer TOUS les terminaux et TOUTES les fenêtres VS Code, puis rouvrir PowerShell, pour que le nouveau PATH soit chargé.</li>
-            </ol>
-            <p class="text-sm text-gray-600 mb-4">Remarque Bash : l'installateur Windows de php.new s'exécute dans PowerShell. Sur un ordinateur personnel macOS ou Linux, copiez la commande correspondant à votre système depuis la même page.</p>
-            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
-              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-blue-900">Sur un ordinateur portable Windows personnel, Laravel Herd (<a href="https://herd.laravel.com" class="underline">https://herd.laravel.com</a>) est une alternative qui nécessite les droits administrateur.</p>
+            <h4 class="font-medium mt-4 mb-2">A. PHP, extensions, Composer et l'installateur Laravel</h4>
+            <p class="text-gray-700 mb-3">Ces commandes s'exécutent dans PowerShell (postes Windows). Faites les sous-étapes dans l'ordre, et passez celles indiquées comme facultatives si elles ne vous concernent pas.</p>
+            <h5 class="font-medium mt-4 mb-2">A1. Retirer une ancienne installation herd-lite (si présente)</h5>
+            <p class="text-gray-700 mb-3">Vérifiez quel PHP est trouvé en premier :</p>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande where.exe php">Copier</button>
+              <pre><code class="language-powershell">where.exe php</code></pre>
             </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si un chemin affiché contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">herd-lite</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de retrait de herd-lite du PATH">Copier</button>
+              <pre><code class="language-powershell">$userPath = [Environment]::GetEnvironmentVariable('Path', 'User')
+$cleanPath = ($userPath -split ';' | Where-Object { $_ -and $_ -notlike '*herd-lite*' }) -join ';'
+[Environment]::SetEnvironmentVariable('Path', $cleanPath, 'User')</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">Fermez ensuite TOUS les terminaux et TOUTES les fenêtres VS Code, puis rouvrez PowerShell.</p>
+            <h5 class="font-medium mt-4 mb-2">A2. Installer PHP (version officielle)</h5>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Ouvrez <a href="https://www.php.net/downloads" class="underline text-brand">https://www.php.net/downloads</a> et choisissez Windows.</li>
+              <li>Copiez la commande PowerShell affichée et collez-la dans une fenêtre PowerShell normale (pas en administrateur).</li>
+              <li>Fermez tous les terminaux et VS Code, rouvrez PowerShell, puis vérifiez avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -v</code> (PHP 8.3 ou plus).</li>
+            </ol>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande php -v">Copier</button>
+              <pre><code class="language-bash">php -v</code></pre>
+            </div>
+            <h5 class="font-medium mt-4 mb-2">A3. Activer les extensions dans php.ini</h5>
+            <p class="text-gray-700 mb-3">PHP pour Windows est livré avec ses extensions désactivées. Ce script crée php.ini s'il n'existe pas, puis active les extensions nécessaires à Composer et à Laravel :</p>
+            <p class="text-sm text-gray-600 mb-2">PowerShell (postes Windows du laboratoire) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le script d&#x27;activation des extensions dans php.ini">Copier</button>
+              <pre><code class="language-powershell">$phpDir = Split-Path (Get-Command php -CommandType Application | Select-Object -First 1).Source
+$ini = Join-Path $phpDir 'php.ini'
+if (-not (Test-Path $ini)) { Copy-Item (Join-Path $phpDir 'php.ini-development') $ini }
+$extensions = 'curl', 'fileinfo', 'intl', 'mbstring', 'mysqli', 'openssl', 'pdo_mysql', 'pdo_sqlite', 'sqlite3', 'zip'
+$lines = Get-Content $ini
+$lines = $lines -replace '^;\s*extension_dir\s*=\s*"ext"', 'extension_dir = "ext"'
+foreach ($e in $extensions) { $lines = $lines -replace "^;\s*extension=$e\s*$", "extension=$e" }
+Set-Content -Path $ini -Value $lines -Encoding ASCII
+php --ini</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4">La ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Loaded Configuration File</code> doit afficher le chemin de ce php.ini (et non <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">(none)</code>). Pour le faire à la main : ouvrez ce fichier, supprimez le point-virgule devant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">extension_dir = "ext"</code> et devant chaque ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">extension=</code> de la liste, puis enregistrez.</p>
+            <h5 class="font-medium mt-4 mb-2">A4. Installer Composer (installateur officiel)</h5>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Téléchargez <a href="https://getcomposer.org/Composer-Setup.exe" class="underline text-brand">https://getcomposer.org/Composer-Setup.exe</a> et lancez-le.</li>
+              <li>À l'écran « Select install mode », choisissez « Install for me only » : aucun droit administrateur n'est nécessaire.</li>
+            </ol>
+            <figure class="mt-4 mb-4">
+              <img src="img/s01/s01-e1-composer-install-mode.png" alt="Fenêtre Select install mode de Composer-Setup. L'option Install for me only est encadrée en vert, avec la mention : aucun droit administrateur requis." width="430" height="294" loading="lazy" class="max-w-full h-auto rounded border border-gray-200">
+              <figcaption class="text-sm text-gray-600 mt-2">Choisissez « Install for me only » : l'option « for all users » demande des droits administrateur.</figcaption>
+            </figure>
+            <ol start="3" class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>À l'écran « Settings Check », le chemin proposé doit être le même que la première ligne affichée par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where.exe php</code>. S'il contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">herd-lite</code>, cliquez sur Cancel, refaites l'étape A1, puis relancez Composer-Setup.exe.</li>
+            </ol>
+            <figure class="mt-4 mb-4">
+              <img src="img/s01/s01-e1-composer-php-path.png" alt="Écran Settings Check de Composer-Setup. Le champ du chemin de php.exe est encadré. Deux mentions : le chemin doit être la première ligne de where.exe php ; s'il contient herd-lite, annuler puis refaire l'étape A1." width="810" height="613" loading="lazy" class="max-w-full h-auto rounded border border-gray-200">
+              <figcaption class="text-sm text-gray-600 mt-2">Composer-Setup propose le premier php.exe trouvé dans le PATH. Comparez-le avec la première ligne de where.exe php : un chemin contenant herd-lite signifie que l'étape A1 n'a pas été faite.</figcaption>
+            </figure>
+            <ol start="4" class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Gardez les autres options par défaut jusqu'à la fin de l'installation.</li>
+              <li>Fermez tous les terminaux et VS Code, rouvrez PowerShell, puis vérifiez avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer -V</code>.</li>
+            </ol>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande composer -V">Copier</button>
+              <pre><code class="language-bash">composer -V</code></pre>
+            </div>
+            <h5 class="font-medium mt-4 mb-2">A5. Installer l'installateur Laravel</h5>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande d&#x27;installation de l&#x27;installateur Laravel">Copier</button>
+              <pre><code class="language-bash">composer global require laravel/installer</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Fermez puis rouvrez le terminal, puis vérifiez :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande laravel --version">Copier</button>
+              <pre><code class="language-bash">laravel --version</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel</code> n'est pas reconnu après la réouverture du terminal :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes d&#x27;ajout du dossier global de Composer au PATH">Copier</button>
+              <pre><code class="language-powershell">$composerBin = (composer global config bin-dir --absolute).Replace('/', '\')
+[Environment]::SetEnvironmentVariable('Path', [Environment]::GetEnvironmentVariable('Path', 'User') + ';' + $composerBin, 'User')</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Fermez puis rouvrez le terminal, puis relancez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel --version</code>.</p>
+            <p class="text-sm text-gray-600 mb-4">Remarque Bash : sur un ordinateur personnel macOS ou Linux, installez PHP et Composer depuis leurs pages officielles, puis utilisez la même commande <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer global require laravel/installer</code>.</p>
 
             <h4 class="font-medium mt-4 mb-2">B. Node.js et npm (si node ou npm manque)</h4>
             <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-3">
@@ -675,7 +753,7 @@ php -m</code></pre>
               <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
               Résultat attendu
             </h3>
-            <p class="text-gray-700">Chaque commande affiche un numéro de version (PHP 8.3 ou plus, Composer 2.x), et la liste de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -m</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code>.</p>
+            <p class="text-gray-700">Chaque commande affiche un numéro de version (PHP 8.3 ou plus, Composer 2.x, Laravel Installer), et la liste de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php -m</code> contient curl, fileinfo, mbstring, openssl, pdo_sqlite, sqlite3 et zip.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -685,18 +763,32 @@ php -m</code></pre>
             </h3>
             <p class="text-sm text-gray-600 mb-2">Bash :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande Bash de vérification sqlite">Copier</button>
-              <pre><code class="language-bash">php -m | grep -i sqlite</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande Bash de vérification des extensions">Copier</button>
+              <pre><code class="language-bash">php -m | grep -E '^(curl|fileinfo|mbstring|openssl|pdo_sqlite|sqlite3|zip)$'</code></pre>
             </div>
             <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande PowerShell de vérification sqlite">Copier</button>
-              <pre><code class="language-powershell">php -m | Select-String sqlite</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande PowerShell de vérification des extensions">Copier</button>
+              <pre><code class="language-powershell">php -m | Select-String -Pattern '^(curl|fileinfo|mbstring|openssl|pdo_sqlite|sqlite3|zip)$'</code></pre>
             </div>
-            <p class="text-gray-700 mb-4">Les deux doivent afficher <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code>.</p>
+            <p class="text-gray-700 mb-4">Les sept extensions doivent apparaître.</p>
             <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-amber-900">« php n'est pas reconnu » juste après l'installation signifie que le terminal date d'avant l'installation. Fermez tout, y compris VS Code, puis rouvrez.</p>
+            </div>
+          </div>
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> PHP lit sa configuration dans <code class="bg-white px-1 py-0.5 rounded text-xs">php.ini</code>. Sous Windows, les extensions sont livrées désactivées : sans <code class="bg-white px-1 py-0.5 rounded text-xs">openssl</code>, Composer ne peut pas télécharger les paquets en HTTPS, et sans <code class="bg-white px-1 py-0.5 rounded text-xs">pdo_sqlite</code>, Laravel ne peut pas utiliser la base SQLite. <code class="bg-white px-1 py-0.5 rounded text-xs">php --ini</code> indique quel fichier <code class="bg-white px-1 py-0.5 rounded text-xs">php.ini</code> est réellement chargé.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">The openssl extension is required for SSL/TLS protection but is not available</code> : openssl n'est pas activée, ou <code class="bg-white px-1 py-0.5 rounded text-xs">php.ini</code> n'est pas chargé (<code class="bg-white px-1 py-0.5 rounded text-xs">php --ini</code> affiche <code class="bg-white px-1 py-0.5 rounded text-xs">(none)</code>). Une modification de <code class="bg-white px-1 py-0.5 rounded text-xs">php.ini</code> sans effet : ce n'est pas le fichier chargé, ou un autre PHP passe en premier dans le PATH (vérifiez avec <code class="bg-white px-1 py-0.5 rounded text-xs">where.exe php</code>). <code class="bg-white px-1 py-0.5 rounded text-xs">laravel</code> n'est pas reconnu : le dossier global de Composer n'est pas dans le PATH (dernier bloc de A5).</p>
             </div>
           </div>
         </section>
@@ -819,7 +911,7 @@ php artisan --version</code></pre>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">could not find driver</code> pendant l'installation : l'extension <code class="bg-white px-1 py-0.5 rounded text-xs">pdo_sqlite</code> est absente (vérifiez avec <code class="bg-white px-1 py-0.5 rounded text-xs">php -m</code>, voir l'Étape 1). Un dossier <code class="bg-white px-1 py-0.5 rounded text-xs">mini-cms</code> incomplet après une coupure réseau : relancez <code class="bg-white px-1 py-0.5 rounded text-xs">laravel new mini-cms --force</code>.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">could not find driver</code> pendant l'installation : l'extension <code class="bg-white px-1 py-0.5 rounded text-xs">pdo_sqlite</code> est absente (vérifiez avec <code class="bg-white px-1 py-0.5 rounded text-xs">php -m</code>, voir l'Étape 1, partie A3). Un dossier <code class="bg-white px-1 py-0.5 rounded text-xs">mini-cms</code> incomplet après une coupure réseau : relancez <code class="bg-white px-1 py-0.5 rounded text-xs">laravel new mini-cms --force</code>.</p>
             </div>
           </div>
         </section>

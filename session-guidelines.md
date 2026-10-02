@@ -19,7 +19,11 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - **`composer run dev` works on Windows.** Vite v8.3.1 prints `Local: http://localhost:5173/` prominently. The application itself is on the `APP_URL` line, `http://localhost:8000`, so every session must tell students to open port 8000, not 5173.
 - **fontaine warning.** laravel-vite-plugin v3.2.0 prints `[laravel:fonts] Optimized font fallbacks require the optional "fontaine" package`. The warning is harmless, so say so in the "Résultat attendu" card.
 - **Framework version.** The Vite plugin reports Laravel v13.34.0.
-- **What php.new installs.** php.new installs PHP, Composer and the Laravel installer with one PowerShell command, without admin rights. Node.js and Git are separate installs, and they usually need admin rights.
+- **php.new is not used anymore (observed 1 Oct 2026, three groups).** After a php.new (herd-lite) install, `laravel new` sometimes failed with OpenSSL errors, and no fix inside that install worked reliably.
+- **The install that works.** Install PHP with the official PowerShell command from https://www.php.net/downloads (Windows). The extensions are disabled by default, so enable them in `php.ini`: `extension_dir = "ext"`, curl, fileinfo, intl, mbstring, mysqli, openssl, pdo_mysql, pdo_sqlite, sqlite3 and zip. Then install Composer with the official `Composer-Setup.exe`, and the Laravel installer with `composer global require laravel/installer`.
+- **Composer-Setup.exe (verified 2 Oct 2026).** It offers "Install for me only", which needs no admin rights. It proposes the first `php.exe` found in the PATH, so a leftover herd-lite PHP is picked silently unless step A1 removed it.
+- **PATH conflicts.** A PC that already had php.new keeps `herd-lite` in the user PATH, which can shadow the new PHP. `where.exe php` shows which one wins, and the herd-lite entry must be removed.
+- **Node.js and Git** are separate installs, and they usually need admin rights.
 
 ## 2. Do
 
@@ -69,6 +73,13 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - No GitHub login on lab PCs before S02's credential hygiene.
 - Offer `git commit --amend --reset-author --no-edit` as a conditional block, for when the installer's commit carries another identity.
 
+### Screenshots
+
+- Use screenshots only for steps that are hard to do or hard to fix: installer prompts, installer windows, and output where the student must pick the right line. Plain terminal output is shown as text instead.
+- Store them in `docs/img/sXX/` as `sXX-eN-description.png`, captured on a lab PC, cropped, without personal data, about 1200 px wide at most and compressed.
+- Annotate with at most a box or two and a short French label. The caption repeats what the annotation says, so colour is never the only cue.
+- Markup: `<figure>` containing `<img>` with a relative `src`, a French `alt`, `width`/`height` and `loading="lazy"`, followed by a `<figcaption>`.
+
 ### Markup and accessibility
 
 - Wrap every table in `div.overflow-x-auto`. Key/value tables use `<th scope="row">` in the first column.
@@ -90,7 +101,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - The only exception is one inline sentence, when a missing tool changes a command (for example: no Node.js, so run `php artisan serve`). The step it points to must show that command.
 - **No teacher or peer interaction prompts:** no "prévenez l'enseignant", "expliquez à un voisin", "en binôme" or oral tasks.
 - **No duplicate checks inside one step,** such as a second "where are the tools" block after the version checks.
-- **No hardcoded php.new command.** Link to https://php.new instead.
+- **No hardcoded PHP install command.** The command embeds a PHP version, so link to https://www.php.net/downloads instead. The `php.ini` script and the Composer and Laravel installer commands are version-independent, so they are given in full.
 - **No concept before its session,** even when `laravel13-conventions.md` says "always". For example, routes stay unnamed until S03, because `course-plan.md` sequencing wins.
 - **No checklist item about something done later on the page.**
 
@@ -119,6 +130,9 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - **Save instructor-only material outside the student page.** Examples are the offline project archive `mini-cms-base.tar.gz` on USB and the lab-PC checks.
 
 ## 5. Still to verify on a lab PC
+
+- Whether `Composer-Setup.exe` adds the Composer global `vendor\bin` folder to the PATH.
+- Where the official php.net PowerShell command installs PHP (the folder students should see in `where.exe php`).
 
 - The `laravel new` prompts after the frontend-stack question.
 - The VS Code `code` command on every lab PC.
