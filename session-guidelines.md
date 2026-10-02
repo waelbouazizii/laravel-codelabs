@@ -116,6 +116,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - a sequencing grep: `->name(`, `make:controller`, `@vite`, `php artisan test`, `php artisan migrate`, `git push`, `x-layout`, adapted to the session;
   - a forbidden-phrase grep: "plan de secours", "enseignant", "voisin", "binôme";
   - a URL consistency grep (`127.0.0.1` appears only once, as the equivalence note).
+- When a shared fact changes (install method, URL, prompt wording), grep every docs/session-*.html for the old wording, not only the session being edited.
 - **Check `docs/index.html`** against the Overview table of `course-plan.md`: titles, and a week equal to `ceil(session / 2)`.
 - **Use the quoted-heredoc form for Claude Code prompts,** so that `$`, backticks and quotes reach Claude Code literally:
 

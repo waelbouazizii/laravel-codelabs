@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Validate the generated codelab pages in docs/.
 
-Checks every docs/*.html file for three things:
+Checks every docs/*.html file for four things:
 
   1. Emoji characters anywhere in the file (forbidden by CLAUDE.md).
   2. Anchor links (href="#...") whose target id does not exist in the same
@@ -9,6 +9,8 @@ Checks every docs/*.html file for three things:
   3. A literal "..." inside a <code> block, which means the code sample is
      incomplete instead of the full, runnable snippet CLAUDE.md requires.
      A comment line ending with "..." is allowed (literal file content).
+  4. Outdated install references ("php.new", "herd.laravel.com"): Session 01
+     replaced that flow (the word "herd-lite" stays allowed for its A1 check).
 
 No third-party dependencies: only the Python 3 standard library is used.
 
@@ -25,6 +27,9 @@ from html.parser import HTMLParser
 # (U+1F300-U+1FAFF) and the older "misc symbols" / dingbats block
 # (U+2600-U+27BF) that also carries common emoji such as checkmarks, stars,
 # and weather symbols.
+# Install references dropped with php.new (see session-guidelines.md, section 1).
+FORBIDDEN_STRINGS = ["php.new", "herd.laravel.com"]
+
 EMOJI_PATTERN = re.compile("[\U0001F300-\U0001FAFF☀-➿]")
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -116,6 +121,15 @@ def check_file(path):
                 "line %d: forbidden emoji character %r (U+%04X)"
                 % (lineno, ch, ord(ch))
             )
+
+    # 4. Outdated install references, line by line.
+    for lineno, line in enumerate(content.splitlines(), start=1):
+        lowered = line.lower()
+        for needle in FORBIDDEN_STRINGS:
+            if needle in lowered:
+                problems.append(
+                    'line %d: outdated install reference "%s"' % (lineno, needle)
+                )
 
     # 2 & 3. Parse the markup for ids, internal links, and code blocks.
     parser = PageChecker()
