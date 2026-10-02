@@ -418,6 +418,7 @@
 git credential-manager --version
 git config --get-all credential.helper
 php -v
+php -r "echo implode(' ', array_diff(['curl','fileinfo','intl','mbstring','openssl','pdo_sqlite','sqlite3','zip'], array_map('strtolower', get_loaded_extensions()))), PHP_EOL;"
 composer -V
 node -v
 npm -v
@@ -435,6 +436,7 @@ git ls-remote https://github.com/laravel/laravel.git HEAD</code></pre>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git credential-manager --version</code></td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git: 'credential-manager' is not a git command</code> signifie que Git for Windows a été installé sans Git Credential Manager : <a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie C</a>, réinstallez avec les options par défaut.</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git config --get-all credential.helper</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">manager</code> (ou <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">manager-core</code> sur une installation plus ancienne)</td><td class="px-3 py-2">Si la ligne est vide : <a href="#step-7" class="underline text-brand">Étape 4, partie B</a>, bloc « Seulement si credential.helper est vide ».</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php -v</code></td><td class="px-3 py-2">PHP 8.3 ou plus récent</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A (A1 à A5)</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php -r</code> (extensions)</td><td class="px-3 py-2">Une ligne vide : toutes les extensions nécessaires sont activées.</td><td class="px-3 py-2">Chaque nom affiché est une extension désactivée dans php.ini : <a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A (A3)</a></td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer -V</code></td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, parties A4 et A5</a></td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node -v</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">npm -v</code></td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie B</a>. Sans Node.js, lancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan serve</code> au lieu de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code> (<a href="#step-5" class="underline text-brand">Étape 2, partie C</a>).</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">code --version</code></td><td class="px-3 py-2">Un numéro de version de VS Code</td><td class="px-3 py-2">Ouvrez VS Code depuis le menu Démarrer, puis Fichier &gt; Ouvrir le dossier, et ouvrez les fichiers depuis l'explorateur de VS Code au lieu de la commande <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">code</code>.</td></tr>
@@ -466,7 +468,7 @@ git ls-remote https://github.com/laravel/laravel.git HEAD</code></pre>
               Vérification
             </h3>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
-              <li>Les neuf commandes répondent comme dans le tableau.</li>
+              <li>Les dix commandes répondent comme dans le tableau.</li>
               <li>Pour chaque ligne en échec, vous avez suivi le lien de la dernière colonne.</li>
             </ul>
           </div>
@@ -482,7 +484,7 @@ git ls-remote https://github.com/laravel/laravel.git HEAD</code></pre>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">git: 'credential-manager' is not a git command</code> : GCM n'a pas été installé avec Git for Windows. <code class="bg-white px-1 py-0.5 rounded text-xs">Could not resolve host: github.com</code> : problème de réseau ; vérifiez la connexion du poste et relancez la commande.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">git: 'credential-manager' is not a git command</code> : GCM n'a pas été installé avec Git for Windows. <code class="bg-white px-1 py-0.5 rounded text-xs">Could not resolve host: github.com</code> : problème de réseau ; vérifiez la connexion du poste et relancez la commande. <code class="bg-white px-1 py-0.5 rounded text-xs">could not find driver</code> pendant <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan migrate</code> : l'extension <code class="bg-white px-1 py-0.5 rounded text-xs">pdo_sqlite</code> est désactivée ; la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">php -r</code> du tableau le détecte avant la restauration du projet.</p>
             </div>
           </div>
         </section>
