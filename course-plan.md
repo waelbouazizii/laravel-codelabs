@@ -62,7 +62,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
   4. Navigate the Laravel 13 skeleton (no `app/Http/Kernel.php`, no `routes/api.php`, configuration in `bootstrap/app.php`).
   5. Write a first closure route returning a string and a view.
 - Key commands: `php -v`, `php --ini`, `where.exe php`, `composer -V`, `composer global require laravel/installer`, `laravel --version`, `node -v`, `npm -v`, `git --version`, `laravel new mini-cms`, `composer run dev`, `php artisan --version`, `php artisan route:list`, `php artisan about`.
-- Git (copy-paste only, explained in S02): `git config user.name` and `git config user.email` run inside the project (local, not `--global`, because lab PCs are shared), `git init` (only if the installer did not create the repository), `git add -A`, `git commit -m "lab-01"`, `git tag lab-01`. The email is the student's GitHub account email, or the one they will create the account with before S02. No GitHub account is needed in S01, and students do not log into GitHub on lab PCs.
+- Git (copy-paste only, explained in S02): `git config user.name` and `git config user.email` run inside the project (local, not `--global`: the identity stays specific to this repository, which is required on university lab PCs), `git init` (only if the installer did not create the repository), `git add -A`, `git commit -m "lab-01"`, `git tag lab-01`. The email is the student's GitHub account email, or the one they will create the account with before S02. No GitHub account is needed in S01, and students do not log into GitHub on lab PCs.
 - Reuses: nothing (first session). Assumes PHP basics and HTML/CSS from years 1-2.
 
 ### S02 — Git, GitHub et publication du projet
@@ -71,7 +71,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Learning outcomes:
   1. Explain the working tree / staging area / commit / tag model and read `git status` and `git log --oneline`.
   2. Explain why `.env`, `vendor/`, `node_modules/` and `database/*.sqlite` are ignored and verify `.gitignore`.
-  3. Authenticate to GitHub from a Windows lab PC with Git Credential Manager (HTTPS) and push the project and its tags.
+  3. Authenticate to GitHub from a Windows PC (personal laptop or university lab PC) with Git Credential Manager (HTTPS) and push the project and its tags.
   4. Write a README with setup instructions and screenshots.
 - Key commands: `git status`, `git log --oneline --decorate`, `git branch -M main`, `git remote add origin <url>`, `git push -u origin main`, `git push origin --tags`, `git tag -n`.
 - Sprint: add a second closure route `/a-propos` returning a view (closure routes only, as in S01), README (project description, install steps bash + PowerShell, screenshots in `screenshots/`), push `lab-01` and `lab-01b`.

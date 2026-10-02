@@ -114,7 +114,8 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
 Most students work on their own Windows laptops; a few use the university's
 shared Windows lab PCs. Pages must work on both. Shared-PC hygiene (credential
 cleanup, browser sign-out) is a part labelled "Seulement si vous travaillez
-sur un poste de l'université".
+sur un poste de l'université" (or "Seulement si vous avez travaillé sur un
+poste de l'université" at the end of a session, in the Livrable).
 
 Wherever a command differs between bash and PowerShell, give both — do not
 assume bash-only students can adapt PowerShell-only commands, or vice versa.
