@@ -678,7 +678,7 @@ php --ini</code></pre>
               <figcaption class="text-sm text-gray-600 mt-2">Choisissez « Install for me only » : l'option « for all users » demande des droits administrateur.</figcaption>
             </figure>
             <ol start="3" class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
-              <li>À l'écran « Settings Check », le chemin proposé doit être le même que la première ligne affichée par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where.exe php</code>. S'il contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">herd-lite</code>, cliquez sur Cancel, refaites l'étape A1, puis relancez Composer-Setup.exe.</li>
+              <li>À l'écran « Settings Check », le chemin proposé doit être le même que la première ligne affichée par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where.exe php</code>. S'il contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">herd-lite</code>, cliquez sur Cancel (ou Annuler), refaites l'étape A1, puis relancez Composer-Setup.exe.</li>
             </ol>
             <figure class="mt-4 mb-4">
               <img src="img/s01/s01-e1-composer-php-path.png" alt="Écran Settings Check de Composer-Setup. Le champ du chemin de php.exe est encadré. Deux mentions : le chemin doit être la première ligne de where.exe php ; s'il contient herd-lite, annuler puis refaire l'étape A1." width="810" height="613" loading="lazy" class="max-w-full h-auto rounded border border-gray-200">
@@ -979,7 +979,7 @@ composer run dev</code></pre>
             <p class="text-gray-700">Le terminal affiche plusieurs processus. Vite affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Local: http://localhost:5173/</code> : ce n'est PAS l'adresse du site. Ouvrez l'adresse de la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">APP_URL</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> (équivalente à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code>). Un avertissement <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">[laravel:fonts]</code> mentionnant le paquet « fontaine » peut apparaître : il est sans conséquence, ignorez-le.</p>
             <figure class="mt-4">
               <img src="img/s01/s01-e3-composer-run-dev.png" alt="Sortie de composer run dev. La ligne Local de Vite indique http://localhost:5173, une adresse à ne pas ouvrir. La ligne APP_URL indique http://localhost:8000, l'adresse du site." width="1049" height="228" loading="lazy" class="max-w-full h-auto rounded border border-gray-200">
-              <figcaption class="text-sm text-gray-600 mt-2">Ouvrez l'adresse de la ligne APP_URL (http://localhost:8000), pas celle de Vite (5173). L'avertissement [laravel:fonts] sur « fontaine » est sans conséquence.</figcaption>
+              <figcaption class="text-sm text-gray-600 mt-2">La ligne à ouvrir (APP_URL) est encadrée en vert ; celle du serveur Vite est encadrée en rouge.</figcaption>
             </figure>
           </div>
 
