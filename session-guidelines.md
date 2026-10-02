@@ -115,6 +115,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - every `<i>` has `aria-hidden="true"`, every copy button has an `aria-label`, and the `<div>` tags are balanced;
   - a sequencing grep: `->name(`, `make:controller`, `@vite`, `php artisan test`, `php artisan migrate`, `git push`, `x-layout`, adapted to the session;
   - a forbidden-phrase grep: "plan de secours", "enseignant", "voisin", "binôme";
+  - Install grep: php.new and herd.laravel.com zero hits on every page; herd-lite only in session-01.html, Étape 1, parties A1 and A4.
   - a URL consistency grep (`127.0.0.1` appears only once, as the equivalence note).
 - When a shared fact changes (install method, URL, prompt wording), grep every docs/session-*.html for the old wording, not only the session being edited.
 - **Check `docs/index.html`** against the Overview table of `course-plan.md`: titles, and a week equal to `ceil(session / 2)`.
@@ -134,6 +135,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 
 - Whether `Composer-Setup.exe` adds the Composer global `vendor\bin` folder to the PATH.
 - Where the official php.net PowerShell command installs PHP (the folder students should see in `where.exe php`).
+- The Session 02 php -r extension check (based on get_loaded_extensions) prints an empty line on a PC that completed Session 01, Étape 1, partie A (A3).
 
 - The `laravel new` prompts after the frontend-stack question.
 - The VS Code `code` command on every lab PC.
