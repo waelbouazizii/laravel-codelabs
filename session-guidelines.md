@@ -56,6 +56,13 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - An "Erreurs fréquentes" callout, where useful, gives the exact error text a student will see, in `<code>`, and what it means.
 - Keep each callout to 2-4 sentences.
 
+### Quiz
+
+- Wrong options must be plausible mistakes that students actually make.
+- Vary the position of the correct answer from one question to the next.
+- One idea per question.
+- Count about 1 minute per question; quiz time is included in the step durations.
+
 ### URLs
 
 - Use `http://localhost:8000` everywhere, matching `APP_URL`. Mention `127.0.0.1:8000` once, as an equivalent.
@@ -118,6 +125,9 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - a forbidden-phrase grep: "plan de secours", "enseignant", "voisin", "binôme";
   - Install grep: php.new and herd.laravel.com zero hits on every page; herd-lite only in session-01.html, Étape 1, parties A1 and A4.
   - a URL consistency grep (`127.0.0.1` appears only once, as the equivalence note).
+  - quiz script and CSS identical to the template;
+  - every `.quiz-question` has a unique id, a `data-answer` matching exactly one of its `data-option` values, three options, one `.quiz-feedback` with `aria-live="polite"` and one non-empty `.quiz-explain`;
+  - at least one `[data-quiz-score]` in every page that has questions.
 - When a shared fact changes (install method, URL, prompt wording), grep every docs/session-*.html for the old wording, not only the session being edited.
 - **Check `docs/index.html`** against the Overview table of `course-plan.md`: titles, and a week equal to `ceil(session / 2)`.
 - **Use the quoted-heredoc form for Claude Code prompts,** so that `$`, backticks and quotes reach Claude Code literally:

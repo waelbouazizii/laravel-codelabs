@@ -146,6 +146,23 @@
     }
     #sidebar-overlay.is-open { display: block; }
   }
+
+  /* Quiz */
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: #ffffff;
+    cursor: pointer;
+  }
+  .quiz-option:hover:not(:disabled) { background: #f9fafb; }
+  .quiz-option:focus-visible { outline: 2px solid #ff3d2e; outline-offset: 2px; }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-option.is-correct { border-color: #16a34a; background: #f0fdf4; }
+  .quiz-option.is-wrong { border-color: #e11d48; background: #fff1f2; }
 </style>
 </head>
 <body class="bg-gray-50 text-gray-900 antialiased">
@@ -340,6 +357,34 @@ FROM products
 WHERE is_active = 1
 ORDER BY name ASC;</code></pre>
             </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s00-q01" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Qu'affiche php artisan --version dans le projet de cette session ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
+                <button type="button" class="quiz-option" data-option="a">PHP 8.3.x</button>
+                <button type="button" class="quiz-option" data-option="b">Laravel Framework 13.x</button>
+                <button type="button" class="quiz-option" data-option="c">Composer version 2.x</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>artisan est l'outil en ligne de commande de Laravel : --version affiche la version du framework, pas celle de PHP ou de Composer.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s00-q02" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Dans le modèle Product ci-dessus, que devient la valeur de is_active lue en base ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 2">
+                <button type="button" class="quiz-option" data-option="a">Un booléen PHP (true ou false)</button>
+                <button type="button" class="quiz-option" data-option="b">La chaîne "1" ou "0"</button>
+                <button type="button" class="quiz-option" data-option="c">Un nombre décimal à deux chiffres</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La méthode casts() convertit is_active en booléen ; decimal:2 s'applique à price.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
         </section>
 
@@ -585,6 +630,109 @@ ORDER BY name ASC;</code></pre>
   if (window.Prism) {
     Prism.highlightAll();
   }
+})();
+</script>
+
+<!-- Quiz JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var questions = Array.prototype.slice.call(document.querySelectorAll('.quiz-question'));
+  if (!questions.length) return;
+
+  var storageKey = 'codelab-quiz:' + window.location.pathname;
+
+  function loadState() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveState(state) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch (e) {
+      /* localStorage unavailable: the quiz still works without persistence */
+    }
+  }
+
+  var state = loadState();
+
+  function updateScores() {
+    var firstTry = 0;
+    questions.forEach(function (question) {
+      var entry = state[question.id];
+      if (entry && entry.done && entry.tries === 1) firstTry++;
+    });
+    Array.prototype.slice.call(document.querySelectorAll('[data-quiz-score]')).forEach(function (el) {
+      el.textContent = firstTry + ' / ' + questions.length;
+    });
+  }
+
+  questions.forEach(function (question) {
+    var options = Array.prototype.slice.call(question.querySelectorAll('.quiz-option'));
+    var feedback = question.querySelector('.quiz-feedback');
+    var explain = question.querySelector('.quiz-explain');
+    var answer = question.getAttribute('data-answer');
+
+    function showFeedback(text) {
+      if (!feedback) return;
+      feedback.textContent = text;
+      feedback.hidden = false;
+    }
+
+    function finish() {
+      options.forEach(function (option) {
+        option.disabled = true;
+        if (option.getAttribute('data-option') === answer) {
+          option.classList.add('is-correct');
+        }
+      });
+      if (explain) explain.hidden = false;
+    }
+
+    if (state[question.id] && state[question.id].done) {
+      finish();
+      showFeedback('Bonne réponse.');
+    }
+
+    options.forEach(function (option) {
+      option.addEventListener('click', function () {
+        var entry = state[question.id] || { tries: 0, done: false };
+        if (entry.done) return;
+
+        entry.tries += 1;
+
+        if (option.getAttribute('data-option') === answer) {
+          entry.done = true;
+          showFeedback(entry.tries === 1 ? 'Bonne réponse du premier coup.' : 'Bonne réponse.');
+          finish();
+        } else {
+          option.classList.add('is-wrong');
+          option.disabled = true;
+          showFeedback('Pas encore. Relisez la question et réessayez.');
+        }
+
+        state[question.id] = entry;
+        saveState(state);
+        updateScores();
+      });
+    });
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll('[data-quiz-reset]')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state = {};
+      saveState(state);
+      window.location.reload();
+    });
+  });
+
+  updateScores();
 })();
 </script>
 

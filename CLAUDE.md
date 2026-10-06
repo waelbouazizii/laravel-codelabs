@@ -69,8 +69,13 @@ Awesome 6.4.0**. Decorative icons get `aria-hidden="true"`. Icon-only buttons
   as appropriate.
 - Code text is HTML-escaped (`&lt;`, `&gt;`, `&amp;`, ...).
 - Code is always **complete and runnable** — never truncated with `...` or
-  similar placeholders. If a snippet needs to omit unrelated code for
-  brevity, write the full, real code instead; do not fake it.
+  similar placeholders.
+- A file is shown in full when it is created or restructured. When a later
+  step changes only a few lines, show only those lines with their exact
+  position ("juste après la ligne ...", "avant la dernière accolade"),
+  followed by the complete file in
+  `<details><summary>Voir le fichier complet à ce stade</summary>`.
+  Snippets are never truncated with "...".
 
 ## Copy blocks
 
@@ -95,9 +100,29 @@ Awesome 6.4.0**. Decorative icons get `aria-hidden="true"`. Icon-only buttons
 4. Expected result
 5. Verification
 
+The five elements stay mandatory, but "Expected result" and "Verification"
+may share one card titled "Résultat et vérification" (`fa-list-check`, items
+with `fa-regular fa-square`).
+
 Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
 "Pourquoi ?" callout and, where useful, an "Erreurs fréquentes" callout (see
 `session-guidelines.md` for the class strings).
+
+## Quiz éclair
+
+- Each conceptual guided step, and the Concept Brief, may end with one
+  "Quiz éclair" card placed just before "À retenir".
+- 1 to 3 questions per card, 3 options each, exactly one correct.
+- Question ids follow `quiz-sXX-qNN` and are unique in the page.
+- Every question has an explanation (`.quiz-explain`).
+- Questions test understanding or ask to predict a result, never recall of a
+  command name.
+- No points, no grade: the score line only counts first-try answers.
+- The quiz script and CSS belong to the skeleton (see
+  `templates/codelab-template.html`, step 2, for the card markup) and are
+  never edited in a session. Never put a display utility class (`block`,
+  `flex`, ...) on `.quiz-feedback` or `.quiz-explain`: it would defeat the
+  `hidden` attribute.
 
 ## Session structure (in order)
 
@@ -108,6 +133,9 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
 5. Independent Challenge (30 min)
 6. Assessment Checklist
 7. Deliverable — commit, tag `lab-XX`, README with screenshots (10-15 min)
+
+The written notes self-check of the Concept Brief may be replaced by a Quiz
+éclair.
 
 ## Windows PCs
 
