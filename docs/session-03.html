@@ -773,7 +773,7 @@ Route::get('/heure', function () {
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Target class [PageController] does not exist.</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">use App\Http\Controllers\PageController;</code> est absente de <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">Method App\Http\Controllers\PageController::about does not exist.</code> : le nom de méthode diffère entre <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code> et le contrôleur.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Target class [PageController] does not exist.</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">use App\Http\Controllers\PageController;</code> est absente de <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">Call to undefined method App\Http\Controllers\PageController::about()</code> : le nom de méthode diffère entre <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code> et le contrôleur.</p>
             </div>
           </div>
         </section>
@@ -1115,7 +1115,7 @@ class PageController extends Controller
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Vite manifest not found at:</code> suivi d'un chemin vers <code class="bg-white px-1 py-0.5 rounded text-xs">public\build\manifest.json</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> ne tourne pas dans le Terminal 1. <code class="bg-white px-1 py-0.5 rounded text-xs">Unable to locate a class or view for component [layout].</code> : fichier mal nommé ou hors du dossier <code class="bg-white px-1 py-0.5 rounded text-xs">components</code>. Page sans style : vous êtes sur le port 5173, ou les classes ont une faute de frappe.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Vite manifest not found at:</code> suivi d'un chemin qui se termine par <code class="bg-white px-1 py-0.5 rounded text-xs">build/manifest.json</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> ne tourne pas dans le Terminal 1. <code class="bg-white px-1 py-0.5 rounded text-xs">Unable to locate a class or view for component [layout].</code> : fichier mal nommé ou hors du dossier <code class="bg-white px-1 py-0.5 rounded text-xs">components</code>. Page sans style : vous êtes sur le port 5173, ou les classes ont une faute de frappe.</p>
             </div>
           </div>
         </section>
