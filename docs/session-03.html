@@ -614,6 +614,13 @@ Réponse :</code></pre>
             </ul>
               </div>
             </details>
+            <p class="text-gray-700 mt-4 mb-3">Enregistrez vos notes dans un premier commit :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit des notes de la session 03">Copier</button>
+              <pre><code class="language-bash">git add notes/s03-routes.md
+git commit -m "Commencer les notes de la session 03"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -797,7 +804,7 @@ Route::get('/heure', function () {
               <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de web.php et a-propos.blade.php">Copier</button>
               <pre><code class="language-powershell">code routes\web.php resources\views\a-propos.blade.php</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Remplacez le contenu des deux fichiers par le code de la carte « Code complet », en gardant votre nom et votre groupe dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code>. Enregistrez, puis :</p>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des deux fichiers par le code de la carte « Code complet ». Si votre route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> diffère de celle affichée, gardez la vôtre, ici et à chaque remplacement de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">web.php</code> jusqu'au Défi. Enregistrez, puis :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 2">Copier</button>
@@ -935,7 +942,6 @@ code resources\css\app.css
 code resources\views\components\layout.blade.php resources\views\home.blade.php resources\views\a-propos.blade.php app\Http\Controllers\PageController.php</code></pre>
             </div>
             <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/css/app.css</code> est seulement à lire : il importe déjà Tailwind (ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@import 'tailwindcss';</code>). Ne le modifiez pas.</p>
-            <!-- A VERIFIER : contenu de resources/css/app.css dans le squelette Laravel 13 -->
             <p class="text-gray-700 mb-3">Collez dans les quatre fichiers le code de la carte « Code complet » et enregistrez-les. Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code>.</p>
             <p class="text-sm text-gray-600 mb-2">Seulement si une page affiche encore l'ancien contenu (Bash et PowerShell, identique) :</p>
             <div class="code-block-wrapper mb-4">
@@ -1755,9 +1761,9 @@ Que se passe-t-il si une vue appelle route('posts.show') sans paramètre ?</code
             <p class="text-gray-700 mb-3">Enregistrez les notes, puis :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les commandes de commit des notes">Copier</button>
+              <button class="copy-btn" aria-label="Copier les commandes de commit de la partie 2 du défi">Copier</button>
               <pre><code class="language-bash">git add notes/s03-routes.md
-git commit -m "Ajouter les notes de la session 03"</code></pre>
+git commit -m "Completer les notes de la session 03"</code></pre>
             </div>
             <details>
               <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
@@ -1791,9 +1797,9 @@ git commit -m "Ajouter les notes de la session 03"</code></pre>
               Vérification
             </h3>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
-              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> s'affiche dans le layout.</li>
-              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep -n "href=./" -- resources/views</code> n'affiche rien.</li>
-              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list --except-vendor</code> montre six routes, toutes nommées, toutes vers un contrôleur.</li>
+              <li>La navigation compte quatre liens (Accueil, Articles, Heure, À propos) sur toutes les pages.</li>
+              <li>L'onglet de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> affiche le titre défini dans le slot <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">title</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline -2</code> affiche les deux commits du Défi.</li>
             </ul>
           </div>
 
@@ -1857,7 +1863,7 @@ git commit -m "Ajouter les notes de la session 03"</code></pre>
               <button class="copy-btn" aria-label="Copier la commande d&#x27;ouverture du README">Copier</button>
               <pre><code class="language-bash">code README.md</code></pre>
             </div>
-            <p class="text-gray-700 mb-6">Remplacez les sections « État actuel » et « Routes disponibles » par le premier bloc de la carte « Code complet ». Dans la section des captures, supprimez le titre « Page Bienvenue » et la ligne de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s01-bienvenue.png</code> (la page n'existe plus), puis ajoutez les trois lignes d'images du second bloc. Enregistrez et vérifiez l'aperçu avec Ctrl+Shift+V.</p>
+            <p class="text-gray-700 mb-6">Remplacez les sections « État actuel » et « Routes disponibles » par le premier bloc de la carte « Code complet ». Dans la section des captures, supprimez le titre « Page Bienvenue » et la ligne de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s01-bienvenue.png</code> (la page n'existe plus), puis ajoutez à la fin de la section les trois titres et images du second bloc. Enregistrez et vérifiez l'aperçu avec Ctrl+Shift+V.</p>
             <h4 class="font-medium mt-4 mb-2">C. Commit, tag et push, dans le Terminal 2</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-6">
@@ -1927,11 +1933,19 @@ cmdkey /list | Select-String github</code></pre>
 | GET | `/posts/archive/{year}` | `posts.archive` | `PostController@archive` |
 | GET | `/posts/{slug}` | `posts.show` | `PostController@show` |</code></pre>
             </div>
-            <p class="text-sm text-gray-600 mb-2">Second bloc : lignes d'images à ajouter dans la section des captures.</p>
+            <p class="text-sm text-gray-600 mb-2">Second bloc : trois titres et images à ajouter à la fin de la section des captures.</p>
             <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier les lignes d&#x27;images des captures">Copier</button>
-              <pre><code class="language-markdown">![Page d'accueil avec le layout](screenshots/s03-accueil.png)
+              <button class="copy-btn" aria-label="Copier les titres et images des captures">Copier</button>
+              <pre><code class="language-markdown">### Accueil avec le layout
+
+![Page d'accueil avec le layout](screenshots/s03-accueil.png)
+
+### Liste des articles
+
 ![Liste des articles](screenshots/s03-articles.png)
+
+### Détail d'un article
+
 ![Détail d'un article](screenshots/s03-article.png)</code></pre>
             </div>
           </div>
