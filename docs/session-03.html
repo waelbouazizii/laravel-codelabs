@@ -1,0 +1,2194 @@
+<!DOCTYPE html>
+<!--
+  Codelab skeleton template - Atelier Framework Cote Serveur (ISET Sidi Bouzid)
+
+  DO NOT edit the skeleton markup, the navigation JavaScript, or the pinned
+  asset versions below when authoring a session. Copy this file to
+  docs/session-XX.html and only touch:
+    - <title> and the header/course metadata in the sidebar
+    - the <section class="step-panel" ...> blocks (edit, add, remove)
+  See CLAUDE.md for the full rules.
+-->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 03 - Routage, contrôleurs et layouts Blade - Atelier Framework Côté Serveur</title>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Roboto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.4.0 (pinned) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Prism 1.29.0 (pinned): core theme, language components load on demand via autoloader -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          sidebar: {
+            DEFAULT: '#1f2430',
+            hover: '#2a3040',
+          },
+          brand: {
+            DEFAULT: '#ff3d2e',
+            dark: '#e6291b',
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; }
+
+  /* Sidebar */
+  #sidebar {
+    transition: transform 0.25s ease-in-out;
+  }
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 4px; }
+
+  .step-link { position: relative; }
+  .step-link.is-active {
+    background-color: rgba(255, 61, 46, 0.15);
+    border-left: 3px solid #ff3d2e;
+    color: #ffffff;
+  }
+  .step-link .step-marker {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+  .step-link.is-completed .step-marker .marker-number { display: none; }
+  .step-link.is-completed .step-marker .marker-check { display: flex; }
+  .step-link .step-marker .marker-check { display: none; }
+
+  /* Progress bar */
+  #progress-track {
+    height: 4px;
+    background: #e5e7eb;
+  }
+  #progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff3d2e, #ff8a3d);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+
+  /* Content cards */
+  .md-card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Code blocks + copy button */
+  .code-block-wrapper { position: relative; }
+  .code-block-wrapper pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0.5rem;
+    max-height: 32rem;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: rgba(255,255,255,0.1);
+    color: #d4d4d4;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* Mobile sidebar */
+  @media (max-width: 767px) {
+    #sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transform: translateX(-100%);
+      width: 85vw;
+      max-width: 20rem;
+    }
+    #sidebar.is-open { transform: translateX(0); }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 30;
+    }
+    #sidebar-overlay.is-open { display: block; }
+  }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="bg-sidebar text-gray-300 w-72 flex-shrink-0 flex flex-col overflow-y-auto">
+    <div class="px-5 py-5 border-b border-white/10">
+      <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
+      <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session 03 - Semaine 2</p>
+    </div>
+    <nav class="flex-1 py-2" aria-label="Etapes du codelab">
+      <ul id="step-nav-list">
+        <li>
+          <a href="#step-1" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-1">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">1</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Prérequis et objectifs</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-2" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-2">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">2</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Vérification de l'environnement</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-3" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-3">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">3</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Notions clés</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-4" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-4">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">4</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 1 - Des closures à PageController</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-5" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-5">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">5</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 2 - Nommer les routes</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-6" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-6">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">6</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 3 - Layout Blade et Tailwind</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-7" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-7">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">7</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 4 - PostController et liste des articles</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-8" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-8">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">8</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 5 - Paramètres et contraintes</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-9" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-9">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">9</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 6 - Groupe de routes</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-10" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-10">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">10</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Défi</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-11" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-11">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">11</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Grille d'auto-évaluation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-12" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-12">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">12</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Livrable : tag lab-02</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="px-5 py-4 border-t border-white/10 text-xs text-gray-500">
+      <a href="index.html" class="hover:text-gray-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au sommaire</a>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4">
+      <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-900" aria-label="Ouvrir le menu des etapes">
+        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500">Session 03 - Semaine 2 - Session A</p>
+        <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prev-step" class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2" aria-label="Etape precedente">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Precedent</span>
+        </button>
+        <button id="next-step" class="px-3 py-2 rounded-md bg-brand text-white hover:bg-brand-dark text-sm flex items-center gap-2" aria-label="Etape suivante">
+          <span class="hidden sm:inline">Suivant</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div id="progress-track" class="w-full">
+      <div id="progress-bar"></div>
+    </div>
+
+    <!-- Content -->
+    <main id="content" class="flex-1 overflow-y-auto">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
+
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel is-active" data-title="Prérequis et objectifs">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectifs
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+              <li>Définir des routes avec paramètres, contraintes (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whereNumber</code>) et noms, et générer des URL avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code>.</li>
+              <li>Regrouper des routes avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prefix</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">name</code>, et les inspecter avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code>.</li>
+              <li>Déplacer la logique des closures vers des contrôleurs avec la syntaxe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">[Controller::class, 'methode']</code>.</li>
+              <li>Construire un layout en composant Blade anonyme (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-layout</code>) avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$slot</code> et un slot nommé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">title</code>.</li>
+              <li>Charger Tailwind avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@vite</code>.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Prérequis
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li>Session 02 terminée : dépôt <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> sur GitHub, tags <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> propre.</li>
+              <li>Node.js LTS et npm : obligatoires à partir de cette session (le layout charge Tailwind avec Vite).</li>
+            </ul>
+            <p class="text-gray-700 mb-4">Dans toute la page, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de dossier choisi en session 01 (minuscules, sans espace ni accent).</p>
+            <h4 class="font-medium mb-2">Seulement si le projet n'est pas sur ce poste</h4>
+            <p class="text-gray-700 mb-3">Récupérez-le depuis GitHub avec les étapes d'installation de votre README. Remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">VOTRE-UTILISATEUR</code> par votre nom d'utilisateur GitHub.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le projet n'est pas sur ce poste, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de récupération du projet">Copier</button>
+              <pre><code class="language-bash">mkdir -p /c/dev/prenom-nom
+cd /c/dev/prenom-nom
+git clone https://github.com/VOTRE-UTILISATEUR/mini-cms.git
+cd mini-cms
+composer install
+npm install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite
+php artisan migrate</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le projet n'est pas sur ce poste, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de récupération du projet">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force C:\dev\prenom-nom
+cd C:\dev\prenom-nom
+git clone https://github.com/VOTRE-UTILISATEUR/mini-cms.git
+cd mini-cms
+composer install
+npm install
+copy .env.example .env
+php artisan key:generate
+New-Item database\database.sqlite -ItemType File
+php artisan migrate</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">La dernière ligne de chaque bloc crée les tables par défaut de Laravel ; elle est expliquée en session 05.</p>
+            <p class="text-gray-700 mb-3">Un dépôt cloné ne contient pas votre identité Git locale. Utilisez la même adresse qu'en session 02 (celle de votre compte GitHub) :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le projet n'est pas sur ce poste, ensuite (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de configuration de l&#x27;identité Git">Copier</button>
+              <pre><code class="language-bash">git config user.name "Prenom Nom"
+git config user.email "votre.adresse@exemple.com"</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur un poste de l'université, faites <a href="#step-12" class="underline font-medium">la partie D du Livrable</a> avant de quitter la salle, même si vous n'avez pas terminé.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+              Déroulement
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Partie</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Durée</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Vérification de l'environnement</td><td class="px-3 py-2">10 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Notions clés</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Étapes 1 à 6</td><td class="px-3 py-2">120 min (20, 15, 30, 20, 20, 15)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Défi</td><td class="px-3 py-2">30 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Livrable</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr><td class="px-3 py-2"><span class="font-medium">Total</span></td><td class="px-3 py-2"><span class="font-medium">3h10</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-eraser text-brand" aria-hidden="true"></i>
+              Ce qui disparaît aujourd'hui
+            </h3>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Les routes d'exercice <code class="bg-white px-1 py-0.5 rounded text-xs">/bonjour</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">/bonjour-court</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">/bienvenue</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">/version</code> sont supprimées ; elles restent consultables avec le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-01</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" data-title="Vérification de l'environnement (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Vérifier les outils et l'état du dépôt, puis démarrer l'application.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Dans le Terminal 1 :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de vérification de l&#x27;environnement">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+git --version
+php -v
+composer -V
+node -v
+npm -v
+code --version
+git status
+git tag
+git remote -v
+composer run dev</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de vérification de l&#x27;environnement">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+git --version
+php -v
+composer -V
+node -v
+npm -v
+code --version
+git status
+git tag
+git remote -v
+composer run dev</code></pre>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Commande</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Résultat attendu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Si la commande échoue</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git --version</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git version 2.x</code></td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie C</a> (installer Git)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php -v</code></td><td class="px-3 py-2">PHP 8.3 ou plus</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer -V</code></td><td class="px-3 py-2">Composer version 2.x</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node -v</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">npm -v</code></td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2"><a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie B</a>. Obligatoire aujourd'hui.</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">code --version</code></td><td class="px-3 py-2">Un numéro de version</td><td class="px-3 py-2">Ouvrez VS Code depuis le menu Démarrer, puis Fichier &gt; Ouvrir le dossier, et ouvrez les fichiers depuis l'explorateur de VS Code au lieu de la commande <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">code</code>.</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git status</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">nothing to commit, working tree clean</code></td><td class="px-3 py-2">Validez d'abord votre travail de la session 02 : <a href="session-02.html#step-13" class="underline text-brand">Session 02, Livrable, partie A</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git tag</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-01</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-01b</code></td><td class="px-3 py-2"><a href="session-02.html#step-13" class="underline text-brand">Session 02, Livrable, partie B</a></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git remote -v</code></td><td class="px-3 py-2">Deux lignes <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">origin</code> vers votre dépôt GitHub</td><td class="px-3 py-2"><a href="session-02.html#step-7" class="underline text-brand">Session 02, Étape 4</a></td></tr>
+                  <tr><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code></td><td class="px-3 py-2">Une ligne <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">APP_URL: http://localhost:8000</code></td><td class="px-3 py-2">Relisez le message ; sans dossier <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">node_modules</code>, arrêtez avec Ctrl+C, lancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">npm install</code>, puis relancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code>.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette partie vérifie uniquement les outils et le dépôt.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700 mb-3">Chaque commande affiche le résultat de la deuxième colonne du tableau. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> affiche la page d'accueil Laravel (équivalent : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://127.0.0.1:8000</code>).</p>
+            <p class="text-gray-700 mb-3">L'avertissement <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">[laravel:fonts]</code> à propos de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">fontaine</code> est sans conséquence.</p>
+            <p class="text-gray-700">Laissez le Terminal 1 ouvert : toutes les commandes suivantes se tapent dans le Terminal 2. Dans VS Code, ouvrez le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> (Fichier &gt; Ouvrir le dossier), puis Terminal &gt; Nouveau terminal : le Terminal 2 s'ouvre dans le dossier du projet.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Les commandes répondent comme dans le tableau.</li>
+              <li>Pour chaque ligne en échec, vous avez suivi la dernière colonne.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> répond et le Terminal 1 reste ouvert.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> lance le serveur PHP et Vite ensemble. À partir de l'Étape 3, sans Vite, les pages ne s'affichent plus.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-route text-brand" aria-hidden="true"></i>
+              Le trajet d'une requête aujourd'hui
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+              <li>Le navigateur demande une URL.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> trouve la route : URI, contrainte, nom.</li>
+              <li>La méthode du contrôleur prépare les données.</li>
+              <li>La vue Blade affiche ces données.</li>
+              <li>Le layout <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-layout</code> entoure la vue (en-tête, navigation, pied de page).</li>
+              <li>Laravel renvoie la réponse HTML au navigateur.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-book text-brand" aria-hidden="true"></i>
+              Vocabulaire
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Terme</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Définition</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">URI</th><td class="px-3 py-2">Le chemin demandé, par exemple <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/routes-et-controleurs</code></td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Paramètre</th><td class="px-3 py-2">Segment variable <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">{slug}</code>, transmis à la méthode</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Contrainte</th><td class="px-3 py-2">Règle sur un paramètre (<code class="bg-gray-100 px-1 py-0.5 rounded text-xs">whereNumber</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">where</code>) ; si elle échoue, la route ne correspond pas et Laravel répond 404</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Nom</th><td class="px-3 py-2">Identifiant stable (<code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.show</code>) utilisé par <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">route()</code> ; l'URI peut changer sans casser les liens</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Contrôleur</th><td class="px-3 py-2">Classe de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">app/Http/Controllers</code> qui regroupe les actions d'un même sujet</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Layout</th><td class="px-3 py-2">Composant <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">resources/views/components/layout.blade.php</code> ; <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">{{ $slot }}</code> reçoit le contenu de la page</td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Slot nommé</th><td class="px-3 py-2">Zone supplémentaire (<code class="bg-gray-100 px-1 py-0.5 rounded text-xs">title</code>) remplie avec <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">x-slot:title</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-brand" aria-hidden="true"></i>
+              Auto-vérification écrite
+            </h3>
+            <p class="text-gray-700 mb-3">Dans le Terminal 2, créez le fichier de notes de la session et ouvrez-le dans VS Code.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création du fichier de notes">Copier</button>
+              <pre><code class="language-bash">mkdir -p notes
+code notes/s03-routes.md</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création du fichier de notes">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force notes
+code notes\s03-routes.md</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s03-routes.md</code> (contenu complet) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le contenu du fichier de notes">Copier</button>
+              <pre><code class="language-markdown"># Session 03 - Routes, contrôleurs et layout
+
+## 1. Prédictions
+
+Dans Route::get('/posts/{slug}', [PostController::class, 'show']), quelle méthode reçoit la requête /posts/bonjour et que vaut son paramètre ?
+
+Réponse :
+
+Quelle différence entre l'URI d'une route et son nom ?
+
+Réponse :
+
+Dans un layout, à quoi sert {{ $slot }} ?
+
+Réponse :</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Répondez dans le fichier et enregistrez-le. Comparez ensuite seulement avec le corrigé.</p>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <div class="mt-2">
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController::show</code> reçoit la chaîne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">"bonjour"</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$slug</code>.</li>
+              <li>L'URI est ce que tape le visiteur ; le nom est ce qu'utilise le code avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$slot</code> est l'emplacement où le layout insère le contenu placé entre les balises <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-layout</code>.</li>
+            </ul>
+              </div>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Rédiger vos réponses avant d'ouvrir le corrigé vous oblige à vérifier ce que vous avez réellement compris. Comparer ensuite révèle précisément les notions à revoir.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 4 -->
+        <section id="step-4" class="step-panel" data-title="Étape 1 - Des closures à PageController (20 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Supprimer les quatre routes d'exercice et confier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code> à un contrôleur.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de création du contrôleur PageController">Copier</button>
+              <pre><code class="language-bash">php artisan make:controller PageController
+git rm resources/views/bienvenue.blade.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git rm</code> supprime le fichier et enregistre la suppression pour le prochain commit.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture de PageController et web.php">Copier</button>
+              <pre><code class="language-bash">code app/Http/Controllers/PageController.php routes/web.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de PageController et web.php">Copier</button>
+              <pre><code class="language-powershell">code app\Http\Controllers\PageController.php routes\web.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des deux fichiers par le code de la carte « Code complet » (lisez d'abord son avertissement). Enregistrez les deux fichiers, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 1">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/bonjour</code> dans le navigateur, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 1">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Deplacer les pages vers PageController"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900">Les deux blocs remplacent tout le contenu des fichiers. Avant de coller, notez votre nom et votre groupe (route <code class="bg-white px-1 py-0.5 rounded text-xs">/a-propos</code> actuelle) et reportez-les dans <code class="bg-white px-1 py-0.5 rounded text-xs">PageController</code>. Si votre route <code class="bg-white px-1 py-0.5 rounded text-xs">/heure</code> diffère de celle-ci, gardez la vôtre.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PageController.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier PageController.php de l&#x27;étape 1">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+class PageController extends Controller
+{
+    public function home()
+    {
+        return view('welcome');
+    }
+
+    public function about()
+    {
+        return view('a-propos', [
+            'auteur' =&gt; 'Prenom Nom',
+            'groupe' =&gt; 'MDW32',
+        ]);
+    }
+}</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 1">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home']);
+
+Route::get('/a-propos', [PageController::class, 'about']);
+
+Route::get('/heure', function () {
+    return view('heure', [
+        'heure' =&gt; now()-&gt;format('H:i'),
+        'date' =&gt; now()-&gt;format('d/m/Y'),
+    ]);
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">make:controller</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Controller [app/Http/Controllers/PageController.php] created successfully.</code> (sous Windows, le chemin peut s'afficher avec des barres obliques inverses).</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche trois lignes : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/</code> vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController@home</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos</code> vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController@about</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure</code> sans action nommée.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> s'affichent comme avant ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> répond 404.</li>
+              <li>Sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code>, le lien Bienvenue mène à une 404 : il est écrit à la main. <a href="#step-5" class="underline text-brand">L'Étape 2</a> corrige ce problème.</li>
+            </ul>
+            <!-- A VERIFIER : --except-vendor masque up et storage/{path} en Laravel 13 -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --except-vendor</code> affiche les trois lignes attendues.</li>
+              <li>Votre nom et votre groupe s'affichent sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bonjour</code> répond 404.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un contrôleur regroupe les actions d'un même sujet ; <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code> redevient un sommaire lisible. <code class="bg-white px-1 py-0.5 rounded text-xs">[PageController::class, 'about']</code> est un tableau PHP vérifiable par l'éditeur, contrairement à l'ancienne chaîne <code class="bg-white px-1 py-0.5 rounded text-xs">'PageController@about'</code>.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Target class [PageController] does not exist.</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">use App\Http\Controllers\PageController;</code> est absente de <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">Method App\Http\Controllers\PageController::about does not exist.</code> : le nom de méthode diffère entre <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code> et le contrôleur.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 5 -->
+        <section id="step-5" class="step-panel" data-title="Étape 2 - Nommer les routes (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Donner un nom à chaque route de contrôleur et générer les liens avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture de web.php et a-propos.blade.php">Copier</button>
+              <pre><code class="language-bash">code routes/web.php resources/views/a-propos.blade.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de web.php et a-propos.blade.php">Copier</button>
+              <pre><code class="language-powershell">code routes\web.php resources\views\a-propos.blade.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des deux fichiers par le code de la carte « Code complet », en gardant votre nom et votre groupe dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code>. Enregistrez, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 2">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> et cliquez sur le lien Accueil, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 2">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Nommer les routes home et about"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 2">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home'])-&gt;name('home');
+
+Route::get('/a-propos', [PageController::class, 'about'])-&gt;name('about');
+
+Route::get('/heure', function () {
+    return view('heure', [
+        'heure' =&gt; now()-&gt;format('H:i'),
+        'date' =&gt; now()-&gt;format('d/m/Y'),
+    ]);
+});</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier a-propos.blade.php de l&#x27;étape 2">Copier</button>
+              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;À propos - Mini-CMS&lt;/title&gt;
+    &lt;style&gt;
+        body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 3rem auto; padding: 0 1rem; color: #1f2937; line-height: 1.6; }
+        h1 { color: #e6291b; }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;À propos de Mini-CMS&lt;/h1&gt;
+    &lt;p&gt;Mini-CMS est le projet fil rouge de l'Atelier Framework Côté Serveur (Laravel 13).&lt;/p&gt;
+    &lt;p&gt;Auteur : {{ $auteur }}&lt;/p&gt;
+    &lt;p&gt;Groupe : {{ $groupe }}&lt;/p&gt;
+    &lt;p&gt;
+        &lt;a href="{{ route('home') }}"&gt;Accueil&lt;/a&gt; |
+        &lt;a href="/heure"&gt;Heure&lt;/a&gt;
+    &lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="text-gray-700">Le lien <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> reste écrit à la main jusqu'au Défi, où la route recevra un nom.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">home</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">about</code> avant le symbole qui précède l'action.</li>
+              <li>Sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code>, le lien Accueil pointe vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> (survolez-le).</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Deux noms apparaissent dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code>.</li>
+              <li>Le clic sur Accueil ouvre la page d'accueil.</li>
+              <li>Plus aucun lien vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/bienvenue</code>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">route('about')</code> produit l'URL à partir du nom. Si <code class="bg-white px-1 py-0.5 rounded text-xs">/a-propos</code> devient <code class="bg-white px-1 py-0.5 rounded text-xs">/about</code> un jour, aucune vue n'est à modifier. C'est aussi ce qui a manqué au lien Bienvenue de l'Étape 1.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Route [home] not defined.</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">-&gt;name('home')</code> est absent, contient une faute de frappe, ou <code class="bg-white px-1 py-0.5 rounded text-xs">web.php</code> n'est pas enregistré.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 6 -->
+        <section id="step-6" class="step-panel" data-title="Étape 3 - Layout Blade et Tailwind (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Écrire une seule fois l'en-tête, la navigation et le pied de page dans un composant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-layout</code>, et y charger Tailwind.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash d&#x27;ouverture des fichiers du layout">Copier</button>
+              <pre><code class="language-bash">mkdir -p resources/views/components
+code resources/css/app.css
+code resources/views/components/layout.blade.php resources/views/home.blade.php resources/views/a-propos.blade.php app/Http/Controllers/PageController.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell d&#x27;ouverture des fichiers du layout">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force resources\views\components
+code resources\css\app.css
+code resources\views\components\layout.blade.php resources\views\home.blade.php resources\views\a-propos.blade.php app\Http\Controllers\PageController.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/css/app.css</code> est seulement à lire : il importe déjà Tailwind (ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@import 'tailwindcss';</code>). Ne le modifiez pas.</p>
+            <!-- A VERIFIER : contenu de resources/css/app.css dans le squelette Laravel 13 -->
+            <p class="text-gray-700 mb-3">Collez dans les quatre fichiers le code de la carte « Code complet » et enregistrez-les. Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code>.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si une page affiche encore l'ancien contenu (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande view:clear">Copier</button>
+              <pre><code class="language-bash">php artisan view:clear</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Quand les deux pages s'affichent avec le layout :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 3">Copier</button>
+              <pre><code class="language-bash">git rm resources/views/welcome.blade.php
+git add -A
+git commit -m "Ajouter le layout x-layout avec Tailwind"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/layout.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier layout.blade.php de l&#x27;étape 3">Copier</button>
+              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;{{ $title ?? 'Mini-CMS' }}&lt;/title&gt;
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+&lt;/head&gt;
+&lt;body class="min-h-screen bg-gray-50 text-gray-900"&gt;
+    &lt;header class="border-b border-gray-200 bg-white"&gt;
+        &lt;nav class="mx-auto flex max-w-3xl items-center gap-6 px-4 py-4"&gt;
+            &lt;a href="{{ route('home') }}" class="text-lg font-bold"&gt;Mini-CMS&lt;/a&gt;
+            &lt;a href="{{ route('home') }}" class="text-gray-600 hover:text-gray-900"&gt;Accueil&lt;/a&gt;
+            &lt;a href="{{ route('about') }}" class="text-gray-600 hover:text-gray-900"&gt;À propos&lt;/a&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main class="mx-auto max-w-3xl px-4 py-8"&gt;
+        {{ $slot }}
+    &lt;/main&gt;
+
+    &lt;footer class="mx-auto max-w-3xl px-4 py-6 text-sm text-gray-500"&gt;
+        Mini-CMS - Atelier Framework Côté Serveur
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/home.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier home.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;Accueil - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;h1 class="text-3xl font-bold"&gt;Bienvenue sur Mini-CMS&lt;/h1&gt;
+    &lt;p class="mt-4 text-gray-700"&gt;Mini-CMS est le projet fil rouge de l'Atelier Framework Côté Serveur (Laravel 13).&lt;/p&gt;
+    &lt;p class="mt-6"&gt;
+        &lt;a href="{{ route('about') }}" class="text-red-600 underline"&gt;En savoir plus sur le projet&lt;/a&gt;
+    &lt;/p&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier a-propos.blade.php de l&#x27;étape 3">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;À propos - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;h1 class="text-3xl font-bold"&gt;À propos de Mini-CMS&lt;/h1&gt;
+    &lt;p class="mt-4 text-gray-700"&gt;Mini-CMS est le projet fil rouge de l'Atelier Framework Côté Serveur (Laravel 13).&lt;/p&gt;
+    &lt;p class="mt-2 text-gray-700"&gt;Auteur : {{ $auteur }}&lt;/p&gt;
+    &lt;p class="mt-2 text-gray-700"&gt;Groupe : {{ $groupe }}&lt;/p&gt;
+    &lt;p class="mt-6"&gt;
+        &lt;a href="/heure" class="text-red-600 underline"&gt;Heure du serveur&lt;/a&gt;
+    &lt;/p&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PageController.php</code> :</p>
+            <p class="text-gray-700 mb-3">Une seule ligne change : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">view('welcome')</code> devient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">view('home')</code>. Gardez votre nom et votre groupe.</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier PageController.php de l&#x27;étape 3">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+class PageController extends Controller
+{
+    public function home()
+    {
+        return view('home');
+    }
+
+    public function about()
+    {
+        return view('a-propos', [
+            'auteur' =&gt; 'Prenom Nom',
+            'groupe' =&gt; 'MDW32',
+        ]);
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-book-open text-brand" aria-hidden="true"></i>
+              Lecture seule : l'alternative classique @extends
+            </h3>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Ne créez pas ces fichiers : ils servent à reconnaître cette syntaxe dans d'anciens projets.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/layouts/app.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;@yield('title', 'Mini-CMS')&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;main&gt;
+        @yield('content')
+    &lt;/main&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code> :</p>
+            <div class="code-block-wrapper ">
+              <pre><code class="language-markup">@extends('layouts.app')
+
+@section('title', 'À propos - Mini-CMS')
+
+@section('content')
+    &lt;h1&gt;À propos de Mini-CMS&lt;/h1&gt;
+@endsection</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> partagent la même barre de navigation, un fond gris clair et un titre en gras. L'onglet du navigateur affiche « Accueil - Mini-CMS » puis « À propos - Mini-CMS ».</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>La navigation est identique sur les deux pages.</li>
+              <li>Les titres d'onglet sont différents.</li>
+              <li>Le texte est stylé par Tailwind.</li>
+              <li>L'adresse est sur le port 8000, et non 5173.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un composant anonyme est un simple fichier de <code class="bg-white px-1 py-0.5 rounded text-xs">resources/views/components</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">x-layout</code> désigne <code class="bg-white px-1 py-0.5 rounded text-xs">layout.blade.php</code>. Tout ce qui est entre les balises arrive dans <code class="bg-white px-1 py-0.5 rounded text-xs">$slot</code>, et <code class="bg-white px-1 py-0.5 rounded text-xs">x-slot:title</code> remplit la variable <code class="bg-white px-1 py-0.5 rounded text-xs">$title</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">@vite</code> insère les balises CSS et JS servies par Vite.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Vite manifest not found at:</code> suivi d'un chemin vers <code class="bg-white px-1 py-0.5 rounded text-xs">public\build\manifest.json</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> ne tourne pas dans le Terminal 1. <code class="bg-white px-1 py-0.5 rounded text-xs">Unable to locate a class or view for component [layout].</code> : fichier mal nommé ou hors du dossier <code class="bg-white px-1 py-0.5 rounded text-xs">components</code>. Page sans style : vous êtes sur le port 5173, ou les classes ont une faute de frappe.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 7 -->
+        <section id="step-7" class="step-panel" data-title="Étape 4 - PostController et liste des articles (20 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Afficher une liste d'articles stockés dans un tableau PHP (la base de données arrive en session 05).</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création de PostController">Copier</button>
+              <pre><code class="language-bash">php artisan make:controller PostController
+mkdir -p resources/views/posts
+code app/Http/Controllers/PostController.php resources/views/posts/index.blade.php routes/web.php resources/views/components/layout.blade.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création de PostController">Copier</button>
+              <pre><code class="language-powershell">php artisan make:controller PostController
+New-Item -ItemType Directory -Force resources\views\posts
+code app\Http\Controllers\PostController.php resources\views\posts\index.blade.php routes\web.php resources\views\components\layout.blade.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des quatre fichiers par le code de la carte « Code complet ». Enregistrez, ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code>, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor
+git add -A
+git commit -m "Ajouter PostController et la liste des articles"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PostController.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier PostController.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+class PostController extends Controller
+{
+    private function posts(): array
+    {
+        return [
+            'decouvrir-laravel-13' =&gt; [
+                'title' =&gt; 'Découvrir Laravel 13',
+                'year' =&gt; 2026,
+                'body' =&gt; 'Laravel 13 simplifie la structure du projet : la configuration des middlewares et des exceptions se fait dans bootstrap/app.php.',
+            ],
+            'routes-et-controleurs' =&gt; [
+                'title' =&gt; 'Routes et contrôleurs',
+                'year' =&gt; 2026,
+                'body' =&gt; 'Une route associe une URL à une méthode de contrôleur. Le contrôleur prépare les données, la vue les affiche.',
+            ],
+            'premiers-pas-avec-blade' =&gt; [
+                'title' =&gt; 'Premiers pas avec Blade',
+                'year' =&gt; 2025,
+                'body' =&gt; 'Blade est le moteur de vues de Laravel. Les doubles accolades échappent toujours le contenu affiché.',
+            ],
+        ];
+    }
+
+    public function index()
+    {
+        return view('posts.index', [
+            'heading' =&gt; 'Tous les articles',
+            'posts' =&gt; $this-&gt;posts(),
+        ]);
+    }
+}</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/index.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier posts/index.blade.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;{{ $heading }} - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;h1 class="text-3xl font-bold"&gt;{{ $heading }}&lt;/h1&gt;
+
+    &lt;ul class="mt-6 space-y-4"&gt;
+        @foreach ($posts as $slug =&gt; $post)
+            &lt;li class="rounded border border-gray-200 bg-white p-4"&gt;
+                &lt;p class="text-xl font-medium"&gt;{{ $post['title'] }}&lt;/p&gt;
+                &lt;p class="mt-1 text-sm text-gray-500"&gt;Publié en {{ $post['year'] }}&lt;/p&gt;
+            &lt;/li&gt;
+        @endforeach
+    &lt;/ul&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home'])-&gt;name('home');
+
+Route::get('/a-propos', [PageController::class, 'about'])-&gt;name('about');
+
+Route::get('/heure', function () {
+    return view('heure', [
+        'heure' =&gt; now()-&gt;format('H:i'),
+        'date' =&gt; now()-&gt;format('d/m/Y'),
+    ]);
+});
+
+Route::get('/posts', [PostController::class, 'index'])-&gt;name('posts.index');</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/layout.blade.php</code> (une ligne ajoutée dans la navigation, entre Accueil et À propos) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier layout.blade.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
+&lt;html lang="fr"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;{{ $title ?? 'Mini-CMS' }}&lt;/title&gt;
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+&lt;/head&gt;
+&lt;body class="min-h-screen bg-gray-50 text-gray-900"&gt;
+    &lt;header class="border-b border-gray-200 bg-white"&gt;
+        &lt;nav class="mx-auto flex max-w-3xl items-center gap-6 px-4 py-4"&gt;
+            &lt;a href="{{ route('home') }}" class="text-lg font-bold"&gt;Mini-CMS&lt;/a&gt;
+            &lt;a href="{{ route('home') }}" class="text-gray-600 hover:text-gray-900"&gt;Accueil&lt;/a&gt;
+            &lt;a href="{{ route('posts.index') }}" class="text-gray-600 hover:text-gray-900"&gt;Articles&lt;/a&gt;
+            &lt;a href="{{ route('about') }}" class="text-gray-600 hover:text-gray-900"&gt;À propos&lt;/a&gt;
+        &lt;/nav&gt;
+    &lt;/header&gt;
+
+    &lt;main class="mx-auto max-w-3xl px-4 py-8"&gt;
+        {{ $slot }}
+    &lt;/main&gt;
+
+    &lt;footer class="mx-auto max-w-3xl px-4 py-6 text-sm text-gray-500"&gt;
+        Mini-CMS - Atelier Framework Côté Serveur
+    &lt;/footer&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code> liste trois articles.</li>
+              <li>Le lien Articles apparaît sur toutes les pages.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController@index</code>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Trois titres d'articles s'affichent.</li>
+              <li>La navigation compte trois liens (Accueil, Articles, À propos) sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/a-propos</code>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">view('posts.index')</code> désigne <code class="bg-white px-1 py-0.5 rounded text-xs">resources/views/posts/index.blade.php</code> : le point remplace la barre oblique. <code class="bg-white px-1 py-0.5 rounded text-xs">@foreach</code> parcourt le tableau ; les sessions 04 et 05 enrichiront cette boucle. Le nom <code class="bg-white px-1 py-0.5 rounded text-xs">posts.index</code> suit la convention <code class="bg-white px-1 py-0.5 rounded text-xs">ressource.action</code> que Laravel utilisera pour tout le CRUD.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">View [posts.index] not found.</code> : dossier <code class="bg-white px-1 py-0.5 rounded text-xs">posts</code> absent ou fichier mal nommé. <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined variable $heading</code> : clé absente du tableau passé à <code class="bg-white px-1 py-0.5 rounded text-xs">view()</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 8 -->
+        <section id="step-8" class="step-panel" data-title="Étape 5 - Paramètres et contraintes (20 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Afficher un article par son slug, filtrer par année, et répondre 404 quand rien ne correspond.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-bash">code app/Http/Controllers/PostController.php resources/views/posts/index.blade.php resources/views/posts/show.blade.php routes/web.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-powershell">code app\Http\Controllers\PostController.php resources\views\posts\index.blade.php resources\views\posts\show.blade.php routes\web.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des quatre fichiers par le code de la carte « Code complet » (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show.blade.php</code> est nouveau). Enregistrez, ouvrez les six URL du tableau « Résultat attendu », puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor
+git add -A
+git commit -m "Ajouter le detail et l'archive des articles"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PostController.php</code> (méthodes `archive` et `show` ajoutées) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier PostController.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+class PostController extends Controller
+{
+    private function posts(): array
+    {
+        return [
+            'decouvrir-laravel-13' =&gt; [
+                'title' =&gt; 'Découvrir Laravel 13',
+                'year' =&gt; 2026,
+                'body' =&gt; 'Laravel 13 simplifie la structure du projet : la configuration des middlewares et des exceptions se fait dans bootstrap/app.php.',
+            ],
+            'routes-et-controleurs' =&gt; [
+                'title' =&gt; 'Routes et contrôleurs',
+                'year' =&gt; 2026,
+                'body' =&gt; 'Une route associe une URL à une méthode de contrôleur. Le contrôleur prépare les données, la vue les affiche.',
+            ],
+            'premiers-pas-avec-blade' =&gt; [
+                'title' =&gt; 'Premiers pas avec Blade',
+                'year' =&gt; 2025,
+                'body' =&gt; 'Blade est le moteur de vues de Laravel. Les doubles accolades échappent toujours le contenu affiché.',
+            ],
+        ];
+    }
+
+    public function index()
+    {
+        return view('posts.index', [
+            'heading' =&gt; 'Tous les articles',
+            'posts' =&gt; $this-&gt;posts(),
+        ]);
+    }
+
+    public function archive(string $year)
+    {
+        $posts = array_filter(
+            $this-&gt;posts(),
+            fn (array $post) =&gt; $post['year'] === (int) $year
+        );
+
+        return view('posts.index', [
+            'heading' =&gt; 'Articles de '.$year,
+            'posts' =&gt; $posts,
+        ]);
+    }
+
+    public function show(string $slug)
+    {
+        $posts = $this-&gt;posts();
+
+        if (! array_key_exists($slug, $posts)) {
+            abort(404);
+        }
+
+        return view('posts.show', [
+            'post' =&gt; $posts[$slug],
+        ]);
+    }
+}</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/index.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier posts/index.blade.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;{{ $heading }} - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;h1 class="text-3xl font-bold"&gt;{{ $heading }}&lt;/h1&gt;
+
+    &lt;ul class="mt-6 space-y-4"&gt;
+        @foreach ($posts as $slug =&gt; $post)
+            &lt;li class="rounded border border-gray-200 bg-white p-4"&gt;
+                &lt;a href="{{ route('posts.show', $slug) }}" class="text-xl font-medium text-red-600 hover:underline"&gt;{{ $post['title'] }}&lt;/a&gt;
+                &lt;p class="mt-1 text-sm text-gray-500"&gt;
+                    Publié en
+                    &lt;a href="{{ route('posts.archive', $post['year']) }}" class="underline"&gt;{{ $post['year'] }}&lt;/a&gt;
+                &lt;/p&gt;
+            &lt;/li&gt;
+        @endforeach
+    &lt;/ul&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/show.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier posts/show.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;{{ $post['title'] }} - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;article&gt;
+        &lt;h1 class="text-3xl font-bold"&gt;{{ $post['title'] }}&lt;/h1&gt;
+        &lt;p class="mt-1 text-sm text-gray-500"&gt;Publié en {{ $post['year'] }}&lt;/p&gt;
+        &lt;p class="mt-6 leading-relaxed text-gray-700"&gt;{{ $post['body'] }}&lt;/p&gt;
+    &lt;/article&gt;
+
+    &lt;p class="mt-8"&gt;
+        &lt;a href="{{ route('posts.index') }}" class="text-red-600 underline"&gt;Retour à la liste des articles&lt;/a&gt;
+    &lt;/p&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home'])-&gt;name('home');
+
+Route::get('/a-propos', [PageController::class, 'about'])-&gt;name('about');
+
+Route::get('/heure', function () {
+    return view('heure', [
+        'heure' =&gt; now()-&gt;format('H:i'),
+        'date' =&gt; now()-&gt;format('d/m/Y'),
+    ]);
+});
+
+Route::get('/posts', [PostController::class, 'index'])-&gt;name('posts.index');
+
+Route::get('/posts/archive/{year}', [PostController::class, 'archive'])
+    -&gt;whereNumber('year')
+    -&gt;name('posts.archive');
+
+Route::get('/posts/{slug}', [PostController::class, 'show'])
+    -&gt;where('slug', '[a-z0-9-]+')
+    -&gt;name('posts.show');</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">URL</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Réponse</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Pourquoi</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000/posts/routes-et-controleurs</code></td><td class="px-3 py-2">Page de l'article</td><td class="px-3 py-2">Le slug est présent dans le tableau</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000/posts/archive/2025</code></td><td class="px-3 py-2">Un seul article</td><td class="px-3 py-2">Filtre sur l'année</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000/posts/archive/2030</code></td><td class="px-3 py-2">Titre et liste vide</td><td class="px-3 py-2">Aucune année ne correspond (la session 04 affichera un message)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000/posts/archive/abc</code></td><td class="px-3 py-2">404</td><td class="px-3 py-2">La contrainte <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">whereNumber</code> rejette la route</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000/posts/Article</code></td><td class="px-3 py-2">404</td><td class="px-3 py-2">La contrainte <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">where</code> refuse les majuscules</td></tr>
+                  <tr><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000/posts/article-inconnu</code></td><td class="px-3 py-2">404</td><td class="px-3 py-2">La route correspond, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">abort(404)</code> est exécuté dans <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">show()</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Les six URL du tableau répondent comme indiqué.</li>
+              <li>Les liens de la liste mènent au détail et à l'archive.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/archive/{year}</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/{slug}</code>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une contrainte agit avant le contrôleur : si elle échoue, Laravel cherche une autre route puis répond 404. <code class="bg-white px-1 py-0.5 rounded text-xs">abort(404)</code> agit dans le contrôleur, quand l'URL est bien formée mais que la donnée n'existe pas. <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.show', $slug)</code> remplit <code class="bg-white px-1 py-0.5 rounded text-xs">{slug}</code> dans l'URL.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Missing required parameter for [Route: posts.show] [URI: posts/{slug}] [Missing parameter: slug].</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">route()</code> est appelé sans le slug. <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined array key</code> : clé <code class="bg-white px-1 py-0.5 rounded text-xs">title</code>, <code class="bg-white px-1 py-0.5 rounded text-xs">year</code> ou <code class="bg-white px-1 py-0.5 rounded text-xs">body</code> mal orthographiée.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 9 -->
+        <section id="step-9" class="step-panel" data-title="Étape 6 - Groupe de routes (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Factoriser le préfixe d'URI et le préfixe de nom des trois routes d'articles, sans changer le résultat.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Avant toute modification :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list avant le groupe">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Gardez cette sortie visible : vous la comparerez après la modification.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture de web.php">Copier</button>
+              <pre><code class="language-bash">code routes/web.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de web.php">Copier</button>
+              <pre><code class="language-powershell">code routes\web.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu du fichier par le code de la carte « Code complet », enregistrez, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list après le groupe">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Comparez les deux sorties, ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code> et un article, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 6">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Regrouper les routes des articles"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 6">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home'])-&gt;name('home');
+
+Route::get('/a-propos', [PageController::class, 'about'])-&gt;name('about');
+
+Route::get('/heure', function () {
+    return view('heure', [
+        'heure' =&gt; now()-&gt;format('H:i'),
+        'date' =&gt; now()-&gt;format('d/m/Y'),
+    ]);
+});
+
+Route::prefix('posts')-&gt;name('posts.')-&gt;group(function () {
+    Route::get('/', [PostController::class, 'index'])-&gt;name('index');
+
+    Route::get('/archive/{year}', [PostController::class, 'archive'])
+        -&gt;whereNumber('year')
+        -&gt;name('archive');
+
+    Route::get('/{slug}', [PostController::class, 'show'])
+        -&gt;where('slug', '[a-z0-9-]+')
+        -&gt;name('show');
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">La seconde sortie de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> est identique à la première : mêmes URI, mêmes noms <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.archive</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Les deux sorties de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> sont identiques.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> et un article s'affichent toujours.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">prefix('posts')</code> ajoute <code class="bg-white px-1 py-0.5 rounded text-xs">posts</code> devant chaque URI du groupe et <code class="bg-white px-1 py-0.5 rounded text-xs">name('posts.')</code> devant chaque nom. Le point final de <code class="bg-white px-1 py-0.5 rounded text-xs">'posts.'</code> est indispensable.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Route [posts.index] not defined.</code> : le point est oublié dans <code class="bg-white px-1 py-0.5 rounded text-xs">name('posts.')</code> ; les routes s'appellent alors <code class="bg-white px-1 py-0.5 rounded text-xs">postsindex</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 10 -->
+        <section id="step-10" class="step-panel" data-title="Défi (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Supprimer la dernière closure et vérifier votre compréhension par écrit.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+              Partie 1 - La page heure dans PageController (20 min)
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> est servie par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code>, méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">time</code>, route nommée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">time</code>.</li>
+              <li>La vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure</code> utilise <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-layout</code> et un slot <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">title</code>.</li>
+              <li>La navigation du layout contient un lien Heure construit avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('time')</code>.</li>
+              <li>Le lien écrit à la main vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> disparaît de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos.blade.php</code>.</li>
+            </ul>
+            <p class="text-gray-700 mb-3">Quand les quatre points sont faits, vérifiez qu'aucune URL n'est écrite à la main dans les vues :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de recherche des liens écrits à la main">Copier</button>
+              <pre><code class="language-bash">git grep -n "href=./" -- resources/views</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">La commande ne doit rien afficher (le point remplace le guillemet). Ensuite :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de la partie 1 du défi">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Deplacer la page heure vers PageController"</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <div class="mt-2">
+            <p class="text-sm text-gray-600 mb-3">Exemple : votre vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure</code> peut avoir un autre texte.</p>
+            <p class="text-sm text-gray-600 mb-2">Route dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la route time">Copier</button>
+              <pre><code class="language-php">Route::get('/heure', [PageController::class, 'time'])-&gt;name('time');</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Méthode ajoutée à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la méthode time">Copier</button>
+              <pre><code class="language-php">    public function time()
+    {
+        return view('heure', [
+            'heure' =&gt; now()-&gt;format('H:i'),
+            'date' =&gt; now()-&gt;format('d/m/Y'),
+        ]);
+    }</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/heure.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier heure.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;Heure du serveur - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;h1 class="text-3xl font-bold"&gt;Heure du serveur&lt;/h1&gt;
+    &lt;p class="mt-4 text-gray-700"&gt;Il est {{ $heure }}, le {{ $date }}.&lt;/p&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Ligne de navigation ajoutée au layout :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier le lien Heure de la navigation">Copier</button>
+              <pre><code class="language-markup">            &lt;a href="{{ route('time') }}" class="text-gray-600 hover:text-gray-900"&gt;Heure&lt;/a&gt;</code></pre>
+            </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-pen-to-square text-brand" aria-hidden="true"></i>
+              Partie 2 - Notes (10 min)
+            </h3>
+            <p class="text-gray-700 mb-3">Ajoutez cette section à la fin de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s03-routes.md</code> et répondez :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la section 2 des notes">Copier</button>
+              <pre><code class="language-markdown">## 2. Défi
+
+URL produite par route('about') :
+
+URL produite par route('posts.show', 'routes-et-controleurs') :
+
+URL produite par route('posts.archive', 2025) :
+
+Pourquoi /posts/archive/abc et /posts/article-inconnu répondent toutes deux 404, et quelle ligne de code en est responsable dans chaque cas ?
+
+Que se passe-t-il si une vue appelle route('posts.show') sans paramètre ?</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Enregistrez les notes, puis :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes de commit des notes">Copier</button>
+              <pre><code class="language-bash">git add notes/s03-routes.md
+git commit -m "Ajouter les notes de la session 03"</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <div class="mt-2">
+            <ul class="list-disc list-inside text-gray-700 space-y-2">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('about')</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code></li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('posts.show', 'routes-et-controleurs')</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/routes-et-controleurs</code></li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('posts.archive', 2025)</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/archive/2025</code></li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/archive/abc</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whereNumber('year')</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">web.php</code> rejette la route. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/article-inconnu</code> : la route correspond, puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort(404)</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController::show</code> répond 404.</li>
+              <li>Laravel affiche l'erreur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Missing required parameter for [Route: posts.show]</code>.</li>
+            </ul>
+              </div>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> s'affiche dans le layout.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep -n "href=./" -- resources/views</code> n'affiche rien.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list --except-vendor</code> montre six routes, toutes nommées, toutes vers un contrôleur.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/heure</code> s'affiche dans le layout.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep -n "href=./" -- resources/views</code> n'affiche rien.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list --except-vendor</code> montre six routes, toutes nommées, toutes vers un contrôleur.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une application sans URL écrite à la main peut changer ses URI sans casser un seul lien ; c'est un critère de la session 04.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 11 -->
+        <section id="step-11" class="step-panel" data-title="Grille d'auto-évaluation">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
+              Grille d'auto-évaluation
+            </h3>
+            <p class="text-sm text-gray-600 mb-3">Cochez mentalement chaque point avant de passer au livrable. Les captures, le README, le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02</code> et le push sont vérifiés à l'étape suivante.</p>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Toutes les routes pointent vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:list --except-vendor</code> affiche six routes nommées : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">home</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">about</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">time</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.archive</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep -n "href=./" -- resources/views</code> n'affiche rien.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque page utilise <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-layout</code> et a son propre titre d'onglet.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les styles Tailwind sont visibles sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/archive/abc</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/article-inconnu</code> répondent 404 et je sais dire quelle ligne en est la cause.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s03-routes.md</code> est complété et comparé aux corrigés.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-01b..HEAD</code> affiche au moins sept commits.</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Step 12 -->
+        <section id="step-12" class="step-panel" data-title="Livrable : tag lab-02 (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Trois captures, un README à jour et le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02</code> poussé.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Captures d'écran</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-6">
+              <li>Ouvrez chaque page ci-dessous et capturez la fenêtre, comme en session 01 (Win+Shift+S).</li>
+              <li>Enregistrez chaque capture dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">C:\dev\prenom-nom\mini-cms\screenshots\</code>, tout en minuscules : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s03-accueil.png</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s03-articles.png</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code>) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s03-article.png</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/routes-et-controleurs</code>).</li>
+            </ol>
+            <h4 class="font-medium mt-4 mb-2">B. README</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande d&#x27;ouverture du README">Copier</button>
+              <pre><code class="language-bash">code README.md</code></pre>
+            </div>
+            <p class="text-gray-700 mb-6">Remplacez les sections « État actuel » et « Routes disponibles » par le premier bloc de la carte « Code complet ». Dans la section des captures, supprimez le titre « Page Bienvenue » et la ligne de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s01-bienvenue.png</code> (la page n'existe plus), puis ajoutez les trois lignes d'images du second bloc. Enregistrez et vérifiez l'aperçu avec Ctrl+Shift+V.</p>
+            <h4 class="font-medium mt-4 mb-2">C. Commit, tag et push, dans le Terminal 2</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de tag et de push du livrable">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Mettre a jour le README pour lab-02"
+git status
+git tag lab-02
+git push origin main
+git push origin --tags
+git ls-remote --tags origin</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">D. Seulement si vous avez travaillé sur un poste de l'université : nettoyer le poste</h4>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur votre ordinateur personnel, ne supprimez rien : Git Credential Manager garde votre identifiant et vos prochains push se feront sans reconnexion.</p>
+            </div>
+            <div class="border-l-4 border-red-600 bg-red-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-red-900">Poste de l'université : faites cette partie avant de quitter la salle, même si vous n'avez pas terminé le reste de la séance. Sans elle, la personne suivante sur ce poste peut pousser en votre nom et accéder à votre compte GitHub.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /delete:git:https://github.com
+MSYS_NO_PATHCONV=1 cmdkey /list | grep -i github</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-powershell">cmdkey /delete:git:https://github.com
+cmdkey /list | Select-String github</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Alternative à la première commande : Panneau de configuration, Gestionnaire d'identification, Informations d'identification Windows, entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, Supprimer.</p>
+            <p class="text-gray-700 mb-2">Toujours sur un poste de l'université :</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1">
+              <li>Sur github.com, avatar en haut à droite, Sign out, puis confirmez.</li>
+              <li>Faites de même dans chaque navigateur ouvert par Git Credential Manager.</li>
+              <li>Si vous avez accepté d'enregistrer votre mot de passe dans le navigateur, supprimez-le dans ses paramètres.</li>
+              <li>Fermez toutes les fenêtres du navigateur.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Premier bloc : sections « État actuel » et « Routes disponibles » de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>.</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les sections État actuel et Routes disponibles">Copier</button>
+              <pre><code class="language-markdown">## État actuel (tag lab-02)
+
+- Routes nommées, toutes servies par des contrôleurs : `PageController` (pages) et `PostController` (articles).
+- Articles stockés dans un tableau PHP, sans base de données pour l'instant.
+- Layout Blade `&lt;x-layout&gt;` avec Tailwind chargé par Vite.
+- Base de données SQLite locale (`database/database.sqlite`, non versionnée).
+
+## Routes disponibles
+
+| Méthode | URI | Nom | Action |
+|---|---|---|---|
+| GET | `/` | `home` | `PageController@home` |
+| GET | `/a-propos` | `about` | `PageController@about` |
+| GET | `/heure` | `time` | `PageController@time` |
+| GET | `/posts` | `posts.index` | `PostController@index` |
+| GET | `/posts/archive/{year}` | `posts.archive` | `PostController@archive` |
+| GET | `/posts/{slug}` | `posts.show` | `PostController@show` |</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Second bloc : lignes d'images à ajouter dans la section des captures.</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les lignes d&#x27;images des captures">Copier</button>
+              <pre><code class="language-markdown">![Page d'accueil avec le layout](screenshots/s03-accueil.png)
+![Liste des articles](screenshots/s03-articles.png)
+![Détail d'un article](screenshots/s03-article.png)</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li>Le push des tags affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">* [new tag]         lab-02 -&gt; lab-02</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-01b</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-02</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> indique une copie de travail propre.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02</code> désigne le dernier commit de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">main</code> sur GitHub.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le README affiche le tableau à six routes et les trois nouvelles captures.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Aucune image n'est cassée sur la page d'accueil du dépôt.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : l'identifiant GitHub est supprimé et le navigateur est déconnecté de github.com.</span></li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-02</code> fige l'état évalué. La session 04 repart de ce commit pour ajouter des composants Blade réutilisables et le lien actif dans la navigation.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Prism core + autoloader (pinned 1.29.0) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+</script>
+
+<!-- Navigation JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.step-panel'));
+  var stepIds = panels.map(function (p) { return p.id; });
+  var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.step-link'));
+  var titleEl = document.getElementById('current-step-title');
+  var prevBtn = document.getElementById('prev-step');
+  var nextBtn = document.getElementById('next-step');
+  var progressBar = document.getElementById('progress-bar');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebar-overlay');
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+
+  var storageKey = 'codelab-progress:' + window.location.pathname;
+
+  function loadCompleted() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCompleted(list) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) {
+      /* localStorage unavailable: navigation still works without persistence */
+    }
+  }
+
+  var completed = loadCompleted();
+
+  function indexOfStep(id) {
+    var idx = stepIds.indexOf(id);
+    return idx === -1 ? 0 : idx;
+  }
+
+  function markCompleted(idx) {
+    var id = stepIds[idx];
+    if (completed.indexOf(id) === -1) {
+      completed.push(id);
+      saveCompleted(completed);
+    }
+  }
+
+  function updateSidebarState(activeId) {
+    sidebarLinks.forEach(function (link) {
+      var id = link.getAttribute('data-step');
+      link.classList.toggle('is-active', id === activeId);
+      link.classList.toggle('is-completed', completed.indexOf(id) !== -1 && id !== activeId);
+    });
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('is-open');
+  }
+
+  function showStep(idx, options) {
+    options = options || {};
+    if (idx < 0) idx = 0;
+    if (idx > panels.length - 1) idx = panels.length - 1;
+
+    var id = stepIds[idx];
+
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('is-active', i === idx);
+    });
+
+    if (titleEl) {
+      titleEl.textContent = panels[idx].getAttribute('data-title') || panels[idx].id;
+    }
+
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === panels.length - 1;
+
+    if (progressBar) {
+      var pct = ((idx + 1) / panels.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    if (idx > 0) {
+      for (var i = 0; i < idx; i++) {
+        markCompleted(i);
+      }
+    }
+
+    updateSidebarState(id);
+
+    if (!options.skipHash) {
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + id);
+      } else {
+        window.location.hash = id;
+      }
+    }
+
+    document.getElementById('content').scrollTop = 0;
+    closeMobileSidebar();
+  }
+
+  function currentIndex() {
+    var hash = window.location.hash.replace('#', '');
+    return indexOfStep(hash);
+  }
+
+  // Sidebar links: native anchor navigation updates location.hash, which
+  // fires 'hashchange'; we just react to that in one place.
+  window.addEventListener('hashchange', function () {
+    showStep(currentIndex(), { skipHash: true });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      showStep(currentIndex() - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      showStep(currentIndex() + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowLeft') {
+      showStep(currentIndex() - 1);
+    } else if (e.key === 'ArrowRight') {
+      showStep(currentIndex() + 1);
+    }
+  });
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.add('is-open');
+      sidebarOverlay.classList.add('is-open');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Copy-to-clipboard for every code block.
+  Array.prototype.slice.call(document.querySelectorAll('.copy-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrapper = btn.closest('.code-block-wrapper');
+      var codeEl = wrapper ? wrapper.querySelector('code') : null;
+      if (!codeEl) return;
+
+      var text = codeEl.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copie';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+  }
+
+  // Initial render.
+  showStep(currentIndex(), { skipHash: true });
+  if (window.location.hash) {
+    // Normalize the hash (e.g. redirect #foo -> #step-1 if invalid).
+    history.replaceState(null, '', '#' + stepIds[currentIndex()]);
+  }
+
+  if (window.Prism) {
+    Prism.highlightAll();
+  }
+})();
+</script>
+
+</body>
+</html>
