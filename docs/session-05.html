@@ -350,6 +350,8 @@
               <li>Créer le modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$fillable</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">casts()</code>, et l'explorer dans Tinker.</li>
               <li>Programmer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> avec la liaison modèle-route, la pagination et la validation.</li>
               <li>Écrire et lancer un premier test Pest.</li>
+              <li>Expliquer ce que fait un ORM et pourquoi le Modèle n'est pas la base de données.</li>
+              <li>Décrire le cycle d'un formulaire et pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> se termine par une redirection.</li>
             </ol>
           </div>
 
@@ -509,10 +511,101 @@ composer run dev</code></pre>
         <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
           <div class="md-card p-6">
             <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-table text-brand" aria-hidden="true"></i>
-              De la table à l'objet
+              <i class="fa-solid fa-sitemap text-brand" aria-hidden="true"></i>
+              MVC, deuxième lecture : le côté Modèle
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
             </h3>
+            <p class="text-gray-700 mb-3">En session 04, les articles venaient d'un tableau PHP : ils disparaissaient à chaque modification du code et personne ne pouvait en ajouter. Aujourd'hui, ils sont enregistrés dans une base de données, et la boîte en pointillés de la Figure 4.1 devient un vrai modèle.</p>
+            <figure class="my-4">
+              <div class="overflow-x-auto">
+                <svg viewBox="0 0 760 362" width="760" height="362" class="w-full h-auto min-w-[640px]" role="img" aria-labelledby="s05-mvc-title s05-mvc-desc" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif" font-size="13">
+                  <title id="s05-mvc-title">Cycle d'une requête dans Mini-CMS, côté Modèle</title>
+                  <desc id="s05-mvc-desc">Étape 1 : le navigateur envoie GET /posts. Étape 2 : le routeur appelle la méthode index de PostController. Étape 3 : le contrôleur demande les articles au modèle Post, encadré en gras car c'est le sujet de la session. Le modèle Post envoie une requête SQL à la base SQLite, qui contient la table posts, et reçoit des lignes qu'il transforme en objets. Étape 4 : le contrôleur transmet ces objets à la vue posts/index.blade.php. Étape 5 : Blade produit une page HTML complète, renvoyée au navigateur.</desc>
+                  <defs>
+                    <marker id="s05-mvc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
+                    </marker>
+                  </defs>
+                  <g fill="#ffffff" stroke="#374151" stroke-width="2">
+                    <rect x="10" y="40" width="116" height="64" rx="8"/>
+                    <rect x="214" y="40" width="116" height="64" rx="8"/>
+                    <rect x="418" y="40" width="116" height="64" rx="8"/>
+                    <rect x="620" y="40" width="132" height="64" rx="8"/>
+                    <rect x="396" y="266" width="160" height="56" rx="8"/>
+                  </g>
+                  <rect x="406" y="158" width="140" height="56" rx="8" fill="#eef2ff" stroke="#4338ca" stroke-width="4"/>
+                  <g fill="#111827" text-anchor="middle">
+                    <text x="68" y="68" font-weight="700">Navigateur</text>
+                    <text x="68" y="88" font-size="12">localhost:8000</text>
+                    <text x="272" y="68" font-weight="700">Routeur</text>
+                    <text x="272" y="88" font-size="12">routes/web.php</text>
+                    <text x="476" y="68" font-weight="700">Contrôleur</text>
+                    <text x="476" y="88" font-size="12">PostController</text>
+                    <text x="686" y="68" font-weight="700">Vue (Blade)</text>
+                    <text x="686" y="88" font-size="11">posts/index.blade.php</text>
+                    <text x="476" y="182" font-weight="700">Modèle Post</text>
+                    <text x="476" y="202" font-size="12">app/Models/Post.php</text>
+                    <text x="476" y="290" font-weight="700">Base SQLite</text>
+                    <text x="476" y="310" font-size="12">table posts</text>
+                    <text x="392" y="190" font-weight="700" fill="#4338ca" text-anchor="end">Sujet de la session</text>
+                  </g>
+                  <g stroke="#374151" stroke-width="2" fill="none" marker-end="url(#s05-mvc-arrow)">
+                    <line x1="126" y1="72" x2="210" y2="72"/>
+                    <line x1="330" y1="72" x2="414" y2="72"/>
+                    <line x1="476" y1="104" x2="476" y2="152"/>
+                    <line x1="476" y1="218" x2="476" y2="262" marker-start="url(#s05-mvc-arrow)"/>
+                    <line x1="534" y1="72" x2="616" y2="72"/>
+                    <path d="M686,104 V346 H68 V109"/>
+                  </g>
+                  <g fill="#111827" font-size="12" text-anchor="middle">
+                    <text x="168" y="62">1. GET /posts</text>
+                    <text x="372" y="62">2. index()</text>
+                    <text x="486" y="133" text-anchor="start">3. demande les articles</text>
+                    <text x="488" y="245" text-anchor="start">requête SQL, lignes en retour</text>
+                    <text x="575" y="62">4. view()</text>
+                    <text x="240" y="338">5. Réponse : page HTML complète</text>
+                  </g>
+                </svg>
+              </div>
+              <figcaption class="mt-2 text-sm text-gray-600">Figure 5.1 - Le modèle est du code PHP qui parle à la base ; la base, elle, ne fait que stocker. La vue et le routeur n'ont pas changé depuis la session 04.</figcaption>
+            </figure>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-table text-brand" aria-hidden="true"></i>
+              Qu'est-ce qu'un ORM ?
+            </h3>
+            <p class="text-gray-700 mb-3">Une base relationnelle range des lignes dans des tables ; PHP manipule des objets. Un ORM (Object-Relational Mapper) fait la traduction dans les deux sens. Celui de Laravel s'appelle Eloquent.</p>
+            <figure class="my-4">
+            <div class="grid gap-3 md:grid-cols-2 items-start">
+              <div class="rounded border-2 border-gray-300 bg-white p-3">
+                <p class="font-bold text-gray-900">Côté PHP : un objet</p>
+                <code class="block bg-gray-100 px-2 py-1 rounded text-xs whitespace-nowrap overflow-x-auto mt-1">$post = Post::find(1);</code>
+                <code class="block bg-gray-100 px-2 py-1 rounded text-xs whitespace-nowrap overflow-x-auto mt-1">$post-&gt;title; // "Bienvenue sur Mini-CMS"</code>
+                <code class="block bg-gray-100 px-2 py-1 rounded text-xs whitespace-nowrap overflow-x-auto mt-1">$post-&gt;is_published; // true</code>
+              </div>
+              <div class="rounded border-2 border-gray-300 bg-white p-3">
+                <p class="font-bold text-gray-900 mb-2">Côté base : la table posts</p>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                    <caption class="sr-only">Extrait de la table posts</caption>
+                    <thead class="bg-gray-50">
+                      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">id</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">title</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">is_published</th></tr>
+                    </thead>
+                    <tbody>
+                      <tr class="font-semibold bg-indigo-50 border-b border-gray-100"><td class="px-3 py-2">1</td><td class="px-3 py-2">Bienvenue sur Mini-CMS</td><td class="px-3 py-2">1</td></tr>
+                      <tr><td class="px-3 py-2">2</td><td class="px-3 py-2">Les migrations Laravel</td><td class="px-3 py-2">0</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p class="text-xs text-gray-600 mt-2">La ligne en gras (id 1) est celle que représente <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$post</code>.</p>
+              </div>
+            </div>
+            <figcaption class="mt-2 text-sm text-gray-600">Figure 5.2 - Une classe correspond à une table, un objet à une ligne, une propriété à une colonne.</figcaption>
+            </figure>
+            <p class="text-gray-700 mb-3">Eloquent ne remplace pas SQL : il l'écrit pour vous. Chaque objet sait aussi s'enregistrer lui-même avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post-&gt;save()</code> ; ce patron de conception s'appelle Active Record.</p>
+            <p class="text-gray-700 mb-2">Aide-mémoire, à consulter pendant les étapes :</p>
             <div class="overflow-x-auto">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <thead class="bg-gray-50">
@@ -533,33 +626,61 @@ composer run dev</code></pre>
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-route text-brand" aria-hidden="true"></i>
-              Contrôleur de ressource
+              CRUD et contrôleur de ressource
             </h3>
-            <div class="overflow-x-auto">
+            <p class="text-gray-700 mb-3">CRUD désigne les quatre opérations de base sur des données enregistrées : Create, Read, Update, Delete. Un contrôleur de ressource les répartit sur sept méthodes.</p>
+            <div class="overflow-x-auto mb-4">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <thead class="bg-gray-50">
-                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Verbe</th><th class="px-3 py-2 border-b border-gray-200 font-medium">URI</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Méthode</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Nom de route</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Session</th></tr>
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">CRUD</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Verbe</th><th class="px-3 py-2 border-b border-gray-200 font-medium">URI</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Méthode</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Nom de route</th><th class="px-3 py-2 border-b border-gray-200 font-medium">SQL</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Session</th></tr>
                 </thead>
                 <tbody>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">index</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.index</code></td><td class="px-3 py-2">S05</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/create</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.create</code></td><td class="px-3 py-2">S05</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">POST</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">store</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.store</code></td><td class="px-3 py-2">S05</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">show</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.show</code></td><td class="px-3 py-2">S05</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}/edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.edit</code></td><td class="px-3 py-2">S06</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">PUT</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">update</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.update</code></td><td class="px-3 py-2">S06</td></tr>
-                  <tr><td class="px-3 py-2">DELETE</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">destroy</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.destroy</code></td><td class="px-3 py-2">S06</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Read (liste)</td><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">index</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.index</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">SELECT</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Create (formulaire)</td><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/create</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.create</code></td><td class="px-3 py-2">aucune</td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Create (enregistrement)</td><td class="px-3 py-2">POST</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">store</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.store</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">INSERT</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Read (un article)</td><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">show</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.show</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">SELECT</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Update (formulaire)</td><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}/edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">SELECT</code></td><td class="px-3 py-2">S06</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Update (enregistrement)</td><td class="px-3 py-2">PUT</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">update</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.update</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">UPDATE</code></td><td class="px-3 py-2">S06</td></tr>
+                  <tr><td class="px-3 py-2">Delete</td><td class="px-3 py-2">DELETE</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">destroy</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.destroy</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">DELETE</code></td><td class="px-3 py-2">S06</td></tr>
                 </tbody>
               </table>
             </div>
+            <p class="text-gray-700">Create occupe deux routes : un GET pour afficher le formulaire, un POST pour enregistrer. Un GET ne modifie jamais les données.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-link text-brand" aria-hidden="true"></i>
-              Liaison modèle-route et validation
+              <i class="fa-solid fa-rotate text-brand" aria-hidden="true"></i>
+              Le cycle d'un formulaire
             </h3>
+            <figure class="my-4">
+            <div class="grid gap-3">
+              <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm">
+                <p class="font-bold text-gray-900">1. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">GET /posts/create</code></p>
+                <p class="text-gray-700 mt-1">La méthode <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create</code> affiche le formulaire vide.</p>
+              </div>
+              <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm">
+                <p class="font-bold text-gray-900">2. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">POST /posts</code></p>
+                <p class="text-gray-700 mt-1">Le navigateur envoie les champs ; <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">store</code> appelle <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">validate()</code>.</p>
+              </div>
+              <div class="grid gap-3 md:grid-cols-2">
+                <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm">
+                <p class="font-bold text-gray-900">3a. Une règle échoue</p>
+                <p class="text-gray-700 mt-1">Laravel redirige vers le formulaire. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">@error</code> affiche les messages, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">old()</code> remet la saisie. Retour à l'étape 1.</p>
+              </div>
+                <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm">
+                <p class="font-bold text-gray-900">3b. Tout est valide</p>
+                <p class="text-gray-700 mt-1"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Post::create()</code> enregistre l'article, puis <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">store</code> renvoie une redirection.</p>
+              </div>
+              </div>
+              <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm">
+                <p class="font-bold text-gray-900">4. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">GET /posts/{post}</code></p>
+                <p class="text-gray-700 mt-1">Le navigateur affiche l'article. Recharger la page répète ce GET : rien n'est créé une seconde fois.</p>
+              </div>
+            </div>
+            <figcaption class="mt-2 text-sm text-gray-600">Figure 5.3 - Un envoi de formulaire se termine toujours par une redirection : vers le formulaire si la validation échoue, vers l'article sinon.</figcaption>
+            </figure>
             <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show(Post $post)</code> : Laravel lit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{post}</code> dans l'URL, cherche l'article qui a cet id et le transmet à la méthode. S'il n'existe pas, la réponse est 404, sans aucun code de votre part.</p>
-            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$request-&gt;validate()</code> : si une règle échoue, Laravel renvoie le navigateur vers le formulaire avec les messages d'erreur et les valeurs saisies ; sinon, la méthode continue avec les données validées.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -567,15 +688,15 @@ composer run dev</code></pre>
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
               Quiz éclair
             </h3>
-            <div class="quiz-question mb-6" id="quiz-s05-q01" data-answer="b">
-              <p class="font-medium text-gray-900 mb-3">Sans autre réglage, quelle table lit le modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> ?</p>
-              <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
-                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">post</code></button>
-                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code></button>
-                <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">post_table</code></button>
+            <div class="quiz-question mb-6" id="quiz-s05-q16" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Dans Mini-CMS, à partir d'aujourd'hui, qu'est-ce que le Modèle de MVC ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 16">
+                <button type="button" class="quiz-option" data-option="a">Le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code></button>
+                <button type="button" class="quiz-option" data-option="b">La classe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code>, qui lit et écrit la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code></button>
+                <button type="button" class="quiz-option" data-option="c">Le fichier de migration de la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code></button>
               </div>
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Par convention, Eloquent prend le nom du modèle en minuscules et au pluriel.</p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le modèle est du code PHP. La base stocke les lignes, et la migration décrit la forme de la table.</p>
             </div>
             <div class="quiz-question mb-6" id="quiz-s05-q02" data-answer="c">
               <p class="font-medium text-gray-900 mb-3">Avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show(Post $post)</code>, que fait Laravel pour l'URL <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/7</code> ?</p>
@@ -607,7 +728,7 @@ composer run dev</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Grâce aux migrations, le schéma de la base voyage avec le code dans Git. Les données, elles, restent locales à chaque poste.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Grâce aux migrations, le schéma de la base voyage avec le code dans Git. Les données, elles, restent locales à chaque poste. Le modèle parle à la base ; il n'est pas la base.</p>
             </div>
           </div>
         </section>
@@ -886,9 +1007,25 @@ class Post extends Model
               <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
               À retenir
             </h3>
+            <figure class="mb-4">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Migration</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Lot</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Effet de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">migrate:rollback</code></th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create_users_table</code></th><td class="px-3 py-2">1</td><td class="px-3 py-2">conservée</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create_cache_table</code></th><td class="px-3 py-2">1</td><td class="px-3 py-2">conservée</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create_jobs_table</code></th><td class="px-3 py-2">1</td><td class="px-3 py-2">conservée</td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create_posts_table</code></th><td class="px-3 py-2">2</td><td class="px-3 py-2">annulée : sa méthode <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">down()</code> s'exécute</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <figcaption class="mt-2 text-sm text-gray-600">Figure 5.4 - La table <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">migrations</code> note chaque fichier exécuté et son lot. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">migrate</code> ne lance que les fichiers absents de cette table ; <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">migrate:rollback</code> annule le dernier lot. Les numéros de lot sont un exemple.</figcaption>
+            </figure>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">up()</code> construit, <code class="bg-white px-1 py-0.5 rounded text-xs">down()</code> défait : une migration doit toujours pouvoir s'annuler.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">up()</code> construit, <code class="bg-white px-1 py-0.5 rounded text-xs">down()</code> défait : une migration doit toujours pouvoir s'annuler. La migration donne sa forme à la table ; le modèle, lui, lit et écrit les lignes. Ajouter une colonne dans <code class="bg-white px-1 py-0.5 rounded text-xs">$fillable</code> ne la crée pas dans la base.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
@@ -1325,7 +1462,7 @@ class PostController extends Controller
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le contrôleur ne contient plus ni données ni <code class="bg-white px-1 py-0.5 rounded text-xs">abort(404)</code> : la requête Eloquent et la liaison modèle-route font le travail.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le contrôleur ne contient plus ni données ni <code class="bg-white px-1 py-0.5 rounded text-xs">abort(404)</code> : la requête Eloquent et la liaison modèle-route font le travail. Eloquent ne charge pas toute la table : <code class="bg-white px-1 py-0.5 rounded text-xs">paginate(4)</code> ajoute <code class="bg-white px-1 py-0.5 rounded text-xs">LIMIT</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">OFFSET</code> à la requête SQL.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
@@ -1637,16 +1774,6 @@ class PostController extends Controller
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
               Quiz éclair
             </h3>
-            <div class="quiz-question mb-6" id="quiz-s05-q11" data-answer="b">
-              <p class="font-medium text-gray-900 mb-3">Vous retirez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@csrf</code> du formulaire et vous l'envoyez. Résultat ?</p>
-              <div class="space-y-2" role="group" aria-label="Réponses à la question 11">
-                <button type="button" class="quiz-option" data-option="a">L'article est créé normalement</button>
-                <button type="button" class="quiz-option" data-option="b">Une page 419 Page Expired</button>
-                <button type="button" class="quiz-option" data-option="c">Une erreur de validation sur le titre</button>
-              </div>
-              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans jeton CSRF, Laravel refuse toute requête POST venant d'un formulaire.</p>
-            </div>
             <div class="quiz-question mb-6" id="quiz-s05-q12" data-answer="c">
               <p class="font-medium text-gray-900 mb-3">À quoi sert <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">value="{{ old('title') }}"</code> ?</p>
               <div class="space-y-2" role="group" aria-label="Réponses à la question 12">
@@ -1667,6 +1794,16 @@ class PostController extends Controller
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
               <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Seule la route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/{post}</code> existait : Laravel cherchait un article dont l'id vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code>.</p>
             </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q17" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Vous venez de créer un article et son détail s'affiche. Vous rechargez la page. Que se passe-t-il ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 17">
+                <button type="button" class="quiz-option" data-option="a">Le formulaire est renvoyé et un second article est créé</button>
+                <button type="button" class="quiz-option" data-option="b">La page de l'article se recharge, rien n'est créé</button>
+                <button type="button" class="quiz-option" data-option="c">Laravel renvoie vers le formulaire vide</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> se termine par une redirection : la dernière requête du navigateur est un GET, et recharger la page ne fait que le répéter.</p>
+            </div>
             <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
@@ -1677,13 +1814,13 @@ class PostController extends Controller
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Ne faites jamais confiance au navigateur : seules les données renvoyées par <code class="bg-white px-1 py-0.5 rounded text-xs">validate()</code> vont dans <code class="bg-white px-1 py-0.5 rounded text-xs">Post::create</code>.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Ne faites jamais confiance au navigateur : seules les données renvoyées par <code class="bg-white px-1 py-0.5 rounded text-xs">validate()</code> vont dans <code class="bg-white px-1 py-0.5 rounded text-xs">Post::create</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">store</code> se termine par une redirection, jamais par une vue : c'est ce qui rend le rechargement sans danger.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">419 Page Expired</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> manque dans le formulaire. <code class="bg-white px-1 py-0.5 rounded text-xs">The POST method is not supported for route posts/create</code> : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">action</code> du formulaire est vide ou faux ; il doit valoir <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.store')</code>.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">419 Page Expired</code> : le jeton <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> manque ou a expiré. Gardez toujours <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> dans un formulaire, même si la page fonctionne sans lui sur votre poste. <code class="bg-white px-1 py-0.5 rounded text-xs">The POST method is not supported for route posts/create</code> : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">action</code> du formulaire est vide ou faux ; il doit valoir <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.store')</code>.</p>
             </div>
-            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes ; comportement de Laravel 13 sans @csrf sur http://localhost:8000 -->
           </div>
         </section>
 
