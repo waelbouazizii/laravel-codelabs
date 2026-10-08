@@ -24,6 +24,7 @@ Bouaziz. Groups: MDW32, MDW33.
   relative path, and are kept to steps that are hard to do or hard to fix.
   Every image has a French alt text, `width` and `height` attributes,
   `loading="lazy"`, and a `figcaption` (see `session-guidelines.md`).
+  Inline figures follow the section Diagrammes et figures.
 - A new session is created by copying `templates/codelab-template.html` to
   `docs/session-XX.html` and filling in the step panels. **Never change the
   skeleton markup, the navigation JavaScript, or the pinned asset versions**
@@ -126,6 +127,23 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
   never edited in a session. Never put a display utility class (`block`,
   `flex`, ...) on `.quiz-feedback` or `.quiz-explain`: it would defeat the
   `hidden` attribute.
+
+## Diagrammes et figures
+
+- A figure is content inside a step panel. It never changes the skeleton.
+- Prefer, in this order: an HTML figure built with Tailwind utilities or a real
+  table; a hand-written inline SVG; an image file in `docs/img/sXX/` for
+  screenshots only.
+- Every figure is a `<figure>` with a French `<figcaption>` numbered
+  "Figure S.n" that states the takeaway.
+- Inline SVG has `role="img"`, `aria-labelledby` pointing to a French
+  `<title>` and `<desc>`, ids prefixed `sXX-`, a `viewBox` with `width` and
+  `height`, the classes `w-full h-auto`, and text of 11 px or more.
+- Colour is never the only cue: use a thicker border, a number or a text label.
+- No animation, no autoplay, no external diagram library.
+- At most three figures in the Concept Brief and one per guided step.
+- The request-cycle diagram introduced in session 04 (Figure 4.1) is the
+  canonical layout: later sessions reuse it and only move the highlight.
 
 ## Session structure (in order)
 

@@ -128,6 +128,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - quiz script and CSS identical to the template;
   - every `.quiz-question` has a unique id, a `data-answer` matching exactly one of its `data-option` values, three options, one `.quiz-feedback` with `aria-live="polite"` and one non-empty `.quiz-explain`;
   - at least one `[data-quiz-score]` in every page that has questions.
+  - every `<svg>` has `role="img"`, a `<title>` and a `<desc>`, and every `<figure>` has a `<figcaption>`;
 - When a shared fact changes (install method, URL, prompt wording), grep every docs/session-*.html for the old wording, not only the session being edited.
 - **Check `docs/index.html`** against the Overview table of `course-plan.md`: titles, and a week equal to `ceil(session / 2)`.
 - **Use the quoted-heredoc form for Claude Code prompts,** so that `$`, backticks and quotes reach Claude Code literally:
