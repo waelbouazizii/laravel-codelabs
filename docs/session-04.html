@@ -205,7 +205,7 @@
               <span class="marker-number">3</span>
               <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
             </span>
-            <span>Concepts clés</span>
+            <span>Notions clés</span>
           </a>
         </li>
         <li>
@@ -268,7 +268,7 @@
               <span class="marker-number">10</span>
               <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
             </span>
-            <span>Défi indépendant</span>
+            <span>Défi</span>
           </a>
         </li>
         <li>
@@ -383,9 +383,9 @@
                 </thead>
                 <tbody>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">Vérification de l'environnement</td><td class="px-3 py-2">10 min</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Concepts clés</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Notions clés</td><td class="px-3 py-2">15 min</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">Étapes 1 à 6</td><td class="px-3 py-2">120 min (10, 15, 25, 30, 25, 15)</td></tr>
-                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Défi indépendant</td><td class="px-3 py-2">30 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Défi</td><td class="px-3 py-2">30 min</td></tr>
                   <tr class="border-b border-gray-100"><td class="px-3 py-2">Livrable</td><td class="px-3 py-2">15 min</td></tr>
                   <tr><td class="px-3 py-2"><span class="font-medium">Total</span></td><td class="px-3 py-2"><span class="font-medium">190 min (3h10)</span></td></tr>
                 </tbody>
@@ -487,7 +487,7 @@ composer run dev</code></pre>
         </section>
 
         <!-- Step 3 -->
-        <section id="step-3" class="step-panel" data-title="Concepts clés (15 min)">
+        <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
           <div class="md-card p-6">
             <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
               <i class="fa-solid fa-clone text-brand" aria-hidden="true"></i>
@@ -524,33 +524,40 @@ composer run dev</code></pre>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-              <i class="fa-solid fa-file-pen text-brand" aria-hidden="true"></i>
-              Fichier de réponses
-            </h3>
-            <p class="text-gray-700 mb-3">Créez le fichier de réponses des auto-tests de la session et ouvrez-le dans VS Code (Terminal 2) :</p>
-            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les commandes Bash de création du fichier d&#x27;auto-tests">Copier</button>
-              <pre><code class="language-bash">mkdir -p notes
-code notes/s04-autotests.md</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
-            <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création du fichier d&#x27;auto-tests">Copier</button>
-              <pre><code class="language-powershell">New-Item -ItemType Directory -Force notes
-code notes\s04-autotests.md</code></pre>
-            </div>
-          </div>
-
-          <div class="md-card p-6 mt-6">
-            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Quelle différence entre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-card :post="$post"&gt;</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-card post="$post"&gt;</code> ?</summary><p class="mt-2 text-sm text-gray-700">Avec les deux-points, l'expression PHP est évaluée et le tableau (ou l'objet) est transmis ; sans eux, le composant reçoit le texte littéral <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post</code>.</p></details>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Où doit se trouver un fichier pour être utilisé avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-nav-link&gt;</code> ?</summary><p class="mt-2 text-sm text-gray-700">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/nav-link.blade.php</code>.</p></details>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Contre quoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> protège-t-il ?</summary><p class="mt-2 text-sm text-gray-700">Il échappe le HTML : un texte saisi par un utilisateur ne peut pas injecter de balises ou de scripts (faille XSS).</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q01" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Quelle différence entre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-card :post="$post"&gt;</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-card post="$post"&gt;</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
+                <button type="button" class="quiz-option" data-option="a">Aucune : les deux transmettent le tableau de l'article</button>
+                <button type="button" class="quiz-option" data-option="b">Avec les deux-points, l'expression PHP est évaluée et le tableau est transmis ; sans eux, le composant reçoit le texte <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post</code></button>
+                <button type="button" class="quiz-option" data-option="c">Sans les deux-points, la valeur est échappée ; avec eux, elle ne l'est pas</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Avec les deux-points, l'expression PHP est évaluée et le tableau (ou l'objet) est transmis ; sans eux, le composant reçoit le texte littéral <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post</code>.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q02" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Où doit se trouver un fichier pour être utilisé avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-nav-link&gt;</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 2">
+                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/nav-link.blade.php</code></button>
+                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/nav-link.blade.php</code></button>
+                <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/View/Components/NavLink.php</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/nav-link.blade.php</code> : le préfixe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-</code> désigne le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">components</code>, et le nom en minuscules avec tirets désigne le fichier.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q03" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Contre quoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> protège-t-il ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 3">
+                <button type="button" class="quiz-option" data-option="a">Les erreurs de syntaxe PHP dans la vue</button>
+                <button type="button" class="quiz-option" data-option="b">Les URL écrites à la main</button>
+                <button type="button" class="quiz-option" data-option="c">L'injection de balises ou de scripts dans la page</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Il échappe le HTML : un texte saisi par un utilisateur ne peut pas injecter de balises ou de scripts (faille XSS).</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -573,7 +580,7 @@ code notes\s04-autotests.md</code></pre>
               Objectif
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">Partir tous du même point : les routes, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> de la fin de la session 03, avec des articles plus complets.</p>
+            <p class="text-gray-700 leading-relaxed">Partir tous du même point : les routes, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> et la vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure</code> de la fin de la session 03, avec des articles plus complets.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -583,15 +590,15 @@ code notes\s04-autotests.md</code></pre>
             </h3>
             <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des trois fichiers de départ">Copier</button>
-              <pre><code class="language-bash">code routes/web.php app/Http/Controllers/PageController.php app/Http/Controllers/PostController.php</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des quatre fichiers de départ">Copier</button>
+              <pre><code class="language-bash">code routes/web.php app/Http/Controllers/PageController.php app/Http/Controllers/PostController.php resources/views/heure.blade.php</code></pre>
             </div>
             <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des trois fichiers de départ">Copier</button>
-              <pre><code class="language-powershell">code routes\web.php app\Http\Controllers\PageController.php app\Http\Controllers\PostController.php</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des quatre fichiers de départ">Copier</button>
+              <pre><code class="language-powershell">code routes\web.php app\Http\Controllers\PageController.php app\Http\Controllers\PostController.php resources\views\heure.blade.php</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Remplacez le contenu des trois fichiers par le code de la carte « Code complet » (lisez d'abord son avertissement). Enregistrez, puis :</p>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des quatre fichiers par le code de la carte « Code complet » (lisez d'abord son avertissement). Enregistrez, puis :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper ">
               <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 1">Copier</button>
@@ -606,7 +613,7 @@ code notes\s04-autotests.md</code></pre>
             </h3>
             <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-amber-900">Ces trois fichiers sont remplacés en entier. Avant de coller, recopiez votre code personnel : votre nom et votre groupe (méthode <code class="bg-white px-1 py-0.5 rounded text-xs">about</code>) et, si votre vue <code class="bg-white px-1 py-0.5 rounded text-xs">heure</code> attend d'autres variables, votre méthode <code class="bg-white px-1 py-0.5 rounded text-xs">time</code> de la session 03.</p>
+              <p class="text-sm text-amber-900">Ces quatre fichiers sont remplacés en entier. Avant de coller, recopiez votre code personnel, en particulier votre nom et votre groupe (méthode <code class="bg-white px-1 py-0.5 rounded text-xs">about</code>), et reportez-le dans le nouveau code.</p>
             </div>
             <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
             <div class="code-block-wrapper mb-4">
@@ -665,7 +672,7 @@ class PageController extends Controller
 }</code></pre>
             </div>
             <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PostController.php</code> :</p>
-            <div class="code-block-wrapper ">
+            <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier PostController.php">Copier</button>
               <pre><code class="language-php">&lt;?php
 
@@ -766,6 +773,16 @@ class PostController extends Controller
     }
 }</code></pre>
             </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/heure.blade.php</code> :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier heure.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;Heure du serveur - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;h1 class="text-3xl font-bold"&gt;Heure du serveur&lt;/h1&gt;
+    &lt;p class="mt-4 text-gray-700"&gt;Il est {{ $heure }}, le {{ $date }}.&lt;/p&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -788,16 +805,33 @@ class PostController extends Controller
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les six noms de routes apparaissent dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> s'affichent encore.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/heure</code> affiche l'heure et la date du serveur.</span></li>
             </ul>
+            <p class="text-gray-700 mt-4 mb-3">Quand tout est vérifié, enregistrez l'étape dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 1">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Aligner routes et controleurs pour le sprint S04"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi les articles sont-ils indexés par leur slug et lus avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$this-&gt;posts()[$slug] ?? null</code> ?</summary><p class="mt-2 text-sm text-gray-700">La lecture est directe, sans boucle ; un slug inconnu donne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>, ce qui mène à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort(404)</code>.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q04" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi les articles sont-ils indexés par leur slug et lus avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$this-&gt;posts()[$slug] ?? null</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 4">
+                <button type="button" class="quiz-option" data-option="a">Pour que les articles s'affichent par ordre alphabétique</button>
+                <button type="button" class="quiz-option" data-option="b">Pour lire un article directement, sans boucle, et obtenir <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code> pour un slug inconnu</button>
+                <button type="button" class="quiz-option" data-option="c">Parce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> exige un tableau indexé par slug</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La lecture est directe, sans boucle ; un slug inconnu donne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>, ce qui mène à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort(404)</code>.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -913,7 +947,7 @@ class PostController extends Controller
               <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
               Résultat attendu
             </h3>
-            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> affiche votre nom, votre groupe, une boîte bleue « Projet pédagogique » et une boîte orangée « Données provisoires ».</p>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/a-propos</code> affiche votre nom, votre groupe, une boîte bleue « Projet pédagogique » et une boîte ambrée « Données provisoires ».</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -926,16 +960,41 @@ class PostController extends Controller
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Une boîte d'avertissement ambrée apparaît.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque boîte affiche son titre en gras et son texte.</span></li>
             </ul>
+            <p class="text-gray-700 mt-4 mb-3">Quand tout est vérifié, enregistrez l'étape dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 2">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter le composant x-alert"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Que se passe-t-il avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">type="inconnu"</code> ?</summary><p class="mt-2 text-sm text-gray-700">L'opérateur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">??</code> revient au style <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">info</code>.</p></details>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi une table de noms de classes complets plutôt que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bg-{{ $color }}-50</code> ?</summary><p class="mt-2 text-sm text-gray-700">Tailwind lit les fichiers comme du texte et ne génère que les classes qu'il trouve écrites en entier.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q05" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Que se passe-t-il avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">type="inconnu"</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 5">
+                <button type="button" class="quiz-option" data-option="a">Laravel affiche une erreur de clé de tableau inconnue</button>
+                <button type="button" class="quiz-option" data-option="b">La boîte prend le style <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">info</code></button>
+                <button type="button" class="quiz-option" data-option="c">La boîte s'affiche sans aucune couleur</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>L'opérateur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">??</code> revient au style <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">info</code> quand le type n'existe pas dans la table.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q06" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi une table de noms de classes complets plutôt que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bg-{{ $color }}-50</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 6">
+                <button type="button" class="quiz-option" data-option="a">Blade n'accepte pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> dans un attribut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">class</code></button>
+                <button type="button" class="quiz-option" data-option="b">Une classe construite par morceaux est plus lente à afficher</button>
+                <button type="button" class="quiz-option" data-option="c">Tailwind ne génère que les classes qu'il trouve écrites en entier dans les fichiers</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Tailwind lit les fichiers comme du texte et ne génère que les classes qu'il trouve écrites en entier.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1083,16 +1142,41 @@ php artisan make:component Navbar --view</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Dans le code source de la page (Ctrl+U), le lien À propos porte <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">aria-current="page"</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/heure</code>, c'est « Heure » qui est mis en évidence.</span></li>
             </ul>
+            <p class="text-gray-700 mt-4 mb-3">Quand tout est vérifié, enregistrez l'étape dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 3">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter x-navbar et x-nav-link au layout"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi Articles reste-t-il en évidence sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/un-slug</code> ?</summary><p class="mt-2 text-sm text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routeIs('posts.*')</code> correspond à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.archive</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</p></details>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi utiliser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">aria-current</code> ?</summary><p class="mt-2 text-sm text-gray-700">Les lecteurs d'écran annoncent la page courante ; la couleur seule ne suffit pas.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q07" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi Articles reste-t-il en évidence sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/un-slug</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 7">
+                <button type="button" class="quiz-option" data-option="a">Parce que le lien Articles est déclaré avant les autres</button>
+                <button type="button" class="quiz-option" data-option="b">Parce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routeIs('posts.*')</code> correspond aussi au nom <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code></button>
+                <button type="button" class="quiz-option" data-option="c">Parce que l'URL de la page commence par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routeIs()</code> compare des noms de routes, pas des URL : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.*</code> correspond à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.archive</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q08" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi utiliser <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">aria-current</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 8">
+                <button type="button" class="quiz-option" data-option="a">Pour que les lecteurs d'écran annoncent la page courante</button>
+                <button type="button" class="quiz-option" data-option="b">Parce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routeIs()</code> en a besoin pour fonctionner</button>
+                <button type="button" class="quiz-option" data-option="c">Pour appliquer automatiquement le fond indigo</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Les lecteurs d'écran annoncent la page courante ; la couleur seule ne suffit pas.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1177,7 +1261,10 @@ php artisan make:component Navbar --view</code></pre>
     &lt;/div&gt;
 
     &lt;p class="text-sm text-gray-600"&gt;{{ $post['excerpt'] }}&lt;/p&gt;
-    &lt;p class="text-xs text-gray-500"&gt;{{ $post['author'] }} - {{ $post['date'] }}&lt;/p&gt;
+    &lt;p class="text-xs text-gray-500"&gt;
+        {{ $post['author'] }} - {{ $post['date'] }} -
+        &lt;a href="{{ route('posts.archive', $post['year']) }}" class="underline"&gt;Archive {{ $post['year'] }}&lt;/a&gt;
+    &lt;/p&gt;
 
     &lt;a href="{{ route('posts.show', $post['slug']) }}" class="text-sm font-medium text-indigo-600 hover:underline"&gt;Lire l'article&lt;/a&gt;
 &lt;/article&gt;</code></pre>
@@ -1225,17 +1312,43 @@ php artisan make:component Navbar --view</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>En survolant un titre, le navigateur affiche une URL qui se termine par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/</code> suivi du slug.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Articles est mis en évidence dans la navigation.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/archive/2025</code> affiche la boîte « Aucun article ».</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le clic sur « Archive 2026 » d'une carte affiche « Articles de 2026 » avec quatre cartes.</span></li>
             </ul>
+            <p class="text-gray-700 mt-4 mb-3">Quand tout est vérifié, enregistrez l'étape dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter x-post-card et la liste des articles"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Quelle différence entre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@foreach</code> ?</summary><p class="mt-2 text-sm text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> ajoute une branche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@empty</code>, affichée quand la liste est vide.</p></details>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Que fait <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">class="md:col-span-2"</code> sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code> ?</summary><p class="mt-2 text-sm text-gray-700">Les attributs ajoutés sont fusionnés par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$attributes-&gt;merge</code> sur l'élément racine du composant.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q09" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Quelle différence entre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@foreach</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 9">
+                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> est plus rapide sur les grands tableaux</button>
+                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> parcourt aussi les clés du tableau</button>
+                <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> ajoute une branche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@empty</code> pour la liste vide</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code> ajoute une branche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@empty</code>, affichée quand la liste est vide.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q10" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Que fait <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">class="md:col-span-2"</code> sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 10">
+                <button type="button" class="quiz-option" data-option="a">Rien : un composant ignore ce qui n'est pas déclaré dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@props</code></button>
+                <button type="button" class="quiz-option" data-option="b">Elle remplace toutes les classes de la boîte</button>
+                <button type="button" class="quiz-option" data-option="c">La classe est ajoutée à l'élément racine de la boîte</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Les attributs ajoutés sont fusionnés par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$attributes-&gt;merge</code> sur l'élément racine du composant.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1249,7 +1362,7 @@ php artisan make:component Navbar --view</code></pre>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined variable $post</code> : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">:post</code> manque sur <code class="bg-white px-1 py-0.5 rounded text-xs">&lt;x-post-card&gt;</code>. Sans les deux-points (<code class="bg-white px-1 py-0.5 rounded text-xs">post="$post"</code>), la carte reçoit un texte au lieu du tableau et l'accès à <code class="bg-white px-1 py-0.5 rounded text-xs">$post['slug']</code> échoue. <code class="bg-white px-1 py-0.5 rounded text-xs">Route [posts.show] not defined.</code> : les routes de l'Étape 1 ne sont pas en place.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Erreur sur la liste juste après l'ajout de la carte : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">:post</code> manque sur <code class="bg-white px-1 py-0.5 rounded text-xs">&lt;x-post-card&gt;</code>, ou les deux-points sont oubliés (<code class="bg-white px-1 py-0.5 rounded text-xs">post="$post"</code>) ; la carte reçoit alors un texte au lieu du tableau et l'accès à <code class="bg-white px-1 py-0.5 rounded text-xs">$post['slug']</code> échoue. <code class="bg-white px-1 py-0.5 rounded text-xs">Route [posts.show] not defined.</code> : les routes de l'Étape 1 ne sont pas en place.</p>
             </div>
           </div>
         </section>
@@ -1354,16 +1467,41 @@ php artisan make:component Navbar --view</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Accueil est mis en évidence sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/inconnu</code> répond 404.</span></li>
             </ul>
+            <p class="text-gray-700 mt-4 mb-3">Quand tout est vérifié, enregistrez l'étape dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Reconstruire le detail et l'accueil avec les composants"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ $paragraph }}</code> et pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{!! $paragraph !!}</code> ?</summary><p class="mt-2 text-sm text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> échappe le HTML ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{!! !!}</code> affiche le HTML brut et ouvre une faille XSS.</p></details>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi un lien de retour avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('posts.index')</code> plutôt que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> ?</summary><p class="mt-2 text-sm text-gray-700">Si l'URL change, seul le fichier des routes est à modifier.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q11" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ $paragraph }}</code> et pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{!! $paragraph !!}</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 11">
+                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> échappe le HTML, alors que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{!! !!}</code> l'affiche brut et ouvre une faille XSS</button>
+                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{!! !!}</code> ne fonctionne pas à l'intérieur de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@foreach</code></button>
+                <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> ajoute automatiquement les balises <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;p&gt;</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> échappe le HTML ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{!! !!}</code> affiche le HTML brut et ouvre une faille XSS.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q12" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi un lien de retour avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('posts.index')</code> plutôt que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 12">
+                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> rend le lien plus rapide à charger</button>
+                <button type="button" class="quiz-option" data-option="b">Une URL écrite à la main ne fonctionne pas dans une vue Blade</button>
+                <button type="button" class="quiz-option" data-option="c">Si l'URL change, seul le fichier des routes est à modifier</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Si l'URL change, seul le fichier des routes est à modifier.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1398,37 +1536,27 @@ php artisan make:component Navbar --view</code></pre>
               <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
               Commandes
             </h3>
-            <h4 class="font-medium mb-2">A et B. URL écrites à la main et affichage brut</h4>
-            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <h4 class="font-medium mb-2">A, B et C. Trois recherches</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les recherches Bash des URL écrites à la main et de l&#x27;affichage brut">Copier</button>
-              <pre><code class="language-bash">grep -rn 'href="/' resources/views
-grep -rn '{!!' resources/views</code></pre>
+              <button class="copy-btn" aria-label="Copier les trois recherches de l&#x27;audit">Copier</button>
+              <pre><code class="language-bash">git grep -n --untracked "href=./" -- resources/views
+git grep -n --untracked '{!!' -- resources/views
+git grep -l --untracked "&lt;x-layout&gt;" -- resources/views</code></pre>
             </div>
-            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les recherches PowerShell des URL écrites à la main et de l&#x27;affichage brut">Copier</button>
-              <pre><code class="language-powershell">Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -SimpleMatch 'href="/'
-Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -SimpleMatch '{!!'</code></pre>
-            </div>
-            <p class="text-gray-700 mb-3">Le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">welcome.blade.php</code>, livré par Laravel, a été supprimé en session 03 ; s'il existe encore chez vous, il n'est plus utilisé et reste hors du périmètre de cet audit.</p>
-            <h4 class="font-medium mt-4 mb-2">C. Pages qui utilisent le layout</h4>
-            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la recherche Bash des pages qui utilisent le layout">Copier</button>
-              <pre><code class="language-bash">grep -rl "&lt;x-layout&gt;" resources/views</code></pre>
-            </div>
-            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la recherche PowerShell des pages qui utilisent le layout">Copier</button>
-              <pre><code class="language-powershell">Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -SimpleMatch '&lt;x-layout&gt;' -List | ForEach-Object { $_.Path }</code></pre>
-            </div>
+            <p class="text-gray-700 mb-3">Comme en session 03, le point de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">href=./</code> remplace le guillemet : la même commande fonctionne dans Bash et dans PowerShell. L'option <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--untracked</code> inclut les fichiers pas encore validés.</p>
             <p class="text-gray-700 mb-3">Corrigez chaque ligne trouvée par A ou B avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code>, enregistrez, puis :</p>
             <h4 class="font-medium mt-4 mb-2">D. Vider le cache des vues</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
-            <div class="code-block-wrapper ">
+            <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande view:clear de l&#x27;audit">Copier</button>
               <pre><code class="language-bash">php artisan view:clear</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si l'audit vous a fait modifier un fichier (Bash et PowerShell, identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit des corrections de l&#x27;audit">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Corriger les URL et affichages signales par l'audit"</code></pre>
             </div>
           </div>
 
@@ -1447,7 +1575,7 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
             </h3>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
               <li>Les recherches A et B n'affichent rien.</li>
-              <li>La recherche C liste cinq fichiers : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heure.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">home.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/index.blade.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/show.blade.php</code>.</li>
+              <li>La recherche C liste cinq fichiers : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/heure.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/home.blade.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/index.blade.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/show.blade.php</code>.</li>
               <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">view:clear</code> confirme que les vues compilées sont effacées.</li>
             </ul>
           </div>
@@ -1467,10 +1595,19 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi éviter les URL écrites à la main ?</summary><p class="mt-2 text-sm text-gray-700">Renommer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/blog</code> ne touche alors que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> garde chaque lien correct.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q13" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi éviter les URL écrites à la main ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 13">
+                <button type="button" class="quiz-option" data-option="a">Renommer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/blog</code> ne touche alors que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code></button>
+                <button type="button" class="quiz-option" data-option="b">Le navigateur refuse les liens qui commencent par une barre oblique</button>
+                <button type="button" class="quiz-option" data-option="c">Elles empêchent Vite de charger le CSS</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Renommer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/blog</code> ne touche alors que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> garde chaque lien correct.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1478,19 +1615,15 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
               <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
               À retenir
             </h3>
-            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un audit par recherche de texte est rapide et répétable : il prouve qu'une règle est respectée dans tout le dossier, et pas seulement dans les fichiers que vous avez relus.</p>
-            </div>
-            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
-              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Une correspondance sur <code class="bg-white px-1 py-0.5 rounded text-xs">href="/</code> dans <code class="bg-white px-1 py-0.5 rounded text-xs">welcome.blade.php</code> : ce fichier livré par Laravel n'est pas le vôtre et n'est plus utilisé.</p>
             </div>
           </div>
         </section>
 
         <!-- Step 10 -->
-        <section id="step-10" class="step-panel" data-title="Défi indépendant (30 min)">
+        <section id="step-10" class="step-panel" data-title="Défi (30 min)">
           <div class="md-card p-6">
             <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
               <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
@@ -1523,7 +1656,7 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
               <button class="copy-btn" aria-label="Copier la commande view:clear du défi">Copier</button>
               <pre><code class="language-bash">php artisan view:clear</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Auto-vérification écrite : avant d'ouvrir le corrigé, relisez votre composant et cochez chaque exigence ci-dessus dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>.</p>
+            <p class="text-gray-700 mb-3">Auto-vérification : avant d'ouvrir le corrigé, relisez votre composant et contrôlez chaque exigence ci-dessus une par une.</p>
             <details>
               <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
               <div class="mt-2">
@@ -1624,6 +1757,13 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le sous-titre n'apparaît que là où <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">subtitle</code> est fourni.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Votre composant respecte les quatre exigences.</span></li>
             </ul>
+            <p class="text-gray-700 mt-4 mb-3">Quand tout est vérifié, enregistrez l'étape dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit du défi">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter le composant x-page-header"</code></pre>
+            </div>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -1645,6 +1785,13 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
               <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
               Checklist d'évaluation
             </h3>
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <p class="text-gray-700">Score des quiz : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+              <button type="button" data-quiz-reset class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                <span>Recommencer les quiz</span>
+              </button>
+            </div>
             <p class="text-sm text-gray-600 mb-3">Cochez chaque point avant de passer au livrable. La capture, le commit, le tag et le push sont vérifiés à l'étape suivante.</p>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Toutes les routes sont nommées : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">home</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">about</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">time</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.archive</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</span></li>
@@ -1680,7 +1827,7 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
             <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
               <li>Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code> et capturez la fenêtre, comme en session 01 (Win+Shift+S).</li>
               <li>Enregistrez-la sous <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">C:\dev\prenom-nom\mini-cms\screenshots\s04-articles.png</code>, tout en minuscules.</li>
-              <li>Ajoutez à la fin de la section des captures de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code> le bloc de la carte « Code complet », puis enregistrez.</li>
+              <li>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>, remplacez la section « État actuel » par le premier bloc de la carte « Code complet », ajoutez le second bloc à la fin de la section des captures, puis enregistrez.</li>
             </ol>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-6">
@@ -1693,15 +1840,21 @@ Get-ChildItem resources\views -Recurse -Filter *.blade.php | Select-String -Simp
               <button class="copy-btn" aria-label="Copier les commandes de commit et de tag du livrable">Copier</button>
               <pre><code class="language-bash">git status
 git add -A
-git commit -m "lab-02b: composants Blade et pages statiques"
+git commit -m "Mettre a jour le README pour lab-02b"
 git tag lab-02b
 git log --oneline --decorate -3</code></pre>
             </div>
             <h4 class="font-medium mt-4 mb-2">C. Publier</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
-            <div class="code-block-wrapper mb-6">
+            <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande de push du livrable">Copier</button>
               <pre><code class="language-bash">git push origin main --tags</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Puis contrôlez les tags publiés :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier la commande de contrôle des tags publiés">Copier</button>
+              <pre><code class="language-bash">git ls-remote --tags origin</code></pre>
             </div>
             <h4 class="font-medium mt-4 mb-2">D. Seulement si vous avez travaillé sur un poste de l'université : nettoyer le poste</h4>
             <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
@@ -1739,7 +1892,16 @@ cmdkey /list | Select-String github</code></pre>
               <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
               Code complet
             </h3>
-            <p class="text-sm text-gray-600 mb-2">À ajouter à la fin de la section des captures de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code> :</p>
+            <p class="text-sm text-gray-600 mb-2">Premier bloc : nouvelle section « État actuel » de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>.</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la section État actuel">Copier</button>
+              <pre><code class="language-markdown">## État actuel (tag lab-02b)
+
+- Pages construites avec des composants Blade anonymes : `x-navbar`, `x-nav-link`, `x-post-card`, `x-alert`, `x-page-header`.
+- Lien actif dans la navigation avec `request()-&gt;routeIs()`.
+- Articles toujours stockés dans un tableau PHP, sans base de données pour l'instant.</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Second bloc : à ajouter à la fin de la section des captures.</p>
             <div class="code-block-wrapper ">
               <button class="copy-btn" aria-label="Copier les lignes de la capture de la session 04">Copier</button>
               <pre><code class="language-markup">### Session 04
@@ -1754,7 +1916,7 @@ cmdkey /list | Select-String github</code></pre>
               Résultat attendu
             </h3>
             <ul class="list-disc list-inside text-gray-700 space-y-1">
-              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline --decorate -3</code> montre le commit « lab-02b: composants Blade et pages statiques » avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tag: lab-02b</code>.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline --decorate -3</code> montre le commit « Mettre a jour le README pour lab-02b » avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tag: lab-02b</code>.</li>
               <li>Le push affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">* [new tag]         lab-02b -&gt; lab-02b</code>.</li>
             </ul>
           </div>
@@ -1767,6 +1929,8 @@ cmdkey /list | Select-String github</code></pre>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La capture <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/s04-articles.png</code> existe et le commit la contient.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Sur GitHub, la page Tags du dépôt liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02b</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-02b</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-02..HEAD</code> affiche au moins sept commits.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>L'image de la session 04 s'affiche dans le README sur GitHub.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les commits affichent votre propre identité (avatar et nom d'utilisateur).</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : l'identifiant GitHub est supprimé et le navigateur est déconnecté de github.com.</span></li>
@@ -1776,10 +1940,19 @@ cmdkey /list | Select-String github</code></pre>
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
-              Auto-test
+              Quiz éclair
             </h3>
-            <p class="text-gray-700 mb-1">Écrivez votre réponse en une phrase dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s04-autotests.md</code>, puis ouvrez le corrigé.</p>
-            <details class="mt-3 rounded border border-gray-200 bg-gray-50 p-3"><summary class="cursor-pointer font-medium text-gray-800">Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--tags</code> ?</summary><p class="mt-2 text-sm text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push</code> n'envoie pas les tags par défaut.</p></details>
+            <div class="quiz-question mb-6" id="quiz-s04-q14" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi ajouter <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--tags</code> à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push origin main</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 14">
+                <button type="button" class="quiz-option" data-option="a">Parce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push</code> n'envoie pas les tags par défaut</button>
+                <button type="button" class="quiz-option" data-option="b">Pour pousser toutes les branches en même temps</button>
+                <button type="button" class="quiz-option" data-option="c">Pour créer le tag sur GitHub à la place de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git tag</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git push</code> n'envoie pas les tags par défaut.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
           <div class="md-card p-6 mt-6">
