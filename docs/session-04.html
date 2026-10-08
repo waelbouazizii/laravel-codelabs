@@ -1544,7 +1544,7 @@ git commit -m "Reconstruire le detail et l'accueil avec les composants"</code></
 git grep -n --untracked '{!!' -- resources/views
 git grep -l --untracked "&lt;x-layout&gt;" -- resources/views</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Comme en session 03, le point de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">href=./</code> remplace le guillemet : la même commande fonctionne dans Bash et dans PowerShell. L'option <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--untracked</code> inclut les fichiers pas encore validés.</p>
+            <p class="text-gray-700 mb-3">Comme en session 03, le point de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">href=./</code> remplace le guillemet : la même commande fonctionne dans Bash et dans PowerShell. L'option <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--untracked</code> inclut les fichiers que Git ne suit pas encore (jamais ajoutés avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git add</code>).</p>
             <p class="text-gray-700 mb-3">Corrigez chaque ligne trouvée par A ou B avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code>, enregistrez, puis :</p>
             <h4 class="font-medium mt-4 mb-2">D. Vider le cache des vues</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
@@ -1600,12 +1600,12 @@ git commit -m "Corriger les URL et affichages signales par l'audit"</code></pre>
             <div class="quiz-question mb-6" id="quiz-s04-q13" data-answer="a">
               <p class="font-medium text-gray-900 mb-3">Pourquoi l'option <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--untracked</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep</code> ?</p>
               <div class="space-y-2" role="group" aria-label="Réponses à la question 13">
-                <button type="button" class="quiz-option" data-option="a">Pour chercher aussi dans les fichiers pas encore validés, comme un composant tout juste créé</button>
+                <button type="button" class="quiz-option" data-option="a">Pour chercher aussi dans les fichiers que Git ne suit pas encore (jamais ajoutés avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git add</code>), comme un composant tout juste créé</button>
                 <button type="button" class="quiz-option" data-option="b">Pour ignorer le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor</code></button>
                 <button type="button" class="quiz-option" data-option="c">Pour chercher sans tenir compte des majuscules</button>
               </div>
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans elle, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep</code> ne cherche que dans les fichiers validés : un nouveau composant échapperait à l'audit.</p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans elle, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep</code> ne cherche que dans les fichiers que Git suit déjà : un nouveau composant, jamais ajouté avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git add</code>, échapperait à l'audit.</p>
             </div>
             <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
