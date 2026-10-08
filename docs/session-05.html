@@ -1,0 +1,2612 @@
+<!DOCTYPE html>
+<!--
+  Codelab skeleton template - Atelier Framework Cote Serveur (ISET Sidi Bouzid)
+
+  DO NOT edit the skeleton markup, the navigation JavaScript, or the pinned
+  asset versions below when authoring a session. Copy this file to
+  docs/session-XX.html and only touch:
+    - <title> and the header/course metadata in the sidebar
+    - the <section class="step-panel" ...> blocks (edit, add, remove)
+  See CLAUDE.md for the full rules.
+-->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 05 - Migrations, Eloquent et CRUD des articles - Atelier Framework Côté Serveur</title>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Roboto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.4.0 (pinned) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Prism 1.29.0 (pinned): core theme, language components load on demand via autoloader -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          sidebar: {
+            DEFAULT: '#1f2430',
+            hover: '#2a3040',
+          },
+          brand: {
+            DEFAULT: '#ff3d2e',
+            dark: '#e6291b',
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; }
+
+  /* Sidebar */
+  #sidebar {
+    transition: transform 0.25s ease-in-out;
+  }
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 4px; }
+
+  .step-link { position: relative; }
+  .step-link.is-active {
+    background-color: rgba(255, 61, 46, 0.15);
+    border-left: 3px solid #ff3d2e;
+    color: #ffffff;
+  }
+  .step-link .step-marker {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+  .step-link.is-completed .step-marker .marker-number { display: none; }
+  .step-link.is-completed .step-marker .marker-check { display: flex; }
+  .step-link .step-marker .marker-check { display: none; }
+
+  /* Progress bar */
+  #progress-track {
+    height: 4px;
+    background: #e5e7eb;
+  }
+  #progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff3d2e, #ff8a3d);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+
+  /* Content cards */
+  .md-card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Code blocks + copy button */
+  .code-block-wrapper { position: relative; }
+  .code-block-wrapper pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0.5rem;
+    max-height: 32rem;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: rgba(255,255,255,0.1);
+    color: #d4d4d4;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* Mobile sidebar */
+  @media (max-width: 767px) {
+    #sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transform: translateX(-100%);
+      width: 85vw;
+      max-width: 20rem;
+    }
+    #sidebar.is-open { transform: translateX(0); }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 30;
+    }
+    #sidebar-overlay.is-open { display: block; }
+  }
+
+  /* Quiz */
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: #ffffff;
+    cursor: pointer;
+  }
+  .quiz-option:hover:not(:disabled) { background: #f9fafb; }
+  .quiz-option:focus-visible { outline: 2px solid #ff3d2e; outline-offset: 2px; }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-option.is-correct { border-color: #16a34a; background: #f0fdf4; }
+  .quiz-option.is-wrong { border-color: #e11d48; background: #fff1f2; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="bg-sidebar text-gray-300 w-72 flex-shrink-0 flex flex-col overflow-y-auto">
+    <div class="px-5 py-5 border-b border-white/10">
+      <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
+      <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session 05 - Migrations, Eloquent et CRUD des articles</p>
+    </div>
+    <nav class="flex-1 py-2" aria-label="Etapes du codelab">
+      <ul id="step-nav-list">
+        <li>
+          <a href="#step-1" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-1">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">1</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Prérequis et objectifs</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-2" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-2">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">2</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Vérification de l'environnement</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-3" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-3">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">3</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Notions clés</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-4" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-4">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">4</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 1 - SQLite et migrations d'origine</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-5" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-5">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">5</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 2 - Modèle Post et migration</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-6" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-6">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">6</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 3 - Explorer Post dans Tinker</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-7" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-7">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">7</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 4 - Contrôleur de ressource, liste et détail</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-8" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-8">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">8</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 5 - Formulaire de création et validation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-9" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-9">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">9</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 6 - Premier test Pest</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-10" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-10">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">10</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Défi</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-11" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-11">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">11</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Grille d'auto-évaluation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-12" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-12">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">12</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Livrable : tag lab-03</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="px-5 py-4 border-t border-white/10 text-xs text-gray-500">
+      <a href="index.html" class="hover:text-gray-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au sommaire</a>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4">
+      <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-900" aria-label="Ouvrir le menu des etapes">
+        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500">Session 05 - Semaine 3 - Session A</p>
+        <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prev-step" class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2" aria-label="Etape precedente">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Precedent</span>
+        </button>
+        <button id="next-step" class="px-3 py-2 rounded-md bg-brand text-white hover:bg-brand-dark text-sm flex items-center gap-2" aria-label="Etape suivante">
+          <span class="hidden sm:inline">Suivant</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div id="progress-track" class="w-full">
+      <div id="progress-bar"></div>
+    </div>
+
+    <!-- Content -->
+    <main id="content" class="flex-1 overflow-y-auto">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
+
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel is-active" data-title="Prérequis et objectifs">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Les articles quittent le tableau PHP de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> pour une base de données SQLite, lue et écrite avec Eloquent.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-bullseye text-brand" aria-hidden="true"></i>
+              Objectifs
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+              <li>Expliquer la configuration SQLite et le cycle des migrations.</li>
+              <li>Écrire la migration de la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code>.</li>
+              <li>Créer le modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$fillable</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">casts()</code>, et l'explorer dans Tinker.</li>
+              <li>Programmer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> avec la liaison modèle-route, la pagination et la validation.</li>
+              <li>Écrire et lancer un premier test Pest.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Prérequis
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li>Session 04 terminée : composants Blade et pages reconstruites (<a href="session-04.html" class="underline text-brand">session 04</a>).</li>
+              <li>Tags locaux <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-01b</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02b</code>.</li>
+              <li>Dépôt <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> sur GitHub, avec un push qui fonctionne.</li>
+              <li>Extensions PHP <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pdo_sqlite</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">sqlite3</code> actives.</li>
+            </ul>
+            <p class="text-gray-700 mb-4">Dans toute la page, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de dossier choisi en session 01 (minuscules, sans espace ni accent).</p>
+            <p class="text-gray-700 mb-4">Seulement si le projet n'est pas sur ce poste : récupérez-le avec les blocs « Seulement si le projet n'est pas sur ce poste » de <a href="session-03.html#step-1" class="underline text-brand">la session 03, Prérequis</a>, puis revenez ici.</p>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur un poste de l'université, faites <a href="#step-12" class="underline font-medium">la partie D du Livrable</a> avant de quitter la salle, même si vous n'avez pas terminé.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+              Déroulement
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Partie</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Durée</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Vérification de l'environnement</td><td class="px-3 py-2">10 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Notions clés</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Étapes 1 à 6</td><td class="px-3 py-2">120 min (10, 25, 15, 30, 25, 15)</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Défi</td><td class="px-3 py-2">30 min</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">Livrable</td><td class="px-3 py-2">15 min</td></tr>
+                  <tr><td class="px-3 py-2"><span class="font-medium">Total</span></td><td class="px-3 py-2"><span class="font-medium">190 min (3h10)</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="text-gray-700 mt-3">15 questions de quiz éclair sont réparties dans les notions clés et les étapes ; leur temps est compris dans les durées.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-arrows-rotate text-brand" aria-hidden="true"></i>
+              Ce qui change aujourd'hui
+            </h3>
+            <ol class="list-decimal list-inside text-gray-700 space-y-2">
+              <li>L'adresse d'un article passe de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/un-slug</code> à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/1</code> : la liaison par slug arrive en session 08.</li>
+              <li>Les cartes n'affichent plus l'auteur, l'extrait ni le badge « À la une » : l'auteur arrive avec les relations, l'extrait en session 06.</li>
+              <li>Le tableau PHP de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> disparaît ; il reste consultable avec le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-02b</code>.</li>
+            </ol>
+          </div>
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" data-title="Vérification de l'environnement (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Vérifier le dépôt, les composants de la session 04 et l'état de la base, puis démarrer l'application.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-gray-700 mb-3">Dans le Terminal 1 :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de vérification de l&#x27;environnement">Copier</button>
+              <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms
+git status
+git tag
+git ls-files resources/views/components
+php artisan migrate:status
+composer run dev</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de vérification de l&#x27;environnement">Copier</button>
+              <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms
+git status
+git tag
+git ls-files resources/views/components
+php artisan migrate:status
+composer run dev</code></pre>
+            </div>
+            <div class="overflow-x-auto mb-4">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Contrôle</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Commande</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Résultat attendu</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Si ce n'est pas le cas</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Copie de travail propre</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git status</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">nothing to commit, working tree clean</code></td><td class="px-3 py-2">Validez le travail en cours : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git add -A</code> puis <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git commit -m "fin session 04"</code>.</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Tags</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git tag</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-01</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-01b</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-02</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-02b</code></td><td class="px-3 py-2">Si <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-02b</code> manque : validez d'abord le travail (ligne précédente), puis <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git tag lab-02b</code>.</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Composants</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git ls-files resources/views/components</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">alert</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">layout</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">nav-link</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">navbar</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">page-header</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">post-card</code> (fichiers <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">.blade.php</code>)</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">page-header</code> manquant : suivez le corrigé du <a href="session-04.html#step-10" class="underline text-brand">Défi de la session 04</a>.</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Base de données</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan migrate:status</code></td><td class="px-3 py-2">Les trois migrations d'origine (<code class="bg-gray-100 px-1 py-0.5 rounded text-xs">users</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">cache</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">jobs</code>) avec l'état <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Ran</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Database file at path</code> suivi d'un chemin et de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">does not exist</code>, ou <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Migration table not found.</code> : lancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan migrate</code> et répondez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">yes</code> si Laravel propose de créer le fichier. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">could not find driver</code> : l'extension <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">pdo_sqlite</code> est absente, voir <a href="session-01.html#step-4" class="underline text-brand">Session 01, Étape 1, partie A3</a>.</td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Application</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code></td><td class="px-3 py-2">Une ligne <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">APP_URL: http://localhost:8000</code></td><td class="px-3 py-2">Ouvrez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000</code> (équivalent : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://127.0.0.1:8000</code>), et non l'adresse de Vite sur le port 5173. L'avertissement <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">[laravel:fonts]</code> à propos de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">fontaine</code> est sans conséquence.</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- A VERIFIER : texte exact des messages de migrate:status quand database/database.sqlite manque ou que la table migrations n'existe pas -->
+            <p class="text-gray-700">Laissez le Terminal 1 ouvert : toutes les commandes suivantes se tapent dans le Terminal 2. Dans VS Code, ouvrez le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> (Fichier &gt; Ouvrir le dossier), puis Terminal &gt; Nouveau terminal.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette partie vérifie uniquement le dépôt, la base et l'application.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700">Chaque contrôle donne le résultat de la troisième colonne, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> affiche la page d'accueil de la session 04.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Copie de travail propre.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les quatre tags sont listés.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les six composants sont versionnés.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les trois migrations d'origine sont <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le Terminal 1 reste ouvert sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code>.</span></li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> À l'Étape 4, l'option <code class="bg-white px-1 py-0.5 rounded text-xs">--force</code> remplace un fichier existant. Une copie de travail propre et le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-02b</code> garantissent que rien n'est perdu : l'ancienne version reste dans l'historique.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-table text-brand" aria-hidden="true"></i>
+              De la table à l'objet
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Élément</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Rôle</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Migration</th><td class="px-3 py-2">Fichier PHP daté qui décrit une modification du schéma ; versionné dans Git, rejoué avec <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan migrate</code>.</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Table <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts</code></th><td class="px-3 py-2">Créée par la migration ; une ligne par article.</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Modèle <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Post</code></th><td class="px-3 py-2">Classe <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">app/Models/Post.php</code> ; par convention, elle lit la table <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts</code> (nom du modèle au pluriel, en minuscules).</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Objet <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$post</code></th><td class="px-3 py-2">Une ligne de la table sous forme d'objet PHP : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$post-&gt;title</code>.</td></tr>
+                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$fillable</code></th><td class="px-3 py-2">Liste des colonnes qu'un formulaire a le droit de remplir en une fois.</td></tr>
+                  <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">casts()</code></th><td class="px-3 py-2">Convertit les valeurs lues : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">1</code> devient <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">true</code>, un texte de date devient un objet date.</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-route text-brand" aria-hidden="true"></i>
+              Contrôleur de ressource
+            </h3>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th class="px-3 py-2 border-b border-gray-200 font-medium">Verbe</th><th class="px-3 py-2 border-b border-gray-200 font-medium">URI</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Méthode</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Nom de route</th><th class="px-3 py-2 border-b border-gray-200 font-medium">Session</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">index</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.index</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/create</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.create</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">POST</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">store</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.store</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">show</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.show</code></td><td class="px-3 py-2">S05</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">GET</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}/edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">edit</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.edit</code></td><td class="px-3 py-2">S06</td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">PUT</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">update</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.update</code></td><td class="px-3 py-2">S06</td></tr>
+                  <tr><td class="px-3 py-2">DELETE</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">/posts/{post}</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">destroy</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.destroy</code></td><td class="px-3 py-2">S06</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-link text-brand" aria-hidden="true"></i>
+              Liaison modèle-route et validation
+            </h3>
+            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show(Post $post)</code> : Laravel lit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{post}</code> dans l'URL, cherche l'article qui a cet id et le transmet à la méthode. S'il n'existe pas, la réponse est 404, sans aucun code de votre part.</p>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$request-&gt;validate()</code> : si une règle échoue, Laravel renvoie le navigateur vers le formulaire avec les messages d'erreur et les valeurs saisies ; sinon, la méthode continue avec les données validées.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q01" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Sans autre réglage, quelle table lit le modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
+                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">post</code></button>
+                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code></button>
+                <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">post_table</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Par convention, Eloquent prend le nom du modèle en minuscules et au pluriel.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q02" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show(Post $post)</code>, que fait Laravel pour l'URL <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/7</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 2">
+                <button type="button" class="quiz-option" data-option="a">Il transmet le texte <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">7</code> à la méthode</button>
+                <button type="button" class="quiz-option" data-option="b">Il affiche la liste filtrée sur 7</button>
+                <button type="button" class="quiz-option" data-option="c">Il charge l'article d'id 7, ou répond 404 s'il n'existe pas</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La liaison modèle-route cherche l'article à votre place et renvoie 404 quand il est introuvable.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q03" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Une règle de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">validate()</code> échoue dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code>. Que reçoit le navigateur ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 3">
+                <button type="button" class="quiz-option" data-option="a">Une redirection vers le formulaire, avec les erreurs et la saisie</button>
+                <button type="button" class="quiz-option" data-option="b">Une page d'erreur 500</button>
+                <button type="button" class="quiz-option" data-option="c">L'article est créé avec des champs vides</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Laravel redirige vers la page précédente et met en session les erreurs et les anciennes valeurs.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Grâce aux migrations, le schéma de la base voyage avec le code dans Git. Les données, elles, restent locales à chaque poste.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 4 -->
+        <section id="step-4" class="step-panel" data-title="Étape 1 - SQLite et migrations d'origine (10 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Voir où se trouve la base, comment Laravel la trouve et quelles migrations ont déjà été exécutées.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;affichage des réglages DB_">Copier</button>
+              <pre><code class="language-bash">grep DB_ .env</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;affichage des réglages DB_">Copier</button>
+              <pre><code class="language-powershell">Select-String DB_ .env</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">La ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">DB_CONNECTION=sqlite</code> est active ; les autres lignes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">DB_</code> commencent par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">#</code> : ce sont des commentaires réservés à MySQL. Sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">DB_DATABASE</code>, Laravel utilise le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code>.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes d&#x27;état de la base">Copier</button>
+              <pre><code class="language-bash">php artisan migrate:status
+php artisan db:show</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : cette étape observe la configuration.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Résultat et vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate:status</code> liste trois migrations avec l'état <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">db:show</code> indique SQLite et liste des tables, dont <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">users</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">cache</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">jobs</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrations</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Aucune table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code> pour l'instant.</span></li>
+            </ul>
+            <!-- A VERIFIER : sortie de php artisan db:show sur SQLite en Laravel 13 -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q04" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate:status</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code> pour toutes les migrations. Que fait <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan migrate</code> maintenant ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 4">
+                <button type="button" class="quiz-option" data-option="a">Il recrée toutes les tables, vides</button>
+                <button type="button" class="quiz-option" data-option="b">Rien : il indique qu'il n'y a rien à migrer</button>
+                <button type="button" class="quiz-option" data-option="c">Il échoue car les tables existent</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrations</code> mémorise les fichiers déjà exécutés ; seuls les nouveaux sont joués.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La table <code class="bg-white px-1 py-0.5 rounded text-xs">migrations</code> mémorise ce qui a été exécuté : <code class="bg-white px-1 py-0.5 rounded text-xs">migrate</code> ne rejoue jamais deux fois le même fichier.</p>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Le fichier <code class="bg-white px-1 py-0.5 rounded text-xs">database/database.sqlite</code> est ignoré par Git (session 02) : chaque poste a sa propre base.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 5 -->
+        <section id="step-5" class="step-panel" data-title="Étape 2 - Modèle Post et migration (25 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 25 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Créer la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code> et la classe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Créer le modèle et sa migration</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de création du modèle Post">Copier</button>
+              <pre><code class="language-bash">php artisan make:model Post -m</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">L'option <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">-m</code> crée aussi la migration <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/migrations/AAAA_MM_JJ_HHMMSS_create_posts_table.php</code> (la date change selon le moment de création).</p>
+            <h4 class="font-medium mt-4 mb-2">B. Écrire les deux fichiers</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture du modèle et de la migration">Copier</button>
+              <pre><code class="language-bash">code app/Models/Post.php database/migrations/*_create_posts_table.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture du modèle et de la migration">Copier</button>
+              <pre><code class="language-powershell">code app\Models\Post.php (Get-ChildItem database\migrations\*_create_posts_table.php).FullName</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des deux fichiers par le code de la carte « Code complet », enregistrez, puis :</p>
+            <h4 class="font-medium mt-4 mb-2">C. Exécuter la migration</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes d&#x27;exécution de la migration">Copier</button>
+              <pre><code class="language-bash">php artisan migrate
+php artisan db:table posts</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">D. Annuler puis rejouer</h4>
+            <p class="text-gray-700 mb-3">Le cycle complet : annuler puis rejouer.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes du cycle des migrations">Copier</button>
+              <pre><code class="language-bash">php artisan migrate:rollback
+php artisan migrate:status
+php artisan migrate
+php artisan migrate:status</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">E. Valider</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 2">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter le modele Post et la migration posts"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/migrations/AAAA_MM_JJ_HHMMSS_create_posts_table.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la migration create_posts_table">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('posts', function (Blueprint $table) {
+            $table-&gt;id();
+            $table-&gt;string('title');
+            $table-&gt;string('slug')-&gt;unique();
+            $table-&gt;text('body');
+            $table-&gt;boolean('is_published')-&gt;default(false);
+            $table-&gt;timestamp('published_at')-&gt;nullable();
+            $table-&gt;timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('posts');
+    }
+};</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Models/Post.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier Post.php">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Post extends Model
+{
+    protected $fillable = [
+        'title',
+        'slug',
+        'body',
+        'is_published',
+        'published_at',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'is_published' =&gt; 'boolean',
+            'published_at' =&gt; 'datetime',
+        ];
+    }
+}</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Laravel 13 accepte aussi des attributs PHP comme <code class="bg-white px-1 py-0.5 rounded text-xs">#[Fillable]</code> à la place de la propriété. Ce cours utilise la propriété <code class="bg-white px-1 py-0.5 rounded text-xs">$fillable</code> partout.</p>
+            </div>
+            <!-- A VERIFIER : existence de l'attribut #[Fillable] sur les modèles Eloquent en Laravel 13 -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Résultat et vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate</code> affiche la migration <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create_posts_table</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">DONE</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">db:table posts</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">id</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">title</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">slug</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">is_published</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">created_at</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">updated_at</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Après le rollback, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create_posts_table</code> est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Pending</code> et les trois autres restent <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Après le second <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate</code>, tout est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+            </ul>
+            <!-- A VERIFIER : sortie de php artisan db:table posts sur SQLite en Laravel 13 -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q05" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Que défait <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan migrate:rollback</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 5">
+                <button type="button" class="quiz-option" data-option="a">Toutes les migrations depuis le début</button>
+                <button type="button" class="quiz-option" data-option="b">Les données, mais pas les tables</button>
+                <button type="button" class="quiz-option" data-option="c">Le dernier lot de migrations exécuté</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le rollback appelle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">down()</code> pour les migrations du dernier lot, ici seulement <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create_posts_table</code>.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q06" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">À quoi sert le cast <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">boolean</code> sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">is_published</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 6">
+                <button type="button" class="quiz-option" data-option="a">À obtenir <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">true</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code> en PHP au lieu de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">1</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">0</code></button>
+                <button type="button" class="quiz-option" data-option="b">À rendre la colonne obligatoire</button>
+                <button type="button" class="quiz-option" data-option="c">À autoriser le remplissage par un formulaire</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>SQLite stocke <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">1</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">0</code> ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">casts()</code> convertit la valeur à la lecture et à l'écriture.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">up()</code> construit, <code class="bg-white px-1 py-0.5 rounded text-xs">down()</code> défait : une migration doit toujours pouvoir s'annuler.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">SQLSTATE[HY000]: General error: 1 table "posts" already exists</code> : la table a été créée hors migration, ou le fichier a été modifié après coup ; lancez <code class="bg-white px-1 py-0.5 rounded text-xs">migrate:rollback</code> puis <code class="bg-white px-1 py-0.5 rounded text-xs">migrate</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">Nothing to migrate.</code> : le fichier de migration n'a pas été enregistré, ou il a déjà été exécuté.</p>
+            </div>
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
+          </div>
+        </section>
+
+        <!-- Step 6 -->
+        <section id="step-6" class="step-panel" data-title="Étape 3 - Explorer Post dans Tinker (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Créer et lire des articles en PHP interactif, sans écrire de page.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de lancement de Tinker">Copier</button>
+              <pre><code class="language-bash">php artisan tinker</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Tinker n'accepte aucune saisie dans Git Bash :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande winpty de lancement de Tinker">Copier</button>
+              <pre><code class="language-bash">winpty php artisan tinker</code></pre>
+            </div>
+            <!-- A VERIFIER : winpty est-il nécessaire pour Tinker dans Git Bash sur les postes du cours -->
+            <p class="text-gray-700 mb-3">Collez les lignes une par une si le collage en bloc ne fonctionne pas ; chaque instruction tient sur une seule ligne.</p>
+            <p class="text-sm text-gray-600 mb-2">Dans Tinker (après l'invite &gt;) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les instructions Tinker de création des articles">Copier</button>
+              <pre><code class="language-php">use App\Models\Post;
+Post::count();
+Post::create(['title' =&gt; 'Bienvenue sur Mini-CMS', 'slug' =&gt; 'bienvenue-sur-mini-cms', 'body' =&gt; 'Mini-CMS est le projet fil rouge de cet atelier Laravel.', 'is_published' =&gt; true, 'published_at' =&gt; now()]);
+Post::create(['title' =&gt; 'Les migrations Laravel', 'slug' =&gt; 'les-migrations-laravel', 'body' =&gt; 'Une migration ajoute ou modifie une table de la base, et se rejoue sur chaque poste.', 'is_published' =&gt; false]);
+foreach (range(1, 4) as $i) { Post::create(['title' =&gt; "Article de test $i", 'slug' =&gt; "article-de-test-$i", 'body' =&gt; "Contenu de l'article de test $i, saisi depuis Tinker.", 'is_published' =&gt; $i % 2 === 0, 'published_at' =&gt; $i % 2 === 0 ? now() : null]); }
+Post::count();</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Dans Tinker (après l'invite &gt;) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les instructions Tinker de lecture des articles">Copier</button>
+              <pre><code class="language-php">$post = Post::first();
+$post-&gt;title;
+$post-&gt;is_published;
+$post-&gt;published_at-&gt;format('d/m/Y');
+Post::where('is_published', true)-&gt;count();
+Post::latest('id')-&gt;pluck('title');
+exit</code></pre>
+            </div>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">exit</code> quitte Tinker.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-gray-700">Aucun fichier à écrire : les données vont dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code>, qui n'est pas versionné. Il n'y a donc rien à valider dans Git à cette étape.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Résultat et vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le premier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post::count()</code> renvoie <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">0</code>, le second <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">6</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post-&gt;is_published</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">true</code> (un booléen, pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">1</code>).</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La date s'affiche au format jour/mois/année.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le comptage des articles publiés renvoie <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">3</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pluck</code> liste six titres.</span></li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q07" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Avec notre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$fillable</code>, que donne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post::create()</code> si le tableau contient aussi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'id' =&gt; 99</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 7">
+                <button type="button" class="quiz-option" data-option="a">Un article avec l'id 99</button>
+                <button type="button" class="quiz-option" data-option="b">Une exception de type MassAssignment</button>
+                <button type="button" class="quiz-option" data-option="c">L'id est ignoré et l'article reçoit le numéro suivant</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Une clé absente de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$fillable</code> est écartée sans erreur : c'est ce qui empêche un formulaire de forcer une colonne.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q08" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post-&gt;published_at-&gt;format('d/m/Y')</code> fonctionne-t-il ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 8">
+                <button type="button" class="quiz-option" data-option="a">Parce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code> est dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$fillable</code></button>
+                <button type="button" class="quiz-option" data-option="b">Parce que le cast <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">datetime</code> renvoie un objet date</button>
+                <button type="button" class="quiz-option" data-option="c">Parce que la migration utilise <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">timestamps()</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans le cast, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code> serait un simple texte, sans méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">format()</code>.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Eloquent traduit chaque appel en SQL : <code class="bg-white px-1 py-0.5 rounded text-xs">Post::where('is_published', true)-&gt;count()</code> devient une requête <code class="bg-white px-1 py-0.5 rounded text-xs">SELECT COUNT</code>.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">UNIQUE constraint failed: posts.slug</code> : la ligne a déjà été exécutée ; passez à la suivante. <code class="bg-white px-1 py-0.5 rounded text-xs">Add [title] to fillable property to allow mass assignment on [App\Models\Post].</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">$fillable</code> est absent ou <code class="bg-white px-1 py-0.5 rounded text-xs">Post.php</code> n'a pas été enregistré ; quittez Tinker, corrigez, relancez.</p>
+            </div>
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
+          </div>
+        </section>
+
+        <!-- Step 7 -->
+        <section id="step-7" class="step-panel" data-title="Étape 4 - Contrôleur de ressource, liste et détail (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Remplacer le tableau PHP par des requêtes Eloquent, paginer la liste et afficher un article grâce à la liaison modèle-route.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Régénérer le contrôleur</h4>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900"><code class="bg-white px-1 py-0.5 rounded text-xs">--force</code> remplace <code class="bg-white px-1 py-0.5 rounded text-xs">PostController.php</code>. L'ancienne version reste lisible avec <code class="bg-white px-1 py-0.5 rounded text-xs">git show lab-02b:app/Http/Controllers/PostController.php</code>.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de régénération de PostController">Copier</button>
+              <pre><code class="language-bash">php artisan make:controller PostController --resource --model=Post --force</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">B. Écrire les fichiers</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-bash">code routes/web.php app/Http/Controllers/PostController.php resources/views/components/post-card.blade.php resources/views/posts/index.blade.php resources/views/posts/show.blade.php resources/views/a-propos.blade.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-powershell">code routes\web.php app\Http\Controllers\PostController.php resources\views\components\post-card.blade.php resources\views\posts\index.blade.php resources\views\posts\show.blade.php resources\views\a-propos.blade.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez le contenu des cinq premiers fichiers par le code de la carte « Code complet » ; dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">a-propos.blade.php</code>, remplacez seulement les deux blocs <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code>. Enregistrez, puis :</p>
+            <h4 class="font-medium mt-4 mb-2">C. Contrôler les routes</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">D. Valider</h4>
+            <p class="text-gray-700 mb-3">Après les contrôles de la carte « Résultat et vérification » :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Lire les articles depuis la base avec Eloquent"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home'])-&gt;name('home');
+Route::get('/a-propos', [PageController::class, 'about'])-&gt;name('about');
+Route::get('/heure', [PageController::class, 'time'])-&gt;name('time');
+
+Route::get('/posts/archive/{year}', [PostController::class, 'archive'])
+    -&gt;whereNumber('year')
+    -&gt;name('posts.archive');
+
+Route::resource('posts', PostController::class)-&gt;only(['index', 'show']);</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PostController.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier PostController.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class PostController extends Controller
+{
+    public function index(): View
+    {
+        return view('posts.index', [
+            'heading' =&gt; 'Tous les articles',
+            'posts' =&gt; Post::latest('id')-&gt;paginate(4),
+        ]);
+    }
+
+    public function archive(string $year): View
+    {
+        return view('posts.index', [
+            'heading' =&gt; 'Articles de '.$year,
+            'posts' =&gt; Post::whereYear('published_at', $year)-&gt;latest('id')-&gt;paginate(4),
+        ]);
+    }
+
+    public function create()
+    {
+        //
+    }
+
+    public function store(Request $request)
+    {
+        //
+    }
+
+    public function show(Post $post): View
+    {
+        return view('posts.show', compact('post'));
+    }
+
+    public function edit(Post $post)
+    {
+        //
+    }
+
+    public function update(Request $request, Post $post)
+    {
+        //
+    }
+
+    public function destroy(Post $post)
+    {
+        //
+    }
+}</code></pre>
+            </div>
+            <p class="text-gray-700 mb-4"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">edit</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">destroy</code> restent vides : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> sont remplies à l'Étape 5, les trois autres en session 06. Le groupe de routes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prefix</code>/<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">name</code> de la session 03 est remplacé par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::resource</code>, qui génère les mêmes noms <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</p>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/post-card.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier post-card.blade.php">Copier</button>
+              <pre><code class="language-markup">@props(['post'])
+
+&lt;article class="bg-white rounded-lg border border-gray-200 shadow-sm p-5 flex flex-col gap-3"&gt;
+    &lt;div class="flex items-center gap-2"&gt;
+        &lt;h2 class="text-lg font-semibold text-gray-900"&gt;
+            &lt;a href="{{ route('posts.show', $post) }}" class="hover:text-indigo-600"&gt;{{ $post-&gt;title }}&lt;/a&gt;
+        &lt;/h2&gt;
+        @if (! $post-&gt;is_published)
+            &lt;span class="text-xs font-medium bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full"&gt;Brouillon&lt;/span&gt;
+        @endif
+    &lt;/div&gt;
+
+    &lt;p class="text-sm text-gray-600"&gt;{{ Str::limit($post-&gt;body, 120) }}&lt;/p&gt;
+
+    &lt;p class="text-xs text-gray-500"&gt;
+        @if ($post-&gt;published_at)
+            Publié le {{ $post-&gt;published_at-&gt;format('d/m/Y') }} -
+            &lt;a href="{{ route('posts.archive', $post-&gt;published_at-&gt;year) }}" class="underline"&gt;Archive {{ $post-&gt;published_at-&gt;year }}&lt;/a&gt;
+        @else
+            Non publié
+        @endif
+    &lt;/p&gt;
+
+    &lt;a href="{{ route('posts.show', $post) }}" class="text-sm font-medium text-indigo-600 hover:underline"&gt;Lire l'article&lt;/a&gt;
+&lt;/article&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/index.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier posts/index.blade.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;{{ $heading }} - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;x-page-header :title="$heading" /&gt;
+
+    &lt;div class="grid gap-6 md:grid-cols-2"&gt;
+        @forelse ($posts as $post)
+            &lt;x-post-card :post="$post" /&gt;
+        @empty
+            &lt;x-alert type="warning" title="Aucun article" class="md:col-span-2"&gt;
+                Il n'y a pas encore d'article.
+            &lt;/x-alert&gt;
+        @endforelse
+    &lt;/div&gt;
+
+    &lt;div class="mt-8"&gt;
+        {{ $posts-&gt;links() }}
+    &lt;/div&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/show.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier posts/show.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;{{ $post-&gt;title }} - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;article class="max-w-2xl"&gt;
+        &lt;a href="{{ route('posts.index') }}" class="text-sm text-indigo-600 hover:underline"&gt;Retour aux articles&lt;/a&gt;
+
+        &lt;h1 class="text-3xl font-bold mt-4 mb-2"&gt;{{ $post-&gt;title }}&lt;/h1&gt;
+
+        &lt;p class="text-sm text-gray-500 mb-6"&gt;
+            @if ($post-&gt;published_at)
+                Publié le {{ $post-&gt;published_at-&gt;format('d/m/Y') }}
+            @else
+                Brouillon
+            @endif
+        &lt;/p&gt;
+
+        &lt;div class="text-gray-800 leading-relaxed whitespace-pre-line"&gt;{{ $post-&gt;body }}&lt;/div&gt;
+    &lt;/article&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/a-propos.blade.php</code> :</p>
+            <p class="text-gray-700 mb-2">À la place des deux blocs <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-alert&gt;</code> existants :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les deux nouvelles boîtes de a-propos">Copier</button>
+              <pre><code class="language-markup">        &lt;x-alert type="info" title="Projet pédagogique"&gt;
+            Ce site évolue à chaque session de l'atelier.
+        &lt;/x-alert&gt;
+
+        &lt;x-alert type="success" title="Données en base"&gt;
+            Les articles sont enregistrés dans une base SQLite et lus avec Eloquent.
+        &lt;/x-alert&gt;</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier a-propos.blade.php de l&#x27;étape 4">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;À propos - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;x-page-header title="À propos" subtitle="Le projet Mini-CMS et ses objectifs." /&gt;
+
+    &lt;div class="space-y-4 max-w-2xl"&gt;
+        &lt;p class="text-gray-700 leading-relaxed"&gt;
+            Mini-CMS est le projet fil rouge de l'Atelier Framework Côté Serveur, 3e année MDW, ISET Sidi Bouzid.
+        &lt;/p&gt;
+
+        &lt;p class="text-gray-700"&gt;Auteur : {{ $auteur }} - Groupe : {{ $groupe }}&lt;/p&gt;
+
+        &lt;x-alert type="info" title="Projet pédagogique"&gt;
+            Ce site évolue à chaque session de l'atelier.
+        &lt;/x-alert&gt;
+
+        &lt;x-alert type="success" title="Données en base"&gt;
+            Les articles sont enregistrés dans une base SQLite et lus avec Eloquent.
+        &lt;/x-alert&gt;
+    &lt;/div&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Résultat et vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">home</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">about</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">time</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.archive</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code> affiche 4 cartes et des liens de pagination en anglais : « Showing 1 to 4 of 6 results » et les numéros de page sur un grand écran, « Previous » et « Next » sur un écran étroit. La page 2 affiche 2 cartes.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les brouillons portent le badge « Brouillon ».</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/1</code> affiche l'article.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/999</code> répond 404.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/archive/2026</code> affiche « Articles de 2026 » avec les trois articles publiés.</span></li>
+            </ul>
+            <!-- A VERIFIER : style des liens de pagination : ligne @source des vues de pagination dans resources/css/app.css, et textes affichés selon la largeur d'écran -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q09" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> répond 404. Quelle ligne de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> en est la cause ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 9">
+                <button type="button" class="quiz-option" data-option="a">Aucune : la liaison modèle-route répond 404 avant d'appeler <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code></button>
+                <button type="button" class="quiz-option" data-option="b">Un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort(404)</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code></button>
+                <button type="button" class="quiz-option" data-option="c">Le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">paginate(4)</code> de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index</code></button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Laravel ne trouve pas l'article 999 et répond 404 sans exécuter la méthode.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q10" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Avec 6 articles et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">paginate(4)</code>, combien de cartes sur la page 2 ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 10">
+                <button type="button" class="quiz-option" data-option="a">4</button>
+                <button type="button" class="quiz-option" data-option="b">6</button>
+                <button type="button" class="quiz-option" data-option="c">2</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La page 1 contient les 4 premiers articles, la page 2 les 2 restants.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le contrôleur ne contient plus ni données ni <code class="bg-white px-1 py-0.5 rounded text-xs">abort(404)</code> : la requête Eloquent et la liaison modèle-route font le travail.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Cannot use object of type App\Models\Post as array</code> : une vue utilise encore <code class="bg-white px-1 py-0.5 rounded text-xs">$post['title']</code> au lieu de <code class="bg-white px-1 py-0.5 rounded text-xs">$post-&gt;title</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">Missing required parameter for [Route: posts.show]</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.show')</code> est appelée sans <code class="bg-white px-1 py-0.5 rounded text-xs">$post</code>. Liens de pagination sans style : arrêtez puis relancez <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> dans le Terminal 1.</p>
+            </div>
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
+          </div>
+        </section>
+
+        <!-- Step 8 -->
+        <section id="step-8" class="step-panel" data-title="Étape 5 - Formulaire de création et validation (25 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 25 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Créer un article depuis le navigateur, avec des données vérifiées par le serveur.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Ouvrir les fichiers</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-bash">code routes/web.php app/Http/Controllers/PostController.php resources/views/posts/index.blade.php resources/views/posts/create.blade.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-powershell">code routes\web.php app\Http\Controllers\PostController.php resources\views\posts\index.blade.php resources\views\posts\create.blade.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create.blade.php</code> est un nouveau fichier : VS Code le crée à l'enregistrement. Appliquez les modifications de la carte « Code complet » aux quatre fichiers, enregistrez, puis :</p>
+            <h4 class="font-medium mt-4 mb-2">B. Contrôler les routes</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --except-vendor</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">C. Valider</h4>
+            <p class="text-gray-700 mb-3">Après les contrôles de la carte « Résultat et vérification » :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter le formulaire de creation d'article"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/web.php</code> :</p>
+            <p class="text-gray-700 mb-2">Remplacez la dernière ligne, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::resource</code>, par :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la ligne Route::resource de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">Route::resource('posts', PostController::class)-&gt;only(['index', 'show', 'create', 'store']);</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier routes/web.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\PageController;
+use App\Http\Controllers\PostController;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', [PageController::class, 'home'])-&gt;name('home');
+Route::get('/a-propos', [PageController::class, 'about'])-&gt;name('about');
+Route::get('/heure', [PageController::class, 'time'])-&gt;name('time');
+
+Route::get('/posts/archive/{year}', [PostController::class, 'archive'])
+    -&gt;whereNumber('year')
+    -&gt;name('posts.archive');
+
+Route::resource('posts', PostController::class)-&gt;only(['index', 'show', 'create', 'store']);</code></pre>
+            </div>
+              </div>
+            </details>
+            <div class="mt-6"></div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PostController.php</code> :</p>
+            <p class="text-gray-700 mb-2">Juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">use App\Models\Post;</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la ligne use RedirectResponse">Copier</button>
+              <pre><code class="language-php">use Illuminate\Http\RedirectResponse;</code></pre>
+            </div>
+            <p class="text-gray-700 mb-2">À la place des méthodes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> vides :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les méthodes create et store">Copier</button>
+              <pre><code class="language-php">    public function create(): View
+    {
+        return view('posts.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request-&gt;validate([
+            'title' =&gt; ['required', 'string', 'max:255'],
+            'slug' =&gt; ['required', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/', 'unique:posts,slug'],
+            'body' =&gt; ['required', 'string', 'min:20'],
+            'is_published' =&gt; ['nullable', 'boolean'],
+        ]);
+
+        $validated['is_published'] = $request-&gt;boolean('is_published');
+        $validated['published_at'] = $validated['is_published'] ? now() : null;
+
+        $post = Post::create($validated);
+
+        return redirect()-&gt;route('posts.show', $post);
+    }</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier PostController.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Post;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\View\View;
+
+class PostController extends Controller
+{
+    public function index(): View
+    {
+        return view('posts.index', [
+            'heading' =&gt; 'Tous les articles',
+            'posts' =&gt; Post::latest('id')-&gt;paginate(4),
+        ]);
+    }
+
+    public function archive(string $year): View
+    {
+        return view('posts.index', [
+            'heading' =&gt; 'Articles de '.$year,
+            'posts' =&gt; Post::whereYear('published_at', $year)-&gt;latest('id')-&gt;paginate(4),
+        ]);
+    }
+
+    public function create(): View
+    {
+        return view('posts.create');
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $validated = $request-&gt;validate([
+            'title' =&gt; ['required', 'string', 'max:255'],
+            'slug' =&gt; ['required', 'string', 'max:255', 'regex:/^[a-z0-9-]+$/', 'unique:posts,slug'],
+            'body' =&gt; ['required', 'string', 'min:20'],
+            'is_published' =&gt; ['nullable', 'boolean'],
+        ]);
+
+        $validated['is_published'] = $request-&gt;boolean('is_published');
+        $validated['published_at'] = $validated['is_published'] ? now() : null;
+
+        $post = Post::create($validated);
+
+        return redirect()-&gt;route('posts.show', $post);
+    }
+
+    public function show(Post $post): View
+    {
+        return view('posts.show', compact('post'));
+    }
+
+    public function edit(Post $post)
+    {
+        //
+    }
+
+    public function update(Request $request, Post $post)
+    {
+        //
+    }
+
+    public function destroy(Post $post)
+    {
+        //
+    }
+}</code></pre>
+            </div>
+              </div>
+            </details>
+            <div class="mt-6"></div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/index.blade.php</code> :</p>
+            <p class="text-gray-700 mb-2">Juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-page-header :title="$heading" /&gt;</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le bouton Nouvel article">Copier</button>
+              <pre><code class="language-markup">    &lt;a href="{{ route('posts.create') }}" class="inline-block mb-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"&gt;Nouvel article&lt;/a&gt;</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier posts/index.blade.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;{{ $heading }} - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;x-page-header :title="$heading" /&gt;
+    &lt;a href="{{ route('posts.create') }}" class="inline-block mb-6 rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700"&gt;Nouvel article&lt;/a&gt;
+
+    &lt;div class="grid gap-6 md:grid-cols-2"&gt;
+        @forelse ($posts as $post)
+            &lt;x-post-card :post="$post" /&gt;
+        @empty
+            &lt;x-alert type="warning" title="Aucun article" class="md:col-span-2"&gt;
+                Il n'y a pas encore d'article.
+            &lt;/x-alert&gt;
+        @endforelse
+    &lt;/div&gt;
+
+    &lt;div class="mt-8"&gt;
+        {{ $posts-&gt;links() }}
+    &lt;/div&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+              </div>
+            </details>
+            <div class="mt-6"></div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/posts/create.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier posts/create.blade.php">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;Nouvel article - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;x-page-header title="Nouvel article" subtitle="Chaque champ est vérifié par le serveur." /&gt;
+
+    @if ($errors-&gt;any())
+        &lt;x-alert type="error" title="Le formulaire contient des erreurs" class="mb-6 max-w-2xl"&gt;
+            Corrigez les champs signalés, puis envoyez à nouveau.
+        &lt;/x-alert&gt;
+    @endif
+
+    &lt;form method="POST" action="{{ route('posts.store') }}" class="max-w-2xl space-y-5"&gt;
+        @csrf
+
+        &lt;div&gt;
+            &lt;label for="title" class="block text-sm font-medium text-gray-700"&gt;Titre&lt;/label&gt;
+            &lt;input type="text" id="title" name="title" value="{{ old('title') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"&gt;
+            @error('title')
+                &lt;p class="mt-1 text-sm text-red-600"&gt;{{ $message }}&lt;/p&gt;
+            @enderror
+        &lt;/div&gt;
+
+        &lt;div&gt;
+            &lt;label for="slug" class="block text-sm font-medium text-gray-700"&gt;Slug (minuscules, chiffres et tirets)&lt;/label&gt;
+            &lt;input type="text" id="slug" name="slug" value="{{ old('slug') }}" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"&gt;
+            @error('slug')
+                &lt;p class="mt-1 text-sm text-red-600"&gt;{{ $message }}&lt;/p&gt;
+            @enderror
+        &lt;/div&gt;
+
+        &lt;div&gt;
+            &lt;label for="body" class="block text-sm font-medium text-gray-700"&gt;Contenu&lt;/label&gt;
+            &lt;textarea id="body" name="body" rows="8" class="mt-1 w-full rounded-md border border-gray-300 px-3 py-2"&gt;{{ old('body') }}&lt;/textarea&gt;
+            @error('body')
+                &lt;p class="mt-1 text-sm text-red-600"&gt;{{ $message }}&lt;/p&gt;
+            @enderror
+        &lt;/div&gt;
+
+        &lt;div class="flex items-center gap-2"&gt;
+            &lt;input type="checkbox" id="is_published" name="is_published" value="1" @checked(old('is_published'))&gt;
+            &lt;label for="is_published" class="text-sm text-gray-700"&gt;Publier immédiatement&lt;/label&gt;
+        &lt;/div&gt;
+
+        &lt;div class="flex items-center gap-4"&gt;
+            &lt;button type="submit" class="rounded-md bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700"&gt;Enregistrer&lt;/button&gt;
+            &lt;a href="{{ route('posts.index') }}" class="text-sm text-gray-600 hover:underline"&gt;Annuler&lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/form&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Le formulaire n'a volontairement aucun attribut HTML <code class="bg-white px-1 py-0.5 rounded text-xs">required</code>, pour que vous puissiez observer la validation du serveur. Les messages d'erreur sont en anglais ; ils seront traduits en session 10.</p>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Résultat et vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche en plus <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.create</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.store</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le bouton « Nouvel article » de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> ouvre le formulaire.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Un envoi vide affiche la boîte rouge et un message sous Titre, Slug et Contenu, par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">The title field is required.</code></span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Après une erreur, le texte déjà saisi reste dans les champs.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le slug <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bienvenue-sur-mini-cms</code> est refusé (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">The slug has already been taken.</code>).</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Un envoi valide redirige vers la page du nouvel article, qui apparaît en tête de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>.</span></li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q11" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Vous retirez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@csrf</code> du formulaire et vous l'envoyez. Résultat ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 11">
+                <button type="button" class="quiz-option" data-option="a">L'article est créé normalement</button>
+                <button type="button" class="quiz-option" data-option="b">Une page 419 Page Expired</button>
+                <button type="button" class="quiz-option" data-option="c">Une erreur de validation sur le titre</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans jeton CSRF, Laravel refuse toute requête POST venant d'un formulaire.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q12" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">À quoi sert <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">value="{{ old('title') }}"</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 12">
+                <button type="button" class="quiz-option" data-option="a">À vérifier que le titre est rempli</button>
+                <button type="button" class="quiz-option" data-option="b">À échapper le titre avant de l'enregistrer</button>
+                <button type="button" class="quiz-option" data-option="c">À remettre la saisie dans le champ après une validation échouée</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">old()</code> relit la valeur envoyée lors de la tentative précédente.</p>
+            </div>
+            <div class="quiz-question mb-6" id="quiz-s05-q13" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Avant cette étape, avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">only(['index', 'show'])</code>, que donnait <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/create</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 13">
+                <button type="button" class="quiz-option" data-option="a">Une page 404 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code> était pris pour un identifiant d'article</button>
+                <button type="button" class="quiz-option" data-option="b">Le formulaire vide</button>
+                <button type="button" class="quiz-option" data-option="c">Une erreur 500</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Seule la route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/{post}</code> existait : Laravel cherchait un article dont l'id vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code>.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Ne faites jamais confiance au navigateur : seules les données renvoyées par <code class="bg-white px-1 py-0.5 rounded text-xs">validate()</code> vont dans <code class="bg-white px-1 py-0.5 rounded text-xs">Post::create</code>.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">419 Page Expired</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> manque dans le formulaire. <code class="bg-white px-1 py-0.5 rounded text-xs">The POST method is not supported for route posts/create</code> : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">action</code> du formulaire est vide ou faux ; il doit valoir <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.store')</code>.</p>
+            </div>
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
+          </div>
+        </section>
+
+        <!-- Step 9 -->
+        <section id="step-9" class="step-panel" data-title="Étape 6 - Premier test Pest (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Faire vérifier les pages par un programme plutôt qu'à la main.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Seulement si le fichier tests/Pest.php n'existe pas</h4>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Pest.php</code> n'existe pas, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash d&#x27;installation de Pest">Copier</button>
+              <pre><code class="language-bash">composer remove phpunit/phpunit --dev
+composer require pestphp/pest pestphp/pest-plugin-laravel --dev --with-all-dependencies
+./vendor/bin/pest --init</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Pest.php</code> n'existe pas, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell d&#x27;installation de Pest">Copier</button>
+              <pre><code class="language-powershell">composer remove phpunit/phpunit --dev
+composer require pestphp/pest pestphp/pest-plugin-laravel --dev --with-all-dependencies
+.\vendor\bin\pest --init</code></pre>
+            </div>
+            <!-- A VERIFIER : commandes d'installation conditionnelle de Pest sur un projet Laravel 13 créé avec PHPUnit -->
+            <h4 class="font-medium mt-4 mb-2">B. Activer la base de test</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture de tests/Pest.php">Copier</button>
+              <pre><code class="language-bash">code tests/Pest.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de tests/Pest.php">Copier</button>
+              <pre><code class="language-powershell">code tests\Pest.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Modifiez la ligne indiquée dans la carte « Code complet », enregistrez ; le reste du fichier ne change pas.</p>
+            <h4 class="font-medium mt-4 mb-2">C. Créer le fichier de test</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de création du test PostPagesTest">Copier</button>
+              <pre><code class="language-bash">php artisan make:test PostPagesTest</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture du test">Copier</button>
+              <pre><code class="language-bash">code tests/Feature/PostPagesTest.php</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture du test">Copier</button>
+              <pre><code class="language-powershell">code tests\Feature\PostPagesTest.php</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Remplacez tout le contenu du fichier par le code de la carte « Code complet », enregistrez, puis :</p>
+            <h4 class="font-medium mt-4 mb-2">D. Lancer les tests</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de lancement des tests">Copier</button>
+              <pre><code class="language-bash">php artisan test</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">E. Valider</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 6">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Ajouter les premiers tests Pest des pages d'articles"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Pest.php</code> :</p>
+            <p class="text-sm text-gray-600 mb-2">Avant :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les lignes de tests/Pest.php avant la modification">Copier</button>
+              <pre><code class="language-php">pest()-&gt;extend(Tests\TestCase::class)
+ // -&gt;use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    -&gt;in('Feature');</code></pre>
+            </div>
+            <!-- A VERIFIER : contenu de tests/Pest.php généré par le squelette Laravel 13 (ligne RefreshDatabase en commentaire) -->
+            <p class="text-sm text-gray-600 mb-2">Après : seule cette ligne change, supprimez les deux barres <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">//</code> et alignez-la sur les autres. Le reste du fichier ne change pas.</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les lignes de tests/Pest.php après la modification">Copier</button>
+              <pre><code class="language-php">pest()-&gt;extend(Tests\TestCase::class)
+    -&gt;use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    -&gt;in('Feature');</code></pre>
+            </div>
+            <div class="mt-6"></div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Feature/PostPagesTest.php</code> :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier PostPagesTest.php">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+use App\Models\Post;
+
+beforeEach(function () {
+    $this-&gt;withoutVite();
+});
+
+it('shows the posts list', function () {
+    Post::create([
+        'title' =&gt; 'Premier article',
+        'slug' =&gt; 'premier-article',
+        'body' =&gt; 'Contenu du premier article de test.',
+        'is_published' =&gt; true,
+        'published_at' =&gt; now(),
+    ]);
+
+    $this-&gt;get(route('posts.index'))
+        -&gt;assertOk()
+        -&gt;assertSee('Premier article');
+});
+
+it('shows a message when there is no post', function () {
+    $this-&gt;get(route('posts.index'))
+        -&gt;assertOk()
+        -&gt;assertSee('Aucun article');
+});
+
+it('shows a single post', function () {
+    $post = Post::create([
+        'title' =&gt; 'Article complet',
+        'slug' =&gt; 'article-complet',
+        'body' =&gt; 'Texte complet de cet article de test.',
+        'is_published' =&gt; true,
+        'published_at' =&gt; now(),
+    ]);
+
+    $this-&gt;get(route('posts.show', $post))
+        -&gt;assertOk()
+        -&gt;assertSee('Texte complet de cet article de test.');
+});
+
+it('returns 404 for an unknown post', function () {
+    $this-&gt;get('/posts/999')-&gt;assertNotFound();
+});
+
+it('shows the create form', function () {
+    $this-&gt;get(route('posts.create'))
+        -&gt;assertOk()
+        -&gt;assertSee('Nouvel article');
+});</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Résultat et vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les cinq tests de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPagesTest</code> sont marqués d'une coche verte.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La dernière ligne indique que tous les tests passent (7 attendus avec les deux tests d'exemple).</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> affiche toujours vos articles : les tests n'ont rien effacé.</span></li>
+            </ul>
+            <!-- A VERIFIER : nombre total de tests (7) et comportement de ExampleTest sans composer run dev (Vite manifest not found) -->
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q14" data-answer="c">
+              <p class="font-medium text-gray-900 mb-3">Le test « no post » passe alors que votre base contient des articles. Pourquoi ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 14">
+                <button type="button" class="quiz-option" data-option="a">Le test efface vos articles avant de s'exécuter</button>
+                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertSee</code> ne lit pas la base</button>
+                <button type="button" class="quiz-option" data-option="c">Les tests utilisent une base séparée, vide au début de chaque test</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La configuration de test utilise une base SQLite en mémoire, reconstruite par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">RefreshDatabase</code>.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">RefreshDatabase</code> reconstruit une base vide en mémoire pour les tests : ils ne touchent jamais <code class="bg-white px-1 py-0.5 rounded text-xs">database/database.sqlite</code>.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">no such table: posts</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">RefreshDatabase</code> de <code class="bg-white px-1 py-0.5 rounded text-xs">tests/Pest.php</code> est encore en commentaire. <code class="bg-white px-1 py-0.5 rounded text-xs">Vite manifest not found</code> sur <code class="bg-white px-1 py-0.5 rounded text-xs">ExampleTest</code> : le Terminal 1 n'exécute plus <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> ; notre fichier évite ce problème avec <code class="bg-white px-1 py-0.5 rounded text-xs">withoutVite()</code>.</p>
+            </div>
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
+          </div>
+        </section>
+
+        <!-- Step 10 -->
+        <section id="step-10" class="step-panel" data-title="Défi (30 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Afficher seul, sur la page d'accueil, les trois derniers articles publiés, et le prouver par un test.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-house text-brand" aria-hidden="true"></i>
+              Les articles récents sur l'accueil
+            </h3>
+            <p class="text-gray-700 mb-2">Exigences :</p>
+            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PageController::home</code> transmet à la vue une variable <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">latestPosts</code> : au plus 3 articles, publiés uniquement, du plus récemment publié au plus ancien.</li>
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">home.blade.php</code> les affiche avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-post-card</code> dans une grille, et un message quand il n'y en a aucun (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code>).</li>
+              <li>La boîte « Sprint en cours » est supprimée.</li>
+              <li>Un nouveau test dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPagesTest</code> crée un article publié et un brouillon, puis vérifie que l'accueil montre le premier et pas le second.</li>
+            </ul>
+            <p class="text-gray-700 mb-4">Indices : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where('is_published', true)</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">latest('published_at')</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">take(3)</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">get()</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertSee</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertDontSee</code>.</p>
+            <p class="text-gray-700 mb-3">Auto-vérification écrite : créez le fichier de notes du défi et ouvrez-le dans VS Code.</p>
+            <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de création des notes du défi">Copier</button>
+              <pre><code class="language-bash">mkdir -p notes
+code notes/s05-defi.md</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de création des notes du défi">Copier</button>
+              <pre><code class="language-powershell">New-Item -ItemType Directory -Force notes
+code notes\s05-defi.md</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s05-defi.md</code> (contenu complet) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le contenu des notes du défi">Copier</button>
+              <pre><code class="language-markdown"># Session 05 - Défi : articles récents sur l'accueil
+
+latestPosts contient au plus 3 articles : oui / non
+Seuls les articles publiés sont transmis à la vue : oui / non
+home.blade.php utilise x-post-card et @forelse : oui / non
+Le nouveau test passe et php artisan test est vert : oui / non
+
+Pourquoi get() et pas paginate(3) sur la page d'accueil ?</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Répondez à chaque ligne dans le fichier et enregistrez-le, puis seulement ensuite ouvrez le corrigé.</p>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <div class="mt-2">
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Controllers/PageController.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier PageController.php du corrigé">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Post;
+use Illuminate\View\View;
+
+class PageController extends Controller
+{
+    public function home(): View
+    {
+        return view('home', [
+            'latestPosts' =&gt; Post::where('is_published', true)
+                -&gt;latest('published_at')
+                -&gt;take(3)
+                -&gt;get(),
+        ]);
+    }
+
+    public function about(): View
+    {
+        return view('a-propos', [
+            'auteur' =&gt; 'Prenom Nom',
+            'groupe' =&gt; 'MDW32',
+        ]);
+    }
+
+    public function time(): View
+    {
+        return view('heure', [
+            'heure' =&gt; now()-&gt;format('H:i'),
+            'date' =&gt; now()-&gt;format('d/m/Y'),
+        ]);
+    }
+}</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-4">Gardez votre nom et votre groupe à la place de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Prenom Nom</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">MDW32</code>.</p>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/home.blade.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier home.blade.php du corrigé">Copier</button>
+              <pre><code class="language-markup">&lt;x-layout&gt;
+    &lt;x-slot:title&gt;Accueil - Mini-CMS&lt;/x-slot:title&gt;
+
+    &lt;section class="py-10"&gt;
+        &lt;h1 class="text-4xl font-bold mb-4"&gt;Bienvenue sur Mini-CMS&lt;/h1&gt;
+        &lt;p class="text-lg text-gray-600 mb-6 max-w-2xl"&gt;
+            Une petite plateforme de publication construite pas à pas pendant l'Atelier Framework Côté Serveur.
+        &lt;/p&gt;
+        &lt;a href="{{ route('posts.index') }}" class="inline-block rounded-md bg-indigo-600 px-5 py-2.5 font-medium text-white hover:bg-indigo-700"&gt;
+            Lire les articles
+        &lt;/a&gt;
+    &lt;/section&gt;
+
+    &lt;h2 class="text-2xl font-bold mb-4"&gt;Derniers articles publiés&lt;/h2&gt;
+
+    &lt;div class="grid gap-6 md:grid-cols-2"&gt;
+        @forelse ($latestPosts as $post)
+            &lt;x-post-card :post="$post" /&gt;
+        @empty
+            &lt;x-alert type="info" title="Aucun article publié" class="md:col-span-2"&gt;
+                Les articles publiés apparaîtront ici.
+            &lt;/x-alert&gt;
+        @endforelse
+    &lt;/div&gt;
+&lt;/x-layout&gt;</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Feature/PostPagesTest.php</code> :</p>
+            <p class="text-gray-700 mb-2">À la fin de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Feature/PostPagesTest.php</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier le test de la page d&#x27;accueil">Copier</button>
+              <pre><code class="language-php">it('shows only published posts on the home page', function () {
+    Post::create([
+        'title' =&gt; 'Article visible',
+        'slug' =&gt; 'article-visible',
+        'body' =&gt; 'Cet article est publie et doit apparaitre.',
+        'is_published' =&gt; true,
+        'published_at' =&gt; now(),
+    ]);
+
+    Post::create([
+        'title' =&gt; 'Article masque',
+        'slug' =&gt; 'article-masque',
+        'body' =&gt; 'Cet article est un brouillon et reste cache.',
+        'is_published' =&gt; false,
+    ]);
+
+    $this-&gt;get(route('home'))
+        -&gt;assertOk()
+        -&gt;assertSee('Article visible')
+        -&gt;assertDontSee('Article masque');
+});</code></pre>
+            </div>
+            <p class="text-gray-700">Dernière question des notes : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">get()</code> exécute la requête et renvoie une collection de 3 articles au plus ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">paginate(3)</code> ajouterait des numéros de page inutiles sur l'accueil.</p>
+              </div>
+            </details>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> affiche « Derniers articles publiés » avec au plus trois cartes, sans brouillon, et la boîte « Sprint en cours » a disparu.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est vert, avec un test de plus qu'à l'Étape 6.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>L'accueil n'affiche aucun badge « Brouillon ».</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vos notes sont rédigées et comparées au corrigé.</span></li>
+            </ul>
+            <p class="text-gray-700 mb-3">Quand tout est vérifié, enregistrez le défi dans Git :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les commandes de commit du défi">Copier</button>
+              <pre><code class="language-bash">git add -A
+git commit -m "Afficher les derniers articles publies sur l'accueil"</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une requête Eloquent se construit maillon par maillon : filtrer, trier, limiter, puis <code class="bg-white px-1 py-0.5 rounded text-xs">get()</code> l'exécute. Le test protège cette règle : un brouillon qui apparaîtrait un jour sur l'accueil ferait échouer <code class="bg-white px-1 py-0.5 rounded text-xs">php artisan test</code>.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Step 11 -->
+        <section id="step-11" class="step-panel" data-title="Grille d'auto-évaluation">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
+              Grille d'auto-évaluation
+            </h3>
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+              <p class="text-gray-700">Score des quiz : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+              <button type="button" data-quiz-reset class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2">
+                <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+                <span>Recommencer les quiz</span>
+              </button>
+            </div>
+            <p class="text-sm text-gray-600 mb-3">Cochez chaque point avant le livrable. Les captures, le README, le tag et le push sont vérifiés à l'étape suivante.</p>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan migrate:status</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create_posts_table</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> déclare <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$fillable</code> (cinq colonnes) et la méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">casts()</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> affiche 4 cartes par page et des liens de pagination.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/1</code> affiche un article et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> répond 404, sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort()</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Un formulaire envoyé vide affiche les erreurs sous les champs et conserve la saisie.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Un envoi valide crée l'article et redirige vers sa page.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>L'accueil n'affiche que des articles publiés.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>J'ai répondu aux 15 questions des quiz éclair.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-02b..HEAD</code> affiche au moins cinq commits.</span></li>
+            </ul>
+          </div>
+        </section>
+
+        <!-- Step 12 -->
+        <section id="step-12" class="step-panel" data-title="Livrable : tag lab-03 (15 min)">
+          <div class="md-card p-6">
+            <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+              Objectif
+              <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+            </h3>
+            <p class="text-gray-700 leading-relaxed">Capturer la liste paginée et le formulaire, mettre à jour le README, puis poser et publier le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-03</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+              Commandes
+            </h3>
+            <h4 class="font-medium mb-2">A. Captures et README</h4>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+              <li>Capturez chaque page ci-dessous avec Win+Shift+S, comme en session 01.</li>
+              <li>Enregistrez les captures dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">C:\dev\prenom-nom\mini-cms\screenshots\</code>, tout en minuscules : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s05-articles.png</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code>, avec la pagination) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s05-formulaire.png</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts/create</code> après un envoi vide, erreurs visibles).</li>
+              <li>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>, remplacez les sections « État actuel » et « Routes disponibles » par le premier bloc de la carte « Code complet », ajoutez le second bloc à la fin de la section des captures, puis enregistrez.</li>
+            </ol>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier la commande d&#x27;ouverture du README">Copier</button>
+              <pre><code class="language-bash">code README.md</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">B. Commit et tag, dans le Terminal 2</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier les commandes de commit et de tag du livrable">Copier</button>
+              <pre><code class="language-bash">git status
+git add -A
+git commit -m "Mettre a jour le README pour lab-03"
+git tag lab-03
+git log --oneline --decorate -3</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">C. Publier</h4>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de push du livrable">Copier</button>
+              <pre><code class="language-bash">git push origin main --tags</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Puis contrôlez les tags publiés :</p>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-6">
+              <button class="copy-btn" aria-label="Copier la commande de contrôle des tags publiés">Copier</button>
+              <pre><code class="language-bash">git ls-remote --tags origin</code></pre>
+            </div>
+            <h4 class="font-medium mt-4 mb-2">D. Seulement si vous avez travaillé sur un poste de l'université : nettoyer le poste</h4>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur votre ordinateur personnel, ne supprimez rien : Git Credential Manager garde votre identifiant et vos prochains push se feront sans reconnexion.</p>
+            </div>
+            <div class="border-l-4 border-red-600 bg-red-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-red-900">Poste de l'université : faites cette partie avant de quitter la salle, même si vous n'avez pas terminé le reste de la séance. Sans elle, la personne suivante sur ce poste peut pousser en votre nom et accéder à votre compte GitHub.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /delete:git:https://github.com
+MSYS_NO_PATHCONV=1 cmdkey /list | grep -i github</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-powershell">cmdkey /delete:git:https://github.com
+cmdkey /list | Select-String github</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Alternative à la première commande : Panneau de configuration, Gestionnaire d'identification, Informations d'identification Windows, entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, Supprimer.</p>
+            <p class="text-gray-700 mb-2">Toujours sur un poste de l'université :</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1">
+              <li>Sur github.com, avatar en haut à droite, Sign out, puis confirmez.</li>
+              <li>Faites de même dans chaque navigateur ouvert par Git Credential Manager.</li>
+              <li>Si vous avez accepté d'enregistrer votre mot de passe dans le navigateur, supprimez-le dans ses paramètres.</li>
+              <li>Fermez toutes les fenêtres du navigateur.</li>
+            </ol>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+              Code complet
+            </h3>
+            <p class="text-sm text-gray-600 mb-2">Premier bloc : sections « État actuel » et « Routes disponibles » de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>.</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les sections État actuel et Routes disponibles">Copier</button>
+              <pre><code class="language-markdown">## État actuel (tag lab-03)
+
+- Articles enregistrés dans une base SQLite et lus avec le modèle Eloquent `Post`.
+- Table `posts` créée par une migration : après un clone, `php artisan migrate` la recrée (vide).
+- Liste paginée, détail par liaison modèle-route, formulaire de création avec validation côté serveur.
+- Premiers tests Pest : `php artisan test`.
+
+## Routes disponibles
+
+| Méthode | URI | Nom | Action |
+|---|---|---|---|
+| GET | `/` | `home` | `PageController@home` |
+| GET | `/a-propos` | `about` | `PageController@about` |
+| GET | `/heure` | `time` | `PageController@time` |
+| GET | `/posts` | `posts.index` | `PostController@index` |
+| GET | `/posts/archive/{year}` | `posts.archive` | `PostController@archive` |
+| GET | `/posts/create` | `posts.create` | `PostController@create` |
+| POST | `/posts` | `posts.store` | `PostController@store` |
+| GET | `/posts/{post}` | `posts.show` | `PostController@show` |</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Second bloc : à ajouter à la fin de la section des captures.</p>
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier les lignes des captures de la session 05">Copier</button>
+              <pre><code class="language-markdown">### Session 05
+
+![Liste paginée des articles](screenshots/s05-articles.png)
+
+![Formulaire avec erreurs de validation](screenshots/s05-formulaire.png)</code></pre>
+            </div>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+              Résultat attendu
+            </h3>
+            <ul class="list-disc list-inside text-gray-700 space-y-1">
+              <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline --decorate -3</code> montre le commit « Mettre a jour le README pour lab-03 » avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tag: lab-03</code>.</li>
+              <li>Le push affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">* [new tag]         lab-03 -&gt; lab-03</code>.</li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+              Vérification
+            </h3>
+            <ul class="space-y-2 text-gray-700">
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les captures <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s05-articles.png</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s05-formulaire.png</code> existent dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">screenshots/</code> et le commit les contient.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Sur GitHub, la page Tags du dépôt liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-03</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-03</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-02b..HEAD</code> affiche au moins six commits.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les deux images s'affichent dans le README sur GitHub.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les commits affichent votre propre identité (avatar et nom d'utilisateur).</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : l'identifiant GitHub est supprimé et le navigateur est déconnecté de github.com.</span></li>
+            </ul>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+              Quiz éclair
+            </h3>
+            <div class="quiz-question mb-6" id="quiz-s05-q15" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Une autre personne clone votre dépôt et lance <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan migrate</code>. Combien d'articles voit-elle sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 15">
+                <button type="button" class="quiz-option" data-option="a">Les mêmes que vous</button>
+                <button type="button" class="quiz-option" data-option="b">Aucun : les migrations transportent le schéma, pas les données</button>
+                <button type="button" class="quiz-option" data-option="c">Une erreur, car la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code> manque</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database.sqlite</code> n'est pas versionné ; la migration recrée une table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts</code> vide.</p>
+            </div>
+            <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+              À retenir
+            </h3>
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-03</code> fige la moitié lecture et création du CRUD. La session 06 ajoute la modification, la suppression, une colonne <code class="bg-white px-1 py-0.5 rounded text-xs">excerpt</code> et les tests d'écriture.</p>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Prism core + autoloader (pinned 1.29.0) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+</script>
+
+<!-- Navigation JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.step-panel'));
+  var stepIds = panels.map(function (p) { return p.id; });
+  var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.step-link'));
+  var titleEl = document.getElementById('current-step-title');
+  var prevBtn = document.getElementById('prev-step');
+  var nextBtn = document.getElementById('next-step');
+  var progressBar = document.getElementById('progress-bar');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebar-overlay');
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+
+  var storageKey = 'codelab-progress:' + window.location.pathname;
+
+  function loadCompleted() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCompleted(list) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) {
+      /* localStorage unavailable: navigation still works without persistence */
+    }
+  }
+
+  var completed = loadCompleted();
+
+  function indexOfStep(id) {
+    var idx = stepIds.indexOf(id);
+    return idx === -1 ? 0 : idx;
+  }
+
+  function markCompleted(idx) {
+    var id = stepIds[idx];
+    if (completed.indexOf(id) === -1) {
+      completed.push(id);
+      saveCompleted(completed);
+    }
+  }
+
+  function updateSidebarState(activeId) {
+    sidebarLinks.forEach(function (link) {
+      var id = link.getAttribute('data-step');
+      link.classList.toggle('is-active', id === activeId);
+      link.classList.toggle('is-completed', completed.indexOf(id) !== -1 && id !== activeId);
+    });
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('is-open');
+  }
+
+  function showStep(idx, options) {
+    options = options || {};
+    if (idx < 0) idx = 0;
+    if (idx > panels.length - 1) idx = panels.length - 1;
+
+    var id = stepIds[idx];
+
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('is-active', i === idx);
+    });
+
+    if (titleEl) {
+      titleEl.textContent = panels[idx].getAttribute('data-title') || panels[idx].id;
+    }
+
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx === panels.length - 1;
+
+    if (progressBar) {
+      var pct = ((idx + 1) / panels.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    if (idx > 0) {
+      for (var i = 0; i < idx; i++) {
+        markCompleted(i);
+      }
+    }
+
+    updateSidebarState(id);
+
+    if (!options.skipHash) {
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + id);
+      } else {
+        window.location.hash = id;
+      }
+    }
+
+    document.getElementById('content').scrollTop = 0;
+    closeMobileSidebar();
+  }
+
+  function currentIndex() {
+    var hash = window.location.hash.replace('#', '');
+    return indexOfStep(hash);
+  }
+
+  // Sidebar links: native anchor navigation updates location.hash, which
+  // fires 'hashchange'; we just react to that in one place.
+  window.addEventListener('hashchange', function () {
+    showStep(currentIndex(), { skipHash: true });
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      showStep(currentIndex() - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      showStep(currentIndex() + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowLeft') {
+      showStep(currentIndex() - 1);
+    } else if (e.key === 'ArrowRight') {
+      showStep(currentIndex() + 1);
+    }
+  });
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.add('is-open');
+      sidebarOverlay.classList.add('is-open');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Copy-to-clipboard for every code block.
+  Array.prototype.slice.call(document.querySelectorAll('.copy-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrapper = btn.closest('.code-block-wrapper');
+      var codeEl = wrapper ? wrapper.querySelector('code') : null;
+      if (!codeEl) return;
+
+      var text = codeEl.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copie';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+  }
+
+  // Initial render.
+  showStep(currentIndex(), { skipHash: true });
+  if (window.location.hash) {
+    // Normalize the hash (e.g. redirect #foo -> #step-1 if invalid).
+    history.replaceState(null, '', '#' + stepIds[currentIndex()]);
+  }
+
+  if (window.Prism) {
+    Prism.highlightAll();
+  }
+})();
+</script>
+
+<!-- Quiz JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var questions = Array.prototype.slice.call(document.querySelectorAll('.quiz-question'));
+  if (!questions.length) return;
+
+  var storageKey = 'codelab-quiz:' + window.location.pathname;
+
+  function loadState() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveState(state) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch (e) {
+      /* localStorage unavailable: the quiz still works without persistence */
+    }
+  }
+
+  var state = loadState();
+
+  function updateScores() {
+    var firstTry = 0;
+    questions.forEach(function (question) {
+      var entry = state[question.id];
+      if (entry && entry.done && entry.tries === 1) firstTry++;
+    });
+    Array.prototype.slice.call(document.querySelectorAll('[data-quiz-score]')).forEach(function (el) {
+      el.textContent = firstTry + ' / ' + questions.length;
+    });
+  }
+
+  questions.forEach(function (question) {
+    var options = Array.prototype.slice.call(question.querySelectorAll('.quiz-option'));
+    var feedback = question.querySelector('.quiz-feedback');
+    var explain = question.querySelector('.quiz-explain');
+    var answer = question.getAttribute('data-answer');
+
+    function showFeedback(text) {
+      if (!feedback) return;
+      feedback.textContent = text;
+      feedback.hidden = false;
+    }
+
+    function finish() {
+      options.forEach(function (option) {
+        option.disabled = true;
+        if (option.getAttribute('data-option') === answer) {
+          option.classList.add('is-correct');
+        }
+      });
+      if (explain) explain.hidden = false;
+    }
+
+    if (state[question.id] && state[question.id].done) {
+      finish();
+      showFeedback('Bonne réponse.');
+    }
+
+    options.forEach(function (option) {
+      option.addEventListener('click', function () {
+        var entry = state[question.id] || { tries: 0, done: false };
+        if (entry.done) return;
+
+        entry.tries += 1;
+
+        if (option.getAttribute('data-option') === answer) {
+          entry.done = true;
+          showFeedback(entry.tries === 1 ? 'Bonne réponse du premier coup.' : 'Bonne réponse.');
+          finish();
+        } else {
+          option.classList.add('is-wrong');
+          option.disabled = true;
+          showFeedback('Pas encore. Relisez la question et réessayez.');
+        }
+
+        state[question.id] = entry;
+        saveState(state);
+        updateScores();
+      });
+    });
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll('[data-quiz-reset]')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state = {};
+      saveState(state);
+      window.location.reload();
+    });
+  });
+
+  updateScores();
+})();
+</script>
+
+</body>
+</html>
