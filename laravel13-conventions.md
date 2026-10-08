@@ -11,7 +11,7 @@ Reference for all generated sessions. When a snippet here conflicts with older t
 | Install | Official PHP for Windows: copy the PowerShell command from https://www.php.net/downloads (never hardcode it, because it embeds a version), then enable extension_dir and the curl, fileinfo, intl, mbstring, mysqli, openssl, pdo_mysql, pdo_sqlite, sqlite3 and zip extensions in php.ini. Composer: official Composer-Setup.exe with 'Install for me only'. Laravel installer: composer global require laravel/installer. Do not use php.new: on the lab PCs (1 Oct 2026), laravel new sometimes failed with OpenSSL errors after a php.new install. |
 | New project | `laravel new app-name` (choose: no starter kit, Blade frontend stack, Pest, SQLite). Verified 30 Sep 2026: the installer asks `Do you want to use a starter kit? (yes/no) [no]`, then `Which frontend stack do you want to build on? [Blade]`. |
 | Run dev | `composer run dev` (serves app + Vite together). Fallback: `php artisan serve` and `npm run dev` in two terminals. Verified working on Windows (30 Sep 2026). Students open the `APP_URL` (`http://localhost:8000`), not the Vite URL (`http://localhost:5173`); the `[laravel:fonts]` "fontaine" warning is harmless. |
-| Database | SQLite by default (`database/database.sqlite`, created by the installer). MySQL only if explicitly taught via `.env`. |
+| Database | SQLite by default (`database/database.sqlite`, created by the installer). PostgreSQL is optional, from S08 only, through `.env` (see section 14). Tests always run on in-memory SQLite (`phpunit.xml`). MySQL is not taught. |
 | Tests | Pest. Run with `php artisan test`. |
 | AI tooling (instructor only) | Laravel Boost: `composer require laravel/boost --dev` then `php artisan boost:install`. |
 
@@ -295,3 +295,29 @@ Use `RefreshDatabase` (configured in `tests/Pest.php`).
 - Installer prompts of `laravel new` after the frontend-stack question (testing framework, database, Laravel Boost, npm): confirm on a lab PC. The first two prompts were verified on 30 Sep 2026.
 - Current official PHP PowerShell command on php.net/downloads, the PHP version it installs and the folder it installs into; whether Composer-Setup.exe adds the Composer global vendorin folder to the PATH.
 - Livewire starter kit install flow for W6 Session B.
+- PostgreSQL for Windows: installer rights, whether the php.net build ships `pdo_pgsql` and `pgsql`, and whether `php artisan migrate` offers to create a missing PostgreSQL database.
+- `whereYear()` and the S07 nullable foreign keys behave the same on PostgreSQL and SQLite.
+- Whether `whereLike()` is case-insensitive on PostgreSQL by default in Laravel 13.
+
+## 14. PostgreSQL (optional, S08 onwards)
+
+Only `.env` changes. `.env.example` stays on SQLite, and `.env` is never committed.
+
+```dotenv
+DB_CONNECTION=pgsql
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_DATABASE=mini_cms
+DB_USERNAME=postgres
+DB_PASSWORD=votre-mot-de-passe
+```
+
+Requirements: a running PostgreSQL server, an empty `mini_cms` database, and the `pdo_pgsql` and `pgsql` extensions enabled in `php.ini` (check with `php -m`). After the switch: `php artisan config:clear`, then `php artisan migrate:fresh --seed`, then `php artisan db:show`.
+
+Portability rules, applied to all code from S05 so that the same project runs on both drivers:
+
+- No raw SQL and no driver-specific functions. Use query builder helpers (`whereYear`, `whereDate`, `latest`).
+- Booleans are compared with `true` / `false`, never `1` / `0`.
+- Every list has an explicit order (`latest('id')`, `orderBy(...)`): PostgreSQL guarantees no default order.
+- Seeders and factories never set `id` by hand: PostgreSQL sequences would not follow.
+- `LIKE` is case-sensitive on PostgreSQL. Filters compare slugs or ids exactly; a text search must be written so that it behaves the same on both drivers.

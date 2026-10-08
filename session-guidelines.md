@@ -124,7 +124,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
   - a sequencing grep: `->name(`, `make:controller`, `@vite`, `php artisan test`, `php artisan migrate`, `git push`, `x-layout`, adapted to the session;
   - a forbidden-phrase grep: "plan de secours", "enseignant", "voisin", "binôme";
   - Install grep: php.new and herd.laravel.com zero hits on every page; herd-lite only in session-01.html, Étape 1, parties A1 and A4.
-  - a URL consistency grep (`127.0.0.1` appears only once, as the equivalence note).
+  - a URL consistency grep (`127.0.0.1` appears only once, as the equivalence note). The grep targets the application URL: `DB_HOST=127.0.0.1` inside an `.env` code block (S08, PostgreSQL bonus) is allowed.
   - quiz script and CSS identical to the template;
   - every `.quiz-question` has a unique id, a `data-answer` matching exactly one of its `data-option` values, three options, one `.quiz-feedback` with `aria-live="polite"` and one non-empty `.quiz-explain`;
   - at least one `[data-quiz-score]` in every page that has questions.
@@ -153,3 +153,4 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - Whether the Node.js and Git for Windows installers run with the lab accounts' rights.
 - Whether `laravel new` initializes a Git repository or makes a first commit, and with which identity.
 - Whether the welcome page renders without a Vite build (the no-Node path).
+- The PostgreSQL bonus of S08: install path on Windows, the two PHP extensions, and whether `php artisan migrate` can create the missing database.

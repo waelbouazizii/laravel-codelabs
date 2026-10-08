@@ -23,7 +23,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Session file: `docs/session-XX.html`, XX = 01 to 16.
 - Session A (odd numbers) = guided codelab. Session B (even numbers) = applied sprint + assessment on the same repository. B sessions keep the 7-part structure from CLAUDE.md; in a B session, "Guided Steps" are sprint tasks with checkpoints, and the Assessment Checklist is graded.
 - Git tags: Session A of week W produces `lab-0W`, Session B produces `lab-0Wb` (week 1: `lab-01`, `lab-01b`; week 8: `lab-08`, `lab-08b`).
-- Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`.
+- Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`. SQLite stays the default database for all 16 sessions; PostgreSQL is an optional driver switch in S08 and is never required afterwards.
 - Windows PCs (mostly personal laptops, some university lab PCs): every command that differs between bash and PowerShell is given in both.
 - Repositories are public (portfolio). To limit copying, the Git history is graded: small meaningful commits between tags, one tag per session, commits authored with the student's own identity.
 - Toolchain: PHP 8.3+, Composer, Laravel installer (composer global require laravel/installer), Node.js LTS + npm (required by Vite / `composer run dev`, installed separately from PHP), Git for Windows, VS Code (the `code` command is used from S01).
@@ -150,8 +150,10 @@ Final result: a small publishing platform with public pages, an authenticated ba
   2. Build public pages "posts by category" and "posts by tag" with route model binding on slug (`{category:slug}`).
   3. Use `withCount` and eager loading on every list page.
   4. Test relationships using factories in Pest.
-- Key commands: `php artisan migrate:fresh --seed`, `php artisan route:list`, `php artisan test`.
-- Assessment focus: no lazy-loading violation, seeders produce a realistic dataset, forms persist relations, tests green.
+  5. (Optional, not graded) Switch the application to PostgreSQL through `.env` (`DB_CONNECTION=pgsql`), rebuild the data with `migrate:fresh --seed`, and explain why migrations, models and tests did not change.
+- Key commands: `php artisan migrate:fresh --seed`, `php artisan route:list`, `php artisan test`; optional part: `php -m`, `php artisan config:clear`, `php artisan db:show`.
+- Optional PostgreSQL part: a bonus at the end of the Independent Challenge, never in the Assessment Checklist. The tag `lab-04b` is produced on SQLite; `.env` is not committed, so the repository is identical for students who skip the bonus. Students switch back to SQLite if the install fails.
+- Assessment focus: no lazy-loading violation, seeders produce a realistic dataset, forms persist relations, tests green. The PostgreSQL bonus is not graded.
 - Reuses: S07 models, pivot, factories, seeders.
 
 ## Week 5
@@ -223,6 +225,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
   2. Test the API with Pest (`getJson`, `assertJsonPath`, `assertJsonCount`, `assertJsonStructure`).
   3. Export a Postman collection into the repository (`docs/postman/`).
 - Key commands: `php artisan make:controller Api/CategoryController --api --model=Category`, `php artisan test --filter=Api`, `curl.exe -H "Accept: application/json" http://127.0.0.1:8000/api/posts`.
+- Portability: the `?category=` and `?tag=` filters compare slugs exactly, so they behave the same on SQLite and PostgreSQL.
 - Assessment focus: consistent JSON shape, pagination, API tests green, collection committed.
 - Reuses: S13 API layer.
 
@@ -245,6 +248,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
   2. Demonstrate web and API features in a 5-minute demo and answer questions on the architecture.
   3. Present a green Pest suite and a final README (setup, features, API documentation, screenshots).
 - Key commands: `git clone`, `composer install`, `copy .env.example .env` (PowerShell) / `cp .env.example .env` (bash), `php artisan key:generate`, `php artisan migrate:fresh --seed`, `php artisan test`, `git tag lab-08b`, `git push origin --tags`.
+- The clean-clone delivery is graded on SQLite, whatever database the student used locally.
 - Assessment focus: final rubric (functionality, code conventions, tests, Git history and tags, README, demo).
 - Timing: 5-minute demos for ~30 students take about 2h30 plus transitions. Run demos in parallel pairs or cap at 4 minutes + 1 minute questions; students who do not demo are graded from a recorded screencast linked in the README.
 - Reuses: the whole project.
@@ -264,7 +268,7 @@ A session must not use a concept listed here with a later session number.
 | Migrations, Eloquent, `casts()`, Tinker, route model binding, `paginate()`, create/read CRUD, `$request->validate()`, Pest | S05 |
 | Update/delete CRUD, `@method`, add-column migrations, local scopes | S06 |
 | 1:N, N:N, pivot, factories, seeders, eager loading, `preventLazyLoading` | S07 |
-| Slug route binding, `withCount`, `sync` in forms | S08 |
+| Slug route binding, `withCount`, `sync` in forms, PostgreSQL driver switch (optional) | S08 |
 | Form Requests, flash messages, custom middleware, `withExceptions` | S09 |
 | Validation messages, `assertSessionHasErrors` | S10 |
 | Manual auth, `auth`/`guest` middleware, Gates, Policies | S11 |
@@ -285,6 +289,7 @@ A session must not use a concept listed here with a later session number.
 - Node.js and Git for Windows installers runnable with the lab accounts' rights.
 - S07 add-column migration with foreign keys (`foreignId()->nullable()->constrained()->nullOnDelete()`) runs cleanly on SQLite.
 - `cmdkey /delete:git:https://github.com` removes the stored GitHub credential on the lab PCs.
+- PostgreSQL for Windows on a student laptop: installer rights, `pdo_pgsql` and `pgsql` available in the php.net build, creation of the `mini_cms` database, and `migrate:fresh --seed` on PostgreSQL with the S07 migrations.
 - Where the official php.net PowerShell command installs PHP, and whether Composer-Setup.exe adds the Composer global vendorin folder to the PATH.
 
 ## Calendar buffer

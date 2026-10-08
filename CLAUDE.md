@@ -43,6 +43,9 @@ Awesome 6.4.0**. Decorative icons get `aria-hidden="true"`. Icon-only buttons
 
 - Laravel 13.x, PHP 8.3+, SQLite as the default database, Pest for tests,
   Blade + Tailwind for the UI.
+- PostgreSQL appears once, in S08, as an optional driver switch through
+  `.env`. It is never a prerequisite: every session, every test and every
+  graded deliverable must work on SQLite. MySQL is not taught.
 - API routes are only introduced after running `php artisan install:api`.
 - Middleware aliases are registered in `bootstrap/app.php` — there is no
   `app/Http/Kernel.php` in this stack.
