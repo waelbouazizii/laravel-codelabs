@@ -138,7 +138,9 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
   "Figure S.n" that states the takeaway.
 - Inline SVG has `role="img"`, `aria-labelledby` pointing to a French
   `<title>` and `<desc>`, ids prefixed `sXX-`, a `viewBox` with `width` and
-  `height`, the classes `w-full h-auto`, and text of 11 px or more.
+  `height`, the classes `w-full h-auto`, and text of 11 px or more. A wide
+  diagram also gets a `min-w-[...]` class so that it scrolls inside
+  `div.overflow-x-auto` instead of shrinking.
 - Colour is never the only cue: use a thicker border, a number or a text label.
 - No animation, no autoplay, no external diagram library.
 - At most three figures in the Concept Brief and one per guided step.
