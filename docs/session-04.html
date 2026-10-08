@@ -349,6 +349,8 @@
               <li>Mettre en évidence le lien de navigation actif avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">request()-&gt;routeIs()</code>.</li>
               <li>Utiliser les structures de contrôle Blade (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@foreach</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@forelse</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@if</code>) et l'affichage toujours échappé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code>.</li>
               <li>Construire chaque lien à partir d'une route nommée, sans aucune URL écrite à la main.</li>
+              <li>Situer la Vue dans le cycle MVC et expliquer pourquoi le tableau PHP est un modèle provisoire.</li>
+              <li>Expliquer que Blade est compilé en PHP sur le serveur et ce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> fait aux caractères HTML.</li>
             </ol>
           </div>
 
@@ -490,19 +492,124 @@ composer run dev</code></pre>
         <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
           <div class="md-card p-6">
             <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
-              <i class="fa-solid fa-clone text-brand" aria-hidden="true"></i>
-              Pourquoi des composants ?
+              <i class="fa-solid fa-sitemap text-brand" aria-hidden="true"></i>
+              MVC, deuxième lecture : le côté Vue
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
             </h3>
-            <p class="text-gray-700 mb-3">Sans composant, la barre de navigation, les boîtes d'information et les cartes d'articles sont recopiées dans chaque vue. Une correction (un lien, une couleur) doit alors être faite dans chaque fichier, et un oubli suffit à rendre le site incohérent.</p>
+            <p class="text-gray-700 mb-3">En session 01, MVC était un tableau à trois lignes. Aujourd'hui, vous construisez la couche Vue pour de bon. La figure suit une requête vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> dans votre projet.</p>
+            <figure class="my-4">
+              <div class="overflow-x-auto">
+                <svg viewBox="0 0 760 260" width="760" height="260" class="w-full h-auto" role="img" aria-labelledby="s04-mvc-title s04-mvc-desc" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif" font-size="13">
+                  <title id="s04-mvc-title">Cycle d'une requête dans Mini-CMS, côté Vue</title>
+                  <desc id="s04-mvc-desc">Étape 1 : le navigateur envoie GET /posts. Étape 2 : le routeur appelle la méthode index de PostController. Étape 3 : le contrôleur lit le tableau PHP des articles, qui joue le rôle du Modèle en session 04. Étape 4 : le contrôleur transmet les données à la vue posts/index.blade.php, encadrée en gras car c'est le sujet de la session. Étape 5 : Blade produit une page HTML complète, renvoyée au navigateur.</desc>
+                  <defs>
+                    <marker id="s04-mvc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
+                    </marker>
+                  </defs>
+                  <g fill="#ffffff" stroke="#374151" stroke-width="2">
+                    <rect x="10" y="40" width="116" height="64" rx="8"/>
+                    <rect x="214" y="40" width="116" height="64" rx="8"/>
+                    <rect x="418" y="40" width="116" height="64" rx="8"/>
+                    <rect x="406" y="160" width="140" height="56" rx="8" stroke-dasharray="6 4"/>
+                  </g>
+                  <rect x="620" y="40" width="132" height="64" rx="8" fill="#eef2ff" stroke="#4338ca" stroke-width="4"/>
+                  <g fill="#111827" text-anchor="middle">
+                    <text x="68" y="68" font-weight="700">Navigateur</text>
+                    <text x="68" y="88" font-size="12">localhost:8000</text>
+                    <text x="272" y="68" font-weight="700">Routeur</text>
+                    <text x="272" y="88" font-size="12">routes/web.php</text>
+                    <text x="476" y="68" font-weight="700">Contrôleur</text>
+                    <text x="476" y="88" font-size="12">PostController</text>
+                    <text x="686" y="68" font-weight="700">Vue (Blade)</text>
+                    <text x="686" y="88" font-size="11">posts/index.blade.php</text>
+                    <text x="476" y="184" font-weight="700">Modèle provisoire</text>
+                    <text x="476" y="204" font-size="12">tableau PHP posts()</text>
+                    <text x="686" y="26" font-weight="700" fill="#4338ca">Sujet de la session</text>
+                  </g>
+                  <g stroke="#374151" stroke-width="2" fill="none" marker-end="url(#s04-mvc-arrow)">
+                    <line x1="126" y1="72" x2="210" y2="72"/>
+                    <line x1="330" y1="72" x2="414" y2="72"/>
+                    <line x1="476" y1="104" x2="476" y2="156"/>
+                    <line x1="534" y1="72" x2="615" y2="72"/>
+                    <path d="M686,106 V244 H68 V109"/>
+                  </g>
+                  <g fill="#111827" font-size="12" text-anchor="middle">
+                    <text x="168" y="62">1. GET /posts</text>
+                    <text x="372" y="62">2. index()</text>
+                    <text x="486" y="135" text-anchor="start">3. lit les articles</text>
+                    <text x="575" y="62">4. view()</text>
+                    <text x="300" y="236">5. Réponse : page HTML complète</text>
+                  </g>
+                </svg>
+              </div>
+              <figcaption class="mt-2 text-sm text-gray-600">Figure 4.1 - La vue ne va jamais chercher les données : elle reçoit ce que le contrôleur lui transmet et le transforme en HTML.</figcaption>
+            </figure>
+            <p class="text-gray-700">Le tableau PHP de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> joue le rôle du Modèle : il fournit les données. MVC est une répartition des rôles, pas une liste de dossiers. En session 05, seule la boîte en pointillés changera ; vos vues et vos composants resteront les mêmes.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-gears text-brand" aria-hidden="true"></i>
+              Du fichier Blade à la page HTML
+            </h3>
+            <p class="text-gray-700 mb-3">Blade est un moteur de templates : du HTML avec des emplacements que le serveur remplit. Le navigateur ne voit jamais de Blade.</p>
+            <figure class="my-4">
+            <div class="grid gap-3 md:grid-cols-3">
+              <div class="rounded border-2 border-gray-300 bg-white p-3">
+                <p class="font-bold text-gray-900">1. Vous écrivez</p>
+                <p class="text-xs text-gray-500 mb-2">resources/views/posts/show.blade.php</p>
+                <code class="block bg-gray-100 px-2 py-1 rounded text-xs break-all">&lt;h1&gt;{{ $post['title'] }}&lt;/h1&gt;</code>
+              </div>
+              <div class="rounded border-2 border-gray-300 bg-white p-3">
+                <p class="font-bold text-gray-900">2. Blade compile en PHP</p>
+                <p class="text-xs text-gray-500 mb-2">un fichier .php dans storage/framework/views</p>
+                <code class="block bg-gray-100 px-2 py-1 rounded text-xs break-all">&lt;h1&gt;&lt;?php echo e($post['title']); ?&gt;&lt;/h1&gt;</code>
+              </div>
+              <div class="rounded border-2 border-gray-300 bg-white p-3">
+                <p class="font-bold text-gray-900">3. Le navigateur reçoit</p>
+                <p class="text-xs text-gray-500 mb-2">du HTML, rien d'autre</p>
+                <code class="block bg-gray-100 px-2 py-1 rounded text-xs break-all">&lt;h1&gt;Bienvenue sur Mini-CMS&lt;/h1&gt;</code>
+              </div>
+            </div>
+            <figcaption class="mt-2 text-sm text-gray-600">Figure 4.2 - Une vue Blade est compilée une fois en PHP, puis réutilisée. Laravel la recompile seul quand le fichier source change.</figcaption>
+            </figure>
+            <p class="text-gray-700">La fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">e()</code> échappe le HTML : c'est elle qui se cache derrière <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code>.</p>
+          </div>
+
+          <div class="md-card p-6 mt-6">
+            <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+              <i class="fa-solid fa-clone text-brand" aria-hidden="true"></i>
+              Penser en composants
+            </h3>
+            <p class="text-gray-700 mb-3">Sans composant, la barre de navigation, les boîtes d'information et les cartes d'articles sont recopiées dans chaque vue. Une correction doit alors être faite dans chaque fichier, et un oubli suffit à rendre le site incohérent.</p>
+            <figure class="my-4">
+            <div class="border-2 border-gray-400 rounded p-3">
+              <p class="text-sm mb-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">x-layout</code></p>
+              <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm text-gray-700 mb-3">
+                <p class="mb-1"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">x-navbar</code></p>
+                <p><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">x-nav-link</code>, quatre fois (Accueil, Articles, Heure, À propos)</p>
+              </div>
+              <div class="border-2 border-dashed border-gray-400 rounded p-3 mb-3">
+                <p class="text-sm mb-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">{{ $slot }} : posts/index.blade.php</code></p>
+                <div class="grid gap-3 md:grid-cols-2">
+                  <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm text-gray-700"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">x-post-card</code>, une par article</div>
+                  <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm text-gray-700"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">x-alert</code>, seulement si la liste est vide</div>
+                </div>
+              </div>
+              <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm text-gray-700"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">&lt;footer&gt;</code> pied de page (dans le layout)</div>
+            </div>
+            <figcaption class="mt-2 text-sm text-gray-600">Figure 4.3 - Une page est un assemblage : le layout contient la navigation et un emplacement, que chaque vue remplit avec ses propres composants.</figcaption>
+            </figure>
             <p class="text-gray-700">Un composant écrit ce HTML une seule fois. Chaque page l'utilise comme une balise et lui transmet ses données.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
             <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
               <i class="fa-solid fa-puzzle-piece text-brand" aria-hidden="true"></i>
-              Anatomie d'un composant anonyme
+              Aide-mémoire : anatomie d'un composant anonyme
             </h3>
+            <p class="text-gray-700 mb-3">Ce tableau sert de référence pendant les étapes : inutile de le mémoriser maintenant.</p>
             <div class="overflow-x-auto mb-4">
               <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
                 <thead class="bg-gray-50">
@@ -527,9 +634,19 @@ composer run dev</code></pre>
               <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
               Quiz éclair
             </h3>
+            <div class="quiz-question mb-6" id="quiz-s04-q15" data-answer="b">
+              <p class="font-medium text-gray-900 mb-3">Dans votre projet, aujourd'hui, où se trouve le « M » de MVC ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
+                <button type="button" class="quiz-option" data-option="a">Dans le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/database.sqlite</code></button>
+                <button type="button" class="quiz-option" data-option="b">Dans le tableau PHP fourni par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code>, qui sert de modèle provisoire</button>
+                <button type="button" class="quiz-option" data-option="c">Nulle part : sans base de données, il n'y a pas de MVC</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>MVC répartit des rôles. Le tableau PHP joue le rôle du Modèle jusqu'à la session 05 ; la vue, elle, ne changera pas.</p>
+            </div>
             <div class="quiz-question mb-6" id="quiz-s04-q01" data-answer="b">
               <p class="font-medium text-gray-900 mb-3">Quelle différence entre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-card :post="$post"&gt;</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-card post="$post"&gt;</code> ?</p>
-              <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 2">
                 <button type="button" class="quiz-option" data-option="a">Aucune : les deux transmettent le tableau de l'article</button>
                 <button type="button" class="quiz-option" data-option="b">Avec les deux-points, l'expression PHP est évaluée et le tableau est transmis ; sans eux, le composant reçoit le texte <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post</code></button>
                 <button type="button" class="quiz-option" data-option="c">Sans les deux-points, la valeur est échappée ; avec eux, elle ne l'est pas</button>
@@ -537,25 +654,15 @@ composer run dev</code></pre>
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
               <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Avec les deux-points, l'expression PHP est évaluée et le tableau (ou l'objet) est transmis ; sans eux, le composant reçoit le texte littéral <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$post</code>.</p>
             </div>
-            <div class="quiz-question mb-6" id="quiz-s04-q02" data-answer="a">
-              <p class="font-medium text-gray-900 mb-3">Où doit se trouver un fichier pour être utilisé avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-nav-link&gt;</code> ?</p>
-              <div class="space-y-2" role="group" aria-label="Réponses à la question 2">
-                <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/nav-link.blade.php</code></button>
-                <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/nav-link.blade.php</code></button>
-                <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/View/Components/NavLink.php</code></button>
-              </div>
-              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/nav-link.blade.php</code> : le préfixe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-</code> désigne le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">components</code>, et le nom en minuscules avec tirets désigne le fichier.</p>
-            </div>
             <div class="quiz-question mb-6" id="quiz-s04-q03" data-answer="c">
-              <p class="font-medium text-gray-900 mb-3">Contre quoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> protège-t-il ?</p>
+              <p class="font-medium text-gray-900 mb-3">Un article a pour titre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;script&gt;alert(1)&lt;/script&gt;</code> et la vue contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ $post['title'] }}</code>. Que voit le visiteur ?</p>
               <div class="space-y-2" role="group" aria-label="Réponses à la question 3">
-                <button type="button" class="quiz-option" data-option="a">Les erreurs de syntaxe PHP dans la vue</button>
-                <button type="button" class="quiz-option" data-option="b">Les URL écrites à la main</button>
-                <button type="button" class="quiz-option" data-option="c">L'injection de balises ou de scripts dans la page</button>
+                <button type="button" class="quiz-option" data-option="a">Une boîte d'alerte s'ouvre dans le navigateur</button>
+                <button type="button" class="quiz-option" data-option="b">Rien : Blade supprime la balise</button>
+                <button type="button" class="quiz-option" data-option="c">Le texte <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;script&gt;alert(1)&lt;/script&gt;</code>, affiché tel quel</button>
               </div>
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Il échappe le HTML : un texte saisi par un utilisateur ne peut pas injecter de balises ou de scripts (faille XSS).</p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{{ }}</code> transforme les chevrons en texte visible : le navigateur les affiche au lieu de les exécuter. Rien n'est supprimé.</p>
             </div>
             <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
@@ -567,7 +674,7 @@ composer run dev</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un composant anonyme transforme un morceau de HTML répété en une balise réutilisable. Les props rendent ce morceau paramétrable, et <code class="bg-white px-1 py-0.5 rounded text-xs">$attributes</code> laisse chaque page l'ajuster sans modifier le composant.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La vue affiche, le contrôleur choisit les données, le modèle les fournit. Un composant transforme un morceau de HTML répété en une balise réutilisable, paramétrée par ses props.</p>
             </div>
           </div>
         </section>
@@ -1002,6 +1109,22 @@ git commit -m "Ajouter le composant x-alert"</code></pre>
               <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
               À retenir
             </h3>
+            <figure class="mb-4">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+                <thead class="bg-gray-50">
+                  <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Dans la page appelante</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Dans alert.blade.php</th></tr>
+                </thead>
+                <tbody>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">type="warning"</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$type</code></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">title="Données provisoires"</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$title</code></td></tr>
+                  <tr class="border-b border-gray-100"><td class="px-3 py-2">le texte entre les deux balises</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">{{ $slot }}</code></td></tr>
+                  <tr><td class="px-3 py-2">une classe ajoutée par la page (Étape 4)</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">$attributes</code></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <figcaption class="mt-2 text-sm text-gray-600">Figure 4.4 - Les props transportent de petites valeurs ; le slot transporte du contenu HTML.</figcaption>
+            </figure>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">@props</code> déclare les entrées du composant avec leurs valeurs par défaut, et <code class="bg-white px-1 py-0.5 rounded text-xs">$attributes-&gt;merge</code> ajoute les classes de la page appelante à celles du composant. Une seule correction dans <code class="bg-white px-1 py-0.5 rounded text-xs">alert.blade.php</code> change toutes les boîtes du site.</p>
@@ -1186,7 +1309,7 @@ git commit -m "Ajouter x-navbar et x-nav-link au layout"</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La navigation n'existe plus qu'à un seul endroit, <code class="bg-white px-1 py-0.5 rounded text-xs">navbar.blade.php</code>, et chaque lien calcule lui-même s'il est actif. Ajouter une page au menu revient à ajouter une ligne <code class="bg-white px-1 py-0.5 rounded text-xs">x-nav-link</code>.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La navigation n'existe plus qu'à un seul endroit, <code class="bg-white px-1 py-0.5 rounded text-xs">navbar.blade.php</code>, et chaque lien calcule lui-même s'il est actif. Ajouter une page au menu revient à ajouter une ligne <code class="bg-white px-1 py-0.5 rounded text-xs">x-nav-link</code>. Le lien actif est calculé sur le serveur : le navigateur reçoit déjà la bonne classe CSS.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
@@ -1348,6 +1471,16 @@ git commit -m "Ajouter x-post-card et la liste des articles"</code></pre>
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
               <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Les attributs ajoutés sont fusionnés par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$attributes-&gt;merge</code> sur l'élément racine du composant.</p>
             </div>
+            <div class="quiz-question mb-6" id="quiz-s04-q16" data-answer="a">
+              <p class="font-medium text-gray-900 mb-3">Vous modifiez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">post-card.blade.php</code>, puis vous rechargez la liste des articles. Que se passe-t-il ?</p>
+              <div class="space-y-2" role="group" aria-label="Réponses à la question 16">
+                <button type="button" class="quiz-option" data-option="a">Toutes les cartes changent : Laravel recompile la vue modifiée</button>
+                <button type="button" class="quiz-option" data-option="b">Rien ne change tant que le cache des vues n'est pas vidé</button>
+                <button type="button" class="quiz-option" data-option="c">Seule la première carte change</button>
+              </div>
+              <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+              <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Laravel recompile une vue quand son fichier source est plus récent que la version compilée. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan view:clear</code> reste le remède si un changement reste invisible.</p>
+            </div>
             <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
           </div>
 
@@ -1358,7 +1491,7 @@ git commit -m "Ajouter x-post-card et la liste des articles"</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La liste ne contient plus de HTML de carte : elle passe chaque article au composant avec <code class="bg-white px-1 py-0.5 rounded text-xs">:post</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">@forelse</code> traite le cas vide sans <code class="bg-white px-1 py-0.5 rounded text-xs">@if</code> supplémentaire, ce qui règle la liste vide de l'archive laissée en suspens en session 03.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> La liste ne contient plus de HTML de carte : elle passe chaque article au composant avec <code class="bg-white px-1 py-0.5 rounded text-xs">:post</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">@forelse</code> traite le cas vide sans <code class="bg-white px-1 py-0.5 rounded text-xs">@if</code> supplémentaire, ce qui règle la liste vide de l'archive laissée en suspens en session 03. La vue gère l'affichage du cas vide, mais c'est toujours le contrôleur qui décide quelles données envoyer.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
@@ -1511,7 +1644,7 @@ git commit -m "Reconstruire le detail et l'accueil avec les composants"</code></
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Toutes les pages partagent maintenant le même layout, la même navigation et les mêmes boîtes. Le détail parcourt les paragraphes avec <code class="bg-white px-1 py-0.5 rounded text-xs">@foreach</code> et les affiche échappés ; le 404 vient toujours de <code class="bg-white px-1 py-0.5 rounded text-xs">abort(404)</code> dans <code class="bg-white px-1 py-0.5 rounded text-xs">PostController</code>.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Toutes les pages partagent maintenant le même layout, la même navigation et les mêmes boîtes. Le détail parcourt les paragraphes avec <code class="bg-white px-1 py-0.5 rounded text-xs">@foreach</code> et les affiche échappés ; le 404 vient toujours de <code class="bg-white px-1 py-0.5 rounded text-xs">abort(404)</code> dans <code class="bg-white px-1 py-0.5 rounded text-xs">PostController</code>. Échapper ne supprime rien : les chevrons deviennent du texte visible.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
