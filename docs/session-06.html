@@ -417,7 +417,7 @@
               Objectif
               <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
             </h3>
-            <p class="text-gray-700 leading-relaxed">Vérifier que le dépôt, la base, les routes et les tests sont dans l'état de fin de session 05, puis démarrer l'application.</p>
+            <p class="text-gray-700 leading-relaxed">Vérifier que le dépôt, la base et les routes sont dans l'état de fin de session 05, puis démarrer l'application.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -434,7 +434,6 @@ git status
 git tag
 php artisan migrate:status
 php artisan route:list --name=posts
-php artisan test
 composer run dev</code></pre>
             </div>
             <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
@@ -445,7 +444,6 @@ git status
 git tag
 php artisan migrate:status
 php artisan route:list --name=posts
-php artisan test
 composer run dev</code></pre>
             </div>
             <div class="overflow-x-auto mb-4">
@@ -458,12 +456,11 @@ composer run dev</code></pre>
                   <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Tags</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">git tag</code></td><td class="px-3 py-2">La liste contient <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">lab-03</code></td><td class="px-3 py-2">Terminez le <a href="session-05.html#step-12" class="underline text-brand">Livrable de la session 05</a>.</td></tr>
                   <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Base</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan migrate:status</code></td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">create_posts_table</code> avec l'état <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Ran</code></td><td class="px-3 py-2">Lancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan migrate</code>.</td></tr>
                   <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Routes</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan route:list --name=posts</code></td><td class="px-3 py-2">Cinq routes : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.index</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.create</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.store</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.show</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">posts.archive</code></td><td class="px-3 py-2">Reprenez <a href="session-05.html#step-8" class="underline text-brand">la session 05, Étape 5</a>.</td></tr>
-                  <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Tests</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan test</code></td><td class="px-3 py-2">Tous les tests passent</td><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">no such table: posts</code> : <a href="session-05.html#step-9" class="underline text-brand">session 05, Étape 6</a>. <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">Vite manifest not found</code> sur <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">ExampleTest</code> : relancez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">php artisan test</code> dans le Terminal 2 une fois <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code> démarré.</td></tr>
                   <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50">Application</th><td class="px-3 py-2"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs">composer run dev</code></td><td class="px-3 py-2">Une ligne <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">APP_URL: http://localhost:8000</code></td><td class="px-3 py-2">Ouvrez <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://localhost:8000</code> (équivalent : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">http://127.0.0.1:8000</code>), et non l'adresse de Vite sur le port 5173. L'avertissement <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">[laravel:fonts]</code> à propos de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">fontaine</code> est sans conséquence.</td></tr>
                 </tbody>
               </table>
             </div>
-            <!-- A VERIFIER : ExampleTest échoue-t-il avec « Vite manifest not found » quand composer run dev n'est pas encore lancé ; texte exact de la sortie de route:list --name=posts -->
+            <!-- A VERIFIER : texte exact de la sortie de route:list --name=posts -->
             <p class="text-gray-700">Laissez le Terminal 1 ouvert : toutes les commandes suivantes se tapent dans le Terminal 2. Dans VS Code, ouvrez le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> (Fichier &gt; Ouvrir le dossier), puis Terminal &gt; Nouveau terminal.</p>
           </div>
 
@@ -472,7 +469,7 @@ composer run dev</code></pre>
               <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
               Code complet
             </h3>
-            <p class="text-gray-700">Aucun fichier à écrire : cette partie vérifie uniquement le dépôt, la base, les routes et les tests.</p>
+            <p class="text-gray-700">Aucun fichier à écrire : cette partie vérifie uniquement le dépôt, la base et les routes.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -493,7 +490,6 @@ composer run dev</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-03</code> est listé.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create_posts_table</code> est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list</code> affiche les cinq routes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.*</code>.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Tous les tests passent.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le Terminal 1 reste ouvert sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code>.</span></li>
             </ul>
           </div>
@@ -505,7 +501,7 @@ composer run dev</code></pre>
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un sprint part d'une base verte : si un test échoue avant de commencer, vous ne saurez pas si l'erreur vient du travail d'aujourd'hui ou d'avant.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une copie de travail propre et le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-03</code> garantissent que vous pouvez revenir en arrière si le sprint tourne mal.</p>
             </div>
           </div>
         </section>
@@ -747,11 +743,12 @@ git commit -m "Afficher les derniers articles publies sur l'accueil"</code></pre
             </div>
             <h4 class="font-medium mt-4 mb-2">B. Préparer les articles</h4>
             <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code>. Avec le bouton « Nouvel article », créez des articles jusqu'à en avoir au moins trois dans la liste, dont au moins un laissé non publié (case décochée). Les slugs sont en minuscules, avec des tirets : par exemple <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mon-premier-sprint</code>. Les six articles créés dans Tinker en session 05 suffisent s'ils sont encore là.</p>
-            <h4 class="font-medium mt-4 mb-2">C. Contrôler les routes</h4>
+            <h4 class="font-medium mt-4 mb-2">C. Contrôler les routes et les tests</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier la commande route:list de l&#x27;étape 1">Copier</button>
-              <pre><code class="language-bash">php artisan route:list --name=posts</code></pre>
+              <button class="copy-btn" aria-label="Copier les commandes de contrôle des routes et des tests de l&#x27;étape 1">Copier</button>
+              <pre><code class="language-bash">php artisan route:list --name=posts
+php artisan test</code></pre>
             </div>
           </div>
 
@@ -772,6 +769,7 @@ git commit -m "Afficher les derniers articles publies sur l'accueil"</code></pre
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/posts</code> liste au moins trois cartes, dont au moins une avec le badge « Brouillon » (la pagination peut les répartir sur deux pages).</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>L'accueil n'affiche aucun brouillon.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --name=posts</code> affiche cinq routes.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> : tous les tests passent.</span></li>
             </ul>
             <!-- A VERIFIER : sortie exacte de php artisan route:list --name=posts (nombre de lignes) -->
           </div>
@@ -799,9 +797,13 @@ git commit -m "Afficher les derniers articles publies sur l'accueil"</code></pre
               <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
               À retenir
             </h3>
-            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3">
+            <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Les étapes suivantes modifient et suppriment des articles : il faut des données pour les essayer, et un brouillon pour voir l'effet du scope <code class="bg-white px-1 py-0.5 rounded text-xs">published</code> à l'Étape 5.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Les étapes suivantes modifient et suppriment des articles : il faut des données pour les essayer, et un brouillon pour voir l'effet du scope <code class="bg-white px-1 py-0.5 rounded text-xs">published</code> à l'Étape 5. Un sprint part d'une base verte : un test qui échoue avant de commencer ne vient pas du travail d'aujourd'hui.</p>
+            </div>
+            <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
+              <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">no such table: posts</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">RefreshDatabase</code> de <code class="bg-white px-1 py-0.5 rounded text-xs">tests/Pest.php</code> est en commentaire (<a href="session-05.html#step-9" class="underline text-brand">session 05, Étape 6</a>). <code class="bg-white px-1 py-0.5 rounded text-xs">Vite manifest not found</code> sur <code class="bg-white px-1 py-0.5 rounded text-xs">ExampleTest</code> : le Terminal 1 n'exécute plus <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> ; relancez-le, puis le bloc C.</p>
             </div>
           </div>
         </section>
@@ -2024,13 +2026,13 @@ class PostController extends Controller
             </h3>
             <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
               <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un lien est un GET : un robot, un préchargement du navigateur ou un double clic pourrait supprimer un article. Une suppression passe toujours par un formulaire avec <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">@method('DELETE')</code>. La zone <code class="bg-white px-1 py-0.5 rounded text-xs">&lt;details&gt;</code> demande un second clic, sans JavaScript.</p>
+              <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Un lien est un GET : un robot, un préchargement du navigateur ou un double clic pourrait supprimer un article. Une suppression passe donc par un formulaire avec <code class="bg-white px-1 py-0.5 rounded text-xs">@method('DELETE')</code>, et la zone <code class="bg-white px-1 py-0.5 rounded text-xs">&lt;details&gt;</code> demande un second clic, sans JavaScript. Laravel 13 accepte un formulaire envoyé depuis le même site même sans <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code>, car le navigateur le signale avec l'en-tête <code class="bg-white px-1 py-0.5 rounded text-xs">Sec-Fetch-Site</code> ; gardez <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code>, qui protège les navigateurs qui n'envoient pas cet en-tête.</p>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">419 Page Expired</code> : le jeton <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> manque ou a expiré dans le formulaire de suppression. Gardez toujours <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> dans un formulaire, même si la page fonctionne sans lui sur votre poste.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> « 405 Method Not Allowed » avec <code class="bg-white px-1 py-0.5 rounded text-xs">The POST method is not supported for route posts/3. Supported methods: GET, HEAD, PUT, PATCH, DELETE.</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">@method('DELETE')</code> manque dans le formulaire de suppression.</p>
             </div>
-            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes ; comportement de Laravel 13 sans @csrf sur http://localhost:8000 -->
+            <!-- A VERIFIER : texte exact du message de l'erreur 405 cité dans Erreurs fréquentes -->
           </div>
         </section>
 
@@ -2349,7 +2351,7 @@ class PostController extends Controller
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
               <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Call to undefined method App\Models\Post::published()</code> : faute de frappe dans <code class="bg-white px-1 py-0.5 rounded text-xs">scopePublished</code>, ou <code class="bg-white px-1 py-0.5 rounded text-xs">Post.php</code> non enregistré. Dans Tinker, quittez avec <code class="bg-white px-1 py-0.5 rounded text-xs">exit</code> et relancez après chaque modification d'un fichier.</p>
             </div>
-            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes ; attribut #[Scope] en Laravel 13 -->
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
           </div>
         </section>
 
@@ -3020,10 +3022,10 @@ git commit -m "Ajouter le bouton publier et depublier"</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Enregistrer un article sans changer son slug fonctionne ; prendre le slug d'un autre article est refusé.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La suppression demande une confirmation et ramène à la liste.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where('is_published', true)</code> n'apparaît plus dans les contrôleurs : le scope <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published</code> est utilisé.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostWriteTest</code> contient six tests verts et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostWriteTest</code> contient au moins six tests verts et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le bouton Publier / Dépublier fonctionne et son test passe.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>J'ai répondu aux 14 questions des quiz éclair.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-03..HEAD</code> affiche au moins six commits.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-03..HEAD</code> affiche au moins cinq commits.</span></li>
             </ul>
           </div>
         </section>

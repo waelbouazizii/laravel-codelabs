@@ -1818,9 +1818,9 @@ class PostController extends Controller
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">419 Page Expired</code> : le jeton <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> manque ou a expiré. Gardez toujours <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> dans un formulaire, même si la page fonctionne sans lui sur votre poste. <code class="bg-white px-1 py-0.5 rounded text-xs">The POST method is not supported for route posts/create</code> : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">action</code> du formulaire est vide ou faux ; il doit valoir <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.store')</code>.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Le formulaire fonctionne même sans <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> : Laravel 13 accepte les envois venant du même site, que le navigateur signale avec l'en-tête <code class="bg-white px-1 py-0.5 rounded text-xs">Sec-Fetch-Site</code>. Gardez <code class="bg-white px-1 py-0.5 rounded text-xs">@csrf</code> : il protège les navigateurs qui n'envoient pas cet en-tête. <code class="bg-white px-1 py-0.5 rounded text-xs">The POST method is not supported for route posts/create</code> : l'attribut <code class="bg-white px-1 py-0.5 rounded text-xs">action</code> du formulaire est vide ou faux ; il doit valoir <code class="bg-white px-1 py-0.5 rounded text-xs">route('posts.store')</code>.</p>
             </div>
-            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes ; comportement de Laravel 13 sans @csrf sur http://localhost:8000 -->
+            <!-- A VERIFIER : texte exact des messages d'erreur cités dans Erreurs fréquentes -->
           </div>
         </section>
 
