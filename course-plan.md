@@ -124,7 +124,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Learning outcomes:
   1. Complete the post CRUD: `edit`, `update` (`@method('PUT')`, unique slug ignoring the current post), `destroy` (`@method('DELETE')` with confirmation form).
   2. Add a column with a new migration instead of editing an old one (`excerpt`, nullable).
-  3. Add a local query scope (`scopePublished`) and use it on the public list.
+  3. Add a local query scope (`scopePublished`) and use it on the home page and the archive (/posts stays the working list until S11).
   4. Cover store, update and destroy with Pest tests using `assertDatabaseHas` / `assertDatabaseMissing`.
 - Key commands: `php artisan make:migration add_excerpt_to_posts_table --table=posts`, `php artisan migrate`, `php artisan test --filter=Post`.
 - Assessment focus: all 7 actions work, tests green, no edited old migrations.
