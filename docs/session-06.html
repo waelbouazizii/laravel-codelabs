@@ -637,7 +637,7 @@ composer run dev</code></pre>
             </h3>
             <ol class="list-decimal list-inside text-gray-700 space-y-2">
               <li>La règle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">unique:posts,slug</code> refuse un slug dès qu'il existe dans la table, y compris quand c'est celui de l'article en cours. À la modification, on demande donc d'ignorer cet article : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">Rule::unique('posts', 'slug')-&gt;ignore($post)</code>.</li>
-              <li>Un scope local donne un nom à une condition répétée : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post::published()</code> remplace <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where('is_published', true)</code> partout où on veut les articles publiés.</li>
+              <li>Un scope local donne un nom à une condition répétée : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post::published()</code> remplace <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">where('is_published', true)</code> partout où on veut les articles publiés.</li>
             </ol>
           </div>
 
@@ -3021,7 +3021,7 @@ git commit -m "Ajouter le bouton publier et depublier"</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le formulaire de modification est prérempli et utilise <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-post-form</code>, comme le formulaire de création.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Enregistrer un article sans changer son slug fonctionne ; prendre le slug d'un autre article est refusé.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La suppression demande une confirmation et ramène à la liste.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where('is_published', true)</code> n'apparaît plus dans les contrôleurs : le scope <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published</code> est utilisé.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">where('is_published', true)</code> n'apparaît plus dans les contrôleurs : le scope <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published</code> est utilisé.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostWriteTest</code> contient au moins six tests verts et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le bouton Publier / Dépublier fonctionne et son test passe.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>J'ai répondu aux 14 questions des quiz éclair.</span></li>
