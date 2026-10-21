@@ -314,7 +314,7 @@
         <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
       </button>
       <div class="flex-1 min-w-0">
-        <p class="text-xs text-gray-500">Session 07 - Semaine 4</p>
+        <p class="text-xs text-gray-500">Session 07 - Semaine 4 - Session A</p>
         <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
       </div>
       <div class="flex items-center gap-2">
@@ -559,7 +559,7 @@ composer run dev</code></pre>
                     <text x="168" y="62">1. GET /posts</text>
                     <text x="372" y="62">2. index()</text>
                     <text x="486" y="133" text-anchor="start">3. articles + relations</text>
-                    <text x="466" y="245" text-anchor="end">quelques requêtes, pas une par article</text>
+                    <text x="488" y="245" text-anchor="start">quelques requêtes, pas une par article</text>
                     <text x="575" y="62">4. view()</text>
                     <text x="240" y="338">5. Réponse : page HTML complète</text>
                   </g>
@@ -792,7 +792,8 @@ php artisan migrate:status</code></pre>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper ">
               <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 1">Copier</button>
-              <pre><code class="language-bash">git add -A
+              <pre><code class="language-bash">git status
+git add -A
 git commit -m "Ajouter le modele Category"</code></pre>
             </div>
           </div>
@@ -865,7 +866,7 @@ class Category extends Model
             </h3>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate:status</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create_categories_table</code> avec l'état <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Avant le commit, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> listait quatre nouveaux fichiers : le modèle, la fabrique, la migration et le seeder.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code>, juste avant le commit, liste quatre nouveaux fichiers : le modèle, la fabrique, la migration et le seeder.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">database/seeders/CategorySeeder.php</code> existe et sa méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">run()</code> est vide.</span></li>
             </ul>
           </div>
@@ -2558,7 +2559,7 @@ class PageController extends Controller
             - {{ $post-&gt;category?-&gt;name ?? 'Sans catégorie' }} - par {{ $post-&gt;user?-&gt;name ?? 'auteur inconnu' }}
         &lt;/p&gt;</code></pre>
             </div>
-            <p class="text-gray-700 mb-2">Juste après ce paragraphe, avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@if ($post-&gt;excerpt)</code> :</p>
+            <p class="text-gray-700 mb-2">Juste après ce paragraphe, avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">@if ($post-&gt;excerpt)</code> :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la liste des tags de la page de détail">Copier</button>
               <pre><code class="language-markup">        @if ($post-&gt;tags-&gt;isNotEmpty())
@@ -3297,7 +3298,7 @@ git commit -m "Afficher les articles de la meme categorie"</code></pre>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined variable $related</code> sur une autre page qui affiche <code class="bg-white px-1 py-0.5 rounded text-xs">posts.show</code> : seule la méthode <code class="bg-white px-1 py-0.5 rounded text-xs">show()</code> transmet <code class="bg-white px-1 py-0.5 rounded text-xs">$related</code>, donc seule elle doit rendre cette vue.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Undefined variable $related</code> sur la page d'un article : <code class="bg-white px-1 py-0.5 rounded text-xs">show()</code> ne transmet pas la variable. Vérifiez <code class="bg-white px-1 py-0.5 rounded text-xs whitespace-nowrap">compact('post', 'related')</code>.</p>
             </div>
           </div>
         </section>
@@ -3333,6 +3334,7 @@ git commit -m "Afficher les articles de la meme categorie"</code></pre>
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">AppServiceProvider</code> appelle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">preventLazyLoading</code>, et l'accueil, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>, une archive et une page d'article s'ouvrent sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">LazyLoadingViolationException</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostRelationsTest</code> contient au moins quatre tests verts et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Seulement si vous avez fait le défi : la section « Dans la même catégorie » s'affiche sous un article publié, sans l'article lui-même ni brouillon, et son test passe dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostRelationsTest</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>J'ai répondu aux 15 questions des quiz éclair.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-03b..HEAD</code> affiche au moins sept commits.</span></li>
             </ul>
@@ -3467,7 +3469,7 @@ Après un clone, reconstruire la base avec `php artisan migrate:fresh --seed`. A
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Sur GitHub, la page Tags du dépôt liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-04</code>, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-04</code>.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les captures <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s07-liste-relations.png</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s07-detail-tags.png</code> s'affichent dans le README sur GitHub.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-03b..lab-04</code> affiche au moins neuf commits.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git log --oneline lab-03b..lab-04</code> affiche au moins huit commits (neuf avec le défi).</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : l'identifiant GitHub est supprimé et le navigateur est déconnecté de github.com.</span></li>
             </ul>
           </div>
