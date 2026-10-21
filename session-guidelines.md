@@ -1,6 +1,7 @@
 # session-guidelines.md
 
-Lessons learned while authoring, testing and proofing Session 01 (30 September 2026).
+Lessons learned while authoring, testing and proofing Session 01 (30 September 2026),
+and while adding theory and figures to Sessions 04 and 05 (8 October 2026, section 6).
 Read this file together with:
 
 - `CLAUDE.md` for the hard rules;
@@ -156,3 +157,48 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - Whether `laravel new` initializes a Git repository or makes a first commit, and with which identity.
 - Whether the welcome page renders without a Vite build (the no-Node path).
 - The PostgreSQL bonus of S08: install path on Windows, the two PHP extensions, and whether `php artisan migrate` can create the missing database.
+- Whether submitting a form without `@csrf` gives `419 Page Expired` on `http://localhost:8000`, in Chrome and in Firefox (see section 6).
+- The compiled form of `{{ $post['title'] }}` in `storage/framework/views` (Figure 4.2 shows `<?php echo e($post['title']); ?>`).
+- Whether the Notions clés of Session 05 (three figures, two tables) fits in 15 minutes with a real group.
+- `Post::create()` with the `#[Fillable]` attribute on the installed 13.x version (issue laravel/framework#59270 was reported on 13.0.0).
+
+## 6. Theory and figures (Sessions 04 and 05, 8 Oct 2026)
+
+### Where theory goes
+
+- The Concept Brief opens with a "second pass" on MVC: one card, one figure, two short paragraphs. S04 reads the cycle from the View side, S05 from the Model side.
+- Figure 4.1 is the canonical request-cycle diagram (S01 only has a table and a vertical list). A later session copies its SVG, moves the highlighted box and the label "Sujet de la session", and changes nothing else in the layout. Figure 5.1 is the worked example: it adds one box under the model.
+- Theory inside guided steps is one sentence appended to the existing "Pourquoi ?" callout, not a new card. This added about 3 minutes per session, with no step duration changed.
+- Reference tables in the Concept Brief are introduced as "Aide-mémoire, à consulter pendant les étapes", so students do not try to memorise them.
+- State the misconception the theory targets, and test it in the quiz: "MVC is three folders", "no database means no Model", "the Model is the database", "the migration and the model are the same thing", "escaping deletes the tags", "Eloquent loads the whole table".
+
+### Figures that survived proof
+
+- Static only. No stepper, no animation, no template change: the form cycle (Figure 5.3) works as numbered boxes with a 3a / 3b branch.
+- A wide SVG gets `min-w-[640px]` inside `div.overflow-x-auto`. Without it, 12 px labels shrink to about 5 px on a phone.
+- Code shown inside a figure uses `<code class="block ... whitespace-nowrap overflow-x-auto">`, never `break-all`, and never `<pre>` (no copy button on illustrative code). Three code boxes side by side break words at laptop width: stack them in one column.
+- Inline code containing `->` gets `whitespace-nowrap`, or it breaks after the hyphen.
+- A mapping table is a real table with `<th scope="row">` in the first column.
+- A figure that simplifies a real file says so ("extrait simplifié"), and a figure with example values says so in its caption ("Les numéros de lot sont un exemple").
+- Figure values come from the page itself: real component names, the first articles created in Tinker, the real route names.
+
+### Quiz ids on a published page
+
+- Answers are saved in the browser under the question id. A question that was answered once loads locked, with its buttons disabled.
+- Never reuse an id for a rewritten question, and never renumber. Delete the old id and give the new question the next free number (S04: `q15`, `q16`; S05: `q16`, `q17`). Rewriting `quiz-s04-q03` in place was a mistake: students who answered the old version see the new one as done.
+- The `aria-label` of the options group carries the number of the id ("Réponses à la question 15"), whatever the position in the card.
+- "Recommencer les quiz" is in the Checklist panel; it clears the saved answers of that page.
+
+### Laravel 13 facts checked on 8 Oct 2026 (documentation, not a lab PC)
+
+- CSRF: the middleware is `PreventRequestForgery`. It first reads the browser's `Sec-Fetch-Site` header and allows a same-origin request "immediately without any token verification"; it falls back to the token otherwise. Whether this applies on `http://localhost:8000` is not verified. No quiz may predict a 419 when `@csrf` is removed; the rule taught is "always keep `@csrf`".
+- Mass assignment: the 13.x documentation shows the `#[Fillable([...])]` attribute. The course keeps `protected $fillable`, with one sentence saying the attribute exists.
+- Blade: views are compiled to PHP and recompiled when the source file is newer; `php artisan view:clear` is the remedy when a change stays invisible, not a routine step.
+
+### Revising a published session
+
+- The prompt says "revise the existing docs/session-XX.html in place", lists the sections it may touch, and ends with a check that `git diff` touches only those sections. `docs/index.html` is not edited.
+- Commits: `Revise session XX: theory and figures`, then `Fix session XX ... after proof`.
+- Rule-file changes go in their own commit, before the session commit.
+- Proof adds three checks to section 4: head, tail, CSS and scripts unchanged from the previous commit; one render of each changed panel at about 1280 px and at about 500 px; every sentence written by the prompt is re-read for accuracy (the first S05 draft said the array articles "disappeared", which was false).
+- After a rule file or the template changes in the repository, copy it to the claude.ai project knowledge. A stale template there caused the wrong quiz format in the first S04 prompt.
