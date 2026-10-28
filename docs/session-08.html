@@ -3125,13 +3125,12 @@ DB_PASSWORD=votre-mot-de-passe</code></pre>
 php artisan migrate:fresh --seed
 php artisan db:show</code></pre>
             </div>
-            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">db:show</code> affiche le pilote <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pgsql</code> et la base <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini_cms</code>. Rechargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> : le site affiche les mêmes données qu'avant. Lancez enfin les tests :</p>
+            <p class="text-gray-700 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">db:show</code> affiche le pilote <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pgsql</code> et la base <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini_cms</code>. Rechargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> : le site affiche les mêmes données qu'avant. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> reste sur SQLite en mémoire (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">phpunit.xml</code>) : relancez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan config:clear</code> avant les tests si vous venez de modifier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>. Lancez enfin les tests :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande de test après la bascule">Copier</button>
               <pre><code class="language-bash">php artisan test</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Les tests restent sur SQLite en mémoire : c'est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">phpunit.xml</code> qui l'impose, pas <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>.</p>
             <h4 class="font-medium mt-4 mb-2">D. Auto-vérification écrite</h4>
             <p class="text-gray-700 mb-3">Ajoutez cette question à la fin de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s08-defi.md</code>, répondez, puis ouvrez le corrigé :</p>
             <div class="code-block-wrapper mb-4">
@@ -3201,6 +3200,15 @@ php artisan migrate:fresh --seed</code></pre>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">LazyLoadingViolationException</code> sur l'accueil, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>, une archive, une page de catégorie, une page d'article, create et edit.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan migrate:fresh --seed</code> redonne 3, 4, 6, 12, 9 et 24 (commande Tinker ci-dessous).</span></li>
             </ul>
+            <div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-amber-900"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate:fresh</code> efface aussi les articles créés pendant cette séance. Faites ce contrôle en dernier ; les captures du Livrable utilisent un article du jeu de données (modifiez-le pour lui choisir une catégorie et des tags).</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de reconstruction de la base de la checklist">Copier</button>
+              <pre><code class="language-bash">php artisan migrate:fresh --seed</code></pre>
+            </div>
             <p class="text-sm text-gray-600 mb-2">Dans Tinker (après l'invite &gt;), lancé avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan tinker</code> (ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">winpty php artisan tinker</code> si Git Bash ne répond pas) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier les instructions Tinker de comptage de la checklist">Copier</button>
