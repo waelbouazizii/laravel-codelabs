@@ -11,8 +11,10 @@ Checks every docs/*.html file for these things:
      A comment line ending with "..." is allowed (literal file content).
   4. Outdated install references ("php.new", "herd.laravel.com"): Session 01
      replaced that flow (the word "herd-lite" stays allowed for its A1 check).
-  5. Session pages only (docs/session-*.html): the quiz CSS rules and the
-     quiz script are byte-identical to templates/codelab-template.html.
+  5. Session pages only (docs/session-*.html): the quiz CSS rules, the quiz
+     script and the Navigation JavaScript block are byte-identical to
+     templates/codelab-template.html, and any page with quiz questions has
+     the id="quiz-gate-msg" paragraph the navigation script shows.
   6. Quiz questions: unique id, a data-answer matching exactly one of its
      data-option values, three options, one .quiz-feedback with
      aria-live="polite", one non-empty .quiz-explain, no display utility
@@ -62,6 +64,14 @@ def quiz_skeleton(template_text):
     js_start = template_text.index("<!-- Quiz JavaScript")
     js_end = template_text.index("</script>", js_start) + len("</script>")
     return css, template_text[js_start:js_end]
+
+
+def navigation_skeleton(text):
+    """Return the Navigation JavaScript block (comment to closing tag), or None."""
+    start = text.find("<!-- Navigation JavaScript")
+    if start == -1:
+        return None
+    return text[start:text.index("</script>", start) + len("</script>")]
 
 
 def is_literal_comment_ellipsis(code_line):
@@ -214,6 +224,10 @@ def check_quiz_and_cards(path, content, template_text):
             problems.append("quiz CSS differs from templates/codelab-template.html")
         if script not in content:
             problems.append("quiz script differs from templates/codelab-template.html")
+        if navigation_skeleton(content) != navigation_skeleton(template_text):
+            problems.append("navigation script differs from templates/codelab-template.html")
+        if 'class="quiz-question' in content and 'id="quiz-gate-msg"' not in content:
+            problems.append('page has quiz questions but no id="quiz-gate-msg"')
 
     parser = QuizCardChecker()
     parser.feed(content)

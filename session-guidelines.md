@@ -120,6 +120,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - **Review the exact committed file.** Use the latest commit SHA: `https://raw.githubusercontent.com/<user>/<repo>/<sha>/docs/session-XX.html`. The `/main/` raw URL can stay cached for several minutes, and GitHub Pages lags as well.
 - **Run these automated checks on every round:**
   - CSS, markup outside the panels and navigation JavaScript identical to `templates/codelab-template.html`;
+  - navigation script identical to the template, and `#quiz-gate-msg` present in every page that has questions;
   - panel ids identical to the sidebar `data-step` values, and every in-page link resolving;
   - no emoji or pictographic symbols;
   - every `<i>` has `aria-hidden="true"`, every copy button has an `aria-label`, and the `<div>` tags are balanced;

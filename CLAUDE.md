@@ -127,6 +127,10 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
   never edited in a session. Never put a display utility class (`block`,
   `flex`, ...) on `.quiz-feedback` or `.quiz-explain`: it would defeat the
   `hidden` attribute.
+- A step that contains a Quiz éclair is a gate: the navigation script (skeleton)
+  keeps every later step locked until each question of that step has been
+  answered correctly (retries allowed). Never put a question in a panel a
+  student must be able to skip (Livrable, Grille).
 
 ## Diagrammes et figures
 
@@ -156,6 +160,9 @@ Each guided step ends with a sixth card, "À retenir" (`fa-lightbulb`), with a
 5. Independent Challenge (30 min)
 6. Assessment Checklist
 7. Deliverable — commit, tag `lab-XX`, README with screenshots (10-15 min)
+
+In a B session, the Independent Challenge may last up to 45 min; the extra time
+is taken from the sprint tasks so the total stays 190 min.
 
 The written notes self-check of the Concept Brief may be replaced by a Quiz
 éclair.
