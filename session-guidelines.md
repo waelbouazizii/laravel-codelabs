@@ -33,6 +33,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 
 - Every page is fully self-guided: a student alone at a PC must be able to finish it without asking anyone.
 - Replace oral or peer checks with written self-checks. Use a short notes file (`notes/sXX-*.md`) and a model answer hidden in `<details><summary>Voir un corrigé</summary>`.
+- From session 09 on, the Défi gives requirements, progressive hints (`<details>` "Indice 1", "Indice 2", ...) and observable checks (URLs, test counts), never solution code. The hidden model answer is kept only for the written questions of the notes file, in prose, under `<details><summary>Voir des éléments de réponse</summary>`. Hints name tools and the session that introduced them; they never contain a complete line of solution code.
 - A self-check always compares the student's answer with something on the page: a diagram, a table or a model answer.
 
 ### Toolchain coherence

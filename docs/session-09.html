@@ -596,7 +596,7 @@ composer run dev</code></pre>
                   <span class="inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-indigo-600 font-bold text-white">4</span>
                   <div class="flex-1 min-w-0">
                     <p class="font-bold text-gray-900">Contrôleur</p>
-                    <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$request-&gt;validated()</code>, enregistrement, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">redirect()-&gt;with('success', 'Article créé.')</code>.</p>
+                    <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$request-&gt;validated()</code>, enregistrement, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">redirect()-&gt;with('success', 'Article créé.')</code>.</p>
                   </div>
                   <p class="md:w-56 font-bold text-gray-900">Réponse : 302 vers la page suivante.</p>
                 </li>
@@ -2168,9 +2168,9 @@ return Application::configure(basePath: dirname(__DIR__))
             <div class="quiz-question mb-6" id="quiz-s09-q11" data-answer="b">
               <p class="font-medium text-gray-900 mb-3">Pour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code>, pourquoi la fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code> reçoit-elle une <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">NotFoundHttpException</code> ?</p>
               <div class="space-y-2" role="group" aria-label="Réponses à la question 11">
-                <button type="button" class="quiz-option" data-option="a">La liaison de modèle lève directement une <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">NotFoundHttpException</code></button>
+                <button type="button" class="quiz-option" data-option="a">La liaison de modèle lève une <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">NotFoundHttpException</code>, sans passer par une <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">ModelNotFoundException</code></button>
                 <button type="button" class="quiz-option" data-option="b">Laravel convertit la <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">ModelNotFoundException</code> en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">NotFoundHttpException</code> avant d'appeler <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code> ; l'originale reste dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">getPrevious()</code></button>
-                <button type="button" class="quiz-option" data-option="c">Parce que la route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code> n'existe pas</button>
+                <button type="button" class="quiz-option" data-option="c">La route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code> n'existe pas, donc Laravel répond 404 avant la liaison de modèle</button>
               </div>
               <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
               <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>C'est pourquoi on teste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">getPrevious()</code> pour savoir quel modèle manque.</p>
@@ -2390,12 +2390,17 @@ it('keeps the standard 404 page for an unknown category', function () {
               <li>Quand <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config('site.read_only')</code> vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">true</code>, chaque page affiche un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code> de type <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">warning</code> titré « Site en lecture seule », au-dessus du message flash.</li>
               <li>Quand la valeur est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code>, le bandeau disparaît.</li>
             </ul>
+            <p class="text-gray-700 mb-3">Ouvrez un indice seulement après avoir essayé : chacun en dit un peu plus que le précédent.</p>
             <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Indice</summary>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 1</summary>
               <div class="mt-2">
-            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-2">
-              <li>Le layout entoure déjà toutes les pages.</li>
-            </ul>
+            <p class="text-gray-700 mb-2">Le layout entoure toutes les pages, y compris la page « Article introuvable » : un seul bloc suffit pour tout le site.</p>
+              </div>
+            </details>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 2</summary>
+              <div class="mt-2">
+            <p class="text-gray-700 mb-2">Une vue Blade lit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config('site.read_only')</code> exactement comme le middleware. Entourez un composant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code> (session 04, props <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">type</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">title</code>) d'une condition <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@if</code>, et placez-le avant le bloc du message flash.</p>
               </div>
             </details>
           </div>
@@ -2411,12 +2416,23 @@ it('keeps the standard 404 page for an unknown category', function () {
               <li>Aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">LazyLoadingViolationException</code>.</li>
               <li>Rien n'est affiché (pas même le titre) s'il n'y a aucun article publié.</li>
             </ul>
+            <p class="text-gray-700 mb-3">Ouvrez un indice seulement après avoir essayé : chacun en dit un peu plus que le précédent.</p>
             <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Indice</summary>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 1</summary>
               <div class="mt-2">
-            <ul class="list-disc list-inside text-gray-700 space-y-1 mb-2">
-              <li>Passez les données dans le deuxième argument de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">response()-&gt;view()</code>, dans la fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code> de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code>.</li>
-            </ul>
+            <p class="text-gray-700 mb-2">La vue ne reçoit que ce que la fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code> de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code> lui passe. Le deuxième argument de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">response()-&gt;view()</code> est un tableau de données, comme celui de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">view()</code> dans un contrôleur.</p>
+              </div>
+            </details>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 2</summary>
+              <div class="mt-2">
+            <p class="text-gray-700 mb-2">La requête se construit avec des outils déjà vus : le scope <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code> (session 06), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with()</code> pour éviter le N+1 (session 07), puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">latest('published_at')</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">take()</code> comme pour la section « Dans la même catégorie » (défi de la session 07).</p>
+              </div>
+            </details>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 3</summary>
+              <div class="mt-2">
+            <p class="text-gray-700 mb-2">Pour ne rien afficher sans article, testez la collection avant le titre, avec la même méthode que dans le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@if</code> qui teste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$related</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts/show.blade.php</code> (défi de la session 07). Chaque article s'affiche avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-post-card</code>, dans une boucle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@foreach</code>.</p>
               </div>
             </details>
           </div>
@@ -2431,6 +2447,19 @@ it('keeps the standard 404 page for an unknown category', function () {
               <li>Deux tests ajoutés à la fin de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostFeedbackTest</code> : la page d'accueil affiche le bandeau quand le site est en lecture seule ; la page d'un article inexistant affiche un article publié mais pas un brouillon.</li>
               <li>Un fichier de notes rédigé et enregistré.</li>
             </ul>
+            <p class="text-gray-700 mb-3">Ouvrez un indice seulement après avoir essayé : chacun en dit un peu plus que le précédent.</p>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 1</summary>
+              <div class="mt-2">
+            <p class="text-gray-700 mb-2">Pour simuler la lecture seule dans un seul test, modifiez la configuration au début du test en passant un tableau à la fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config()</code>. Ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">phpunit.xml</code> ne changent.</p>
+              </div>
+            </details>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Indice 2</summary>
+              <div class="mt-2">
+            <p class="text-gray-700 mb-2">Les fabriques de la session 07 créent un article publié (état <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code>) ou un brouillon. Donnez à chacun un titre reconnaissable, puis combinez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertNotFound()</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertSee()</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertDontSee()</code> sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code>.</p>
+              </div>
+            </details>
             <p class="text-gray-700 mb-3">Auto-vérification écrite : créez le fichier de notes du défi et ouvrez-le dans VS Code.</p>
             <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
             <div class="code-block-wrapper mb-4">
@@ -2458,272 +2487,12 @@ Les deux nouveaux tests passent et php artisan test est vert : oui / non
 Pourquoi le bandeau est-il dans le layout et pas dans chaque vue ?
 Pourquoi le test du bandeau n'a-t-il pas besoin de modifier .env ?</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Répondez à chaque ligne dans le fichier et enregistrez-le, puis seulement ensuite ouvrez le corrigé.</p>
+            <p class="text-gray-700 mb-3">Répondez à chaque ligne dans le fichier et enregistrez-le, puis seulement ensuite ouvrez les éléments de réponse.</p>
             <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Voir un corrigé</summary>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir des éléments de réponse</summary>
               <div class="mt-2">
-            <p class="text-sm text-gray-600 mb-2">1. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/layout.blade.php</code> :</p>
-            <p class="text-gray-700 mb-2">Juste avant le bloc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@if (session('success'))</code> :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier le bandeau du corrigé">Copier</button>
-              <pre><code class="language-markup">        @if (config('site.read_only'))
-            &lt;x-alert type="warning" title="Site en lecture seule" class="mb-6"&gt;
-                Les créations, modifications et suppressions sont désactivées pour le moment.
-            &lt;/x-alert&gt;
-        @endif</code></pre>
-            </div>
-            <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
-              <div class="mt-2">
-            <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier layout.blade.php du corrigé">Copier</button>
-              <pre><code class="language-markup">&lt;!DOCTYPE html&gt;
-&lt;html lang="fr"&gt;
-&lt;head&gt;
-    &lt;meta charset="UTF-8"&gt;
-    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;{{ $title ?? 'Mini-CMS' }}&lt;/title&gt;
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-&lt;/head&gt;
-&lt;body class="min-h-screen bg-gray-50 text-gray-900 flex flex-col"&gt;
-    &lt;x-navbar /&gt;
-
-    &lt;main class="flex-1 w-full max-w-5xl mx-auto px-4 py-8"&gt;
-        @if (config('site.read_only'))
-            &lt;x-alert type="warning" title="Site en lecture seule" class="mb-6"&gt;
-                Les créations, modifications et suppressions sont désactivées pour le moment.
-            &lt;/x-alert&gt;
-        @endif
-
-        @if (session('success'))
-            &lt;x-alert type="success" class="mb-6"&gt;{{ session('success') }}&lt;/x-alert&gt;
-        @endif
-
-        {{ $slot }}
-    &lt;/main&gt;
-
-    &lt;footer class="border-t border-gray-200 py-6 text-center text-sm text-gray-500"&gt;
-        Mini-CMS - Atelier Framework Côté Serveur - ISET Sidi Bouzid
-    &lt;/footer&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
-            </div>
-              </div>
-            </details>
-            <div class="mt-6"></div>
-            <p class="text-sm text-gray-600 mb-2">2. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code> :</p>
-            <p class="text-gray-700 mb-2">Dans la branche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> de la fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code>, à la place de la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">return response()-&gt;view('errors.article-introuvable', [], 404);</code> :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier le return du corrigé">Copier</button>
-              <pre><code class="language-php">                return response()-&gt;view('errors.article-introuvable', [
-                    'recentPosts' =&gt; Post::published()
-                        -&gt;with('user', 'category', 'tags')
-                        -&gt;latest('published_at')
-                        -&gt;take(3)
-                        -&gt;get(),
-                ], 404);</code></pre>
-            </div>
-            <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
-              <div class="mt-2">
-            <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier bootstrap/app.php du corrigé">Copier</button>
-              <pre><code class="language-php">&lt;?php
-
-use App\Http\Middleware\EnsureSiteIsWritable;
-use App\Models\Post;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Foundation\Application;
-use Illuminate\Foundation\Configuration\Exceptions;
-use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Http\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-
-return Application::configure(basePath: dirname(__DIR__))
-    -&gt;withRouting(
-        web: __DIR__.'/../routes/web.php',
-        commands: __DIR__.'/../routes/console.php',
-        health: '/up',
-    )
-    -&gt;withMiddleware(function (Middleware $middleware): void {
-        $middleware-&gt;alias([
-            'writable' =&gt; EnsureSiteIsWritable::class,
-        ]);
-    })
-    -&gt;withExceptions(function (Exceptions $exceptions): void {
-        $exceptions-&gt;shouldRenderJsonWhen(
-            fn (Request $request) =&gt; $request-&gt;is('api/*') || $request-&gt;expectsJson(),
-        );
-
-        $exceptions-&gt;render(function (NotFoundHttpException $e, Request $request) {
-            if ($request-&gt;is('api/*') || $request-&gt;expectsJson()) {
-                return null;
-            }
-
-            $previous = $e-&gt;getPrevious();
-
-            if ($previous instanceof ModelNotFoundException &amp;&amp; $previous-&gt;getModel() === Post::class) {
-                return response()-&gt;view('errors.article-introuvable', [
-                    'recentPosts' =&gt; Post::published()
-                        -&gt;with('user', 'category', 'tags')
-                        -&gt;latest('published_at')
-                        -&gt;take(3)
-                        -&gt;get(),
-                ], 404);
-            }
-
-            return null;
-        });
-    })-&gt;create();</code></pre>
-            </div>
-              </div>
-            </details>
-            <div class="mt-6"></div>
-            <p class="text-sm text-gray-600 mb-2">3. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/errors/article-introuvable.blade.php</code> :</p>
-            <p class="text-gray-700 mb-2">Juste avant la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;/x-layout&gt;</code> :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la section Articles récents du corrigé">Copier</button>
-              <pre><code class="language-markup">    @if ($recentPosts-&gt;isNotEmpty())
-        &lt;section class="mt-10" aria-labelledby="recent-title"&gt;
-            &lt;h2 id="recent-title" class="text-xl font-bold mb-4"&gt;Articles récents&lt;/h2&gt;
-
-            &lt;div class="grid gap-6 md:grid-cols-2"&gt;
-                @foreach ($recentPosts as $recentPost)
-                    &lt;x-post-card :post="$recentPost" /&gt;
-                @endforeach
-            &lt;/div&gt;
-        &lt;/section&gt;
-    @endif</code></pre>
-            </div>
-            <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
-              <div class="mt-2">
-            <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier article-introuvable.blade.php du corrigé">Copier</button>
-              <pre><code class="language-markup">&lt;x-layout&gt;
-    &lt;x-slot:title&gt;Article introuvable - Mini-CMS&lt;/x-slot:title&gt;
-
-    &lt;x-page-header title="Article introuvable" subtitle="Cet article n'existe pas ou a été supprimé." /&gt;
-
-    &lt;x-alert type="info" title="Que faire ?" class="max-w-2xl"&gt;
-        Vérifiez l'adresse, ou parcourez la liste des articles.
-    &lt;/x-alert&gt;
-
-    &lt;p class="mt-6"&gt;
-        &lt;a href="{{ route('posts.index') }}" class="font-medium text-indigo-600 hover:underline"&gt;Voir tous les articles&lt;/a&gt;
-    &lt;/p&gt;
-
-    @if ($recentPosts-&gt;isNotEmpty())
-        &lt;section class="mt-10" aria-labelledby="recent-title"&gt;
-            &lt;h2 id="recent-title" class="text-xl font-bold mb-4"&gt;Articles récents&lt;/h2&gt;
-
-            &lt;div class="grid gap-6 md:grid-cols-2"&gt;
-                @foreach ($recentPosts as $recentPost)
-                    &lt;x-post-card :post="$recentPost" /&gt;
-                @endforeach
-            &lt;/div&gt;
-        &lt;/section&gt;
-    @endif
-&lt;/x-layout&gt;</code></pre>
-            </div>
-              </div>
-            </details>
-            <div class="mt-6"></div>
-            <p class="text-sm text-gray-600 mb-2">4. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tests/Feature/PostFeedbackTest.php</code> :</p>
-            <p class="text-gray-700 mb-2">À la fin du fichier :</p>
-            <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les tests du corrigé">Copier</button>
-              <pre><code class="language-php">it('shows the read-only banner when the site is read-only', function () {
-    config(['site.read_only' =&gt; true]);
-
-    $this-&gt;get(route('home'))
-        -&gt;assertOk()
-        -&gt;assertSee('Site en lecture seule');
-});
-
-it('suggests recent published posts on the missing post page', function () {
-    Post::factory()-&gt;published()-&gt;create(['title' =&gt; 'Article recent publie']);
-    Post::factory()-&gt;create(['title' =&gt; 'Brouillon cache']);
-
-    $this-&gt;get('/posts/999')
-        -&gt;assertNotFound()
-        -&gt;assertSee('Article recent publie')
-        -&gt;assertDontSee('Brouillon cache');
-});</code></pre>
-            </div>
-            <details>
-              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
-              <div class="mt-2">
-            <div class="code-block-wrapper ">
-              <button class="copy-btn" aria-label="Copier PostFeedbackTest.php du corrigé">Copier</button>
-              <pre><code class="language-php">&lt;?php
-
-use App\Models\Post;
-
-beforeEach(function () {
-    $this-&gt;withoutVite();
-});
-
-function feedbackPostData(array $overrides = []): array
-{
-    return array_merge([
-        'title' =&gt; 'Article avec message',
-        'slug' =&gt; 'article-avec-message',
-        'body' =&gt; 'Contenu assez long pour passer la validation.',
-        'is_published' =&gt; '1',
-    ], $overrides);
-}
-
-it('shows a success message after creating a post', function () {
-    $this-&gt;followingRedirects()
-        -&gt;post(route('posts.store'), feedbackPostData())
-        -&gt;assertOk()
-        -&gt;assertSee('Article créé.');
-});
-
-it('shows a success message after deleting a post', function () {
-    $post = Post::factory()-&gt;create();
-
-    $this-&gt;followingRedirects()
-        -&gt;delete(route('posts.destroy', $post))
-        -&gt;assertOk()
-        -&gt;assertSee('Article supprimé.');
-});
-
-it('shows the custom page for an unknown post', function () {
-    $this-&gt;get('/posts/999')
-        -&gt;assertNotFound()
-        -&gt;assertSee('Article introuvable');
-});
-
-it('keeps the standard 404 page for an unknown category', function () {
-    $this-&gt;get('/posts/categorie/inconnue')
-        -&gt;assertNotFound()
-        -&gt;assertDontSee('Article introuvable');
-});
-
-it('shows the read-only banner when the site is read-only', function () {
-    config(['site.read_only' =&gt; true]);
-
-    $this-&gt;get(route('home'))
-        -&gt;assertOk()
-        -&gt;assertSee('Site en lecture seule');
-});
-
-it('suggests recent published posts on the missing post page', function () {
-    Post::factory()-&gt;published()-&gt;create(['title' =&gt; 'Article recent publie']);
-    Post::factory()-&gt;create(['title' =&gt; 'Brouillon cache']);
-
-    $this-&gt;get('/posts/999')
-        -&gt;assertNotFound()
-        -&gt;assertSee('Article recent publie')
-        -&gt;assertDontSee('Brouillon cache');
-});</code></pre>
-            </div>
-              </div>
-            </details>
-            <div class="mt-6"></div>
-            <p class="text-gray-700">5. Réponses aux questions des notes : le layout entoure toutes les pages, y compris la page d'erreur, donc un seul bloc couvre tout le site. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config(['site.read_only' =&gt; true])</code> change la valeur pour ce test seulement, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">phpunit.xml</code> garde <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code> pour tous les autres.</p>
+            <p class="text-gray-700 mb-3">Le layout entoure toutes les pages, y compris la page d'erreur : un seul bloc couvre tout le site, et une correction se fait à un seul endroit.</p>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config(['site.read_only' =&gt; true])</code> change la valeur pour ce test seulement ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">phpunit.xml</code> garde <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code> pour tous les autres, donc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> n'a pas à changer.</p>
               </div>
             </details>
           </div>
@@ -2736,8 +2505,9 @@ it('suggests recent published posts on the missing post page', function () {
             <ul class="space-y-2 text-gray-700">
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=true</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, l'accueil, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> affichent le bandeau ; avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code>, il disparaît.</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> propose au plus trois articles publiés, sans brouillon, et s'ouvre sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">LazyLoadingViolationException</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test --filter=PostFeedbackTest</code> affiche 6 tests réussis (4 de l'Étape 6 et 2 du niveau 3).</span></li>
               <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est vert, avec deux tests de plus dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostFeedbackTest</code>.</span></li>
-              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vos notes sont rédigées et comparées au corrigé, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> contient de nouveau <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code>.</span></li>
+              <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vos notes sont rédigées et comparées aux éléments de réponse, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> contient de nouveau <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code>.</span></li>
             </ul>
             <p class="text-gray-700 mb-3 mt-4">Quand tout est vérifié, enregistrez le défi dans Git :</p>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
