@@ -164,7 +164,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
   1. Move validation into `StorePostRequest` / `UpdatePostRequest` and use `$request->validated()` (unique slug ignoring the current post on update).
   2. Show flash messages with `->with('success', ...)` and a reusable Blade alert component.
   3. Write a custom middleware (`EnsureSiteIsWritable`: blocks write requests with 503 when a config flag is on) and register it as an alias in `bootstrap/app.php`.
-  4. Customize exception handling in `bootstrap/app.php` (`withExceptions` render callback for 404 on posts) and custom error views in `resources/views/errors/`. The callback must return `null` for API/JSON requests (`if ($request->expectsJson()) { return null; }`) so S13 API errors stay JSON.
+  4. Customize exception handling in `bootstrap/app.php` (`withExceptions` render callback for 404 on posts) and custom error views in `resources/views/errors/`. The callback must return `null` for API/JSON requests (`if ($request->is('api/*') || $request->expectsJson()) { return null; }`, the same rule as the skeleton's `shouldRenderJsonWhen`) so S13 API errors stay JSON, even when a browser opens an `/api/*` URL.
 - Key commands: `php artisan make:request StorePostRequest`, `php artisan make:request UpdatePostRequest`, `php artisan make:middleware EnsureSiteIsWritable`, `php artisan vendor:publish --tag=laravel-errors`, `php artisan config:clear`.
 - Reuses: S05-S08 controller, forms, `@error`, alert component from S04.
 - Note: no auth-based middleware yet (`admin` alias arrives in S11).

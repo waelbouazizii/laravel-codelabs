@@ -188,6 +188,7 @@ use App\Http\Middleware\EnsureUserIsAdmin;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -201,11 +202,24 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->shouldRenderJsonWhen(
+            fn (Request $request) => $request->is('api/*') || $request->expectsJson(),
+        );
     })->create();
 ```
 
 Create middleware with `php artisan make:middleware EnsureUserIsAdmin`. Use it as `->middleware('admin')`.
+
+Skeleton facts (checked against laravel/laravel v13.8.0 to v13.11.0 and framework 13.x, 12 Nov 2026):
+
+- Since skeleton v13.8.0, `withExceptions` already contains the `shouldRenderJsonWhen` call above and the file imports `Illuminate\Http\Request`. Older projects have `//` instead. Pages tell students to keep whichever they have. `session-01.html` still shows the `//` version (known, harmless, fix when Session 01 is next revised).
+- Aliases from S09 on: `writable` => `App\Http\Middleware\EnsureSiteIsWritable` (S09); `admin` arrives in S11. Call `$middleware->alias([...])` once with every alias: a second call replaces the first array.
+- Render callbacks (`$exceptions->render(...)`) receive the exception after `prepareException()`: a `ModelNotFoundException` arrives as `NotFoundHttpException`, with the original in `getPrevious()`. A callback typed `ModelNotFoundException` is never called. Test the model with `$e->getPrevious() instanceof ModelNotFoundException && $e->getPrevious()->getModel() === Post::class`.
+- Every web render callback returns `null` first for `$request->is('api/*') || $request->expectsJson()` (same rule as `shouldRenderJsonWhen`), so S13 API errors stay JSON.
+- `php artisan vendor:publish --tag=laravel-errors` copies 10 views to `resources/views/errors`: 401, 402, 403, 404, 419, 429, 500, 503, `layout`, `minimal`.
+- `FormRequest` stub: `authorize()` returns `false` (gives 403 "This action is unauthorized."); `rules()` returns `array<string, ValidationRule|array<mixed>|string>`.
+- `php artisan serve` (also inside `composer run dev`) restarts itself when `.env` changes ("Environment modified. Restarting server..."). `config:clear` is needed only if the config is cached.
+- Config flags read by code go through a file in `config/` (`config('site.read_only')`), never `env()` outside `config/`. Tests pin such flags in `phpunit.xml` (`<env name="SITE_READ_ONLY" value="false"/>`), which wins over `.env`; a single test changes one with `config([...])`.
 
 ## 9. Authentication and authorization (W6)
 

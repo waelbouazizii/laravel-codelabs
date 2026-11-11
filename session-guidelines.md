@@ -204,3 +204,39 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - Rule-file changes go in their own commit, before the session commit.
 - Proof adds three checks to section 4: head, tail, CSS and scripts unchanged from the previous commit; one render of each changed panel at about 1280 px and at about 500 px; every sentence written by the prompt is re-read for accuracy (the first S05 draft said the array articles "disappeared", which was false).
 - After a rule file or the template changes in the repository, copy it to the claude.ai project knowledge. A stale template there caused the wrong quiz format in the first S04 prompt.
+
+## 7. Sessions 08 and 09 (12 Nov 2026)
+
+### Student project at tag lab-05 (start of S10)
+
+- Routes: `home`, `about`, `time`, `posts.archive`, `posts.category` (`{category:slug}`), `posts.tag` (`{tag:slug}`, S08 Défi level 1, optional), then `Route::middleware('writable')->group(...)` around `Route::resource('posts', ...)` and `posts.publication` (S06 Défi, optional). `route:list --middleware=writable` lists 8 routes.
+- `PostController`: index, archive, byCategory, byTag, create, store(`StorePostRequest`), show (with `$related`, S07 Défi), edit, update(`UpdatePostRequest`), destroy, togglePublication. No `Illuminate\Http\Request` or `Rule` import left; `git grep -n -e "->validate(" -- app/Http/Controllers` prints nothing. Every write redirects `->with('success', ...)`: "Article créé.", "Article mis à jour.", "Article supprimé.", "Article publié." / "Article dépublié.".
+- `UpdatePostRequest` slug rule: `Rule::unique('posts', 'slug')->ignore($this->route('post'))`. Rules are duplicated between the two Form Requests on purpose.
+- `layout.blade.php`: `@if (session('success')) <x-alert type="success" class="mb-6">` just after `<main ...>`, before `{{ $slot }}`. Students who did the Défi also have the read-only banner (`x-alert type="warning"`) just before it.
+- Middleware `EnsureSiteIsWritable`: `config('site.read_only') && ! $request->isMethodSafe()` gives `abort(503, 'Le site est en lecture seule.')`. `config/site.php` reads `SITE_READ_ONLY`; the flag is in `.env`, `.env.example` and `phpunit.xml` (false).
+- `bootstrap/app.php`: alias `writable`; `shouldRenderJsonWhen` kept; one `render(NotFoundHttpException ...)` callback returning `errors.article-introuvable` (status 404) for a missing `Post` only, `null` otherwise and for API/JSON. Défi students pass `recentPosts` to that view.
+- Published error views in `resources/views/errors` (10 files, unchanged) plus `article-introuvable.blade.php`. The 404 and 503 pages are still the framework's minimal design: S10 restyles them.
+- Tests: `PostPagesTest`, `PostWriteTest` (helper `postData`), `PostRelationsTest`, `PostTaxonomyTest` (helper `taxonomyPostData`), `PostFeedbackTest` (helper `feedbackPostData`, 4 tests, 6 with the Défi). Pest helper functions are global: every new test file needs a new helper name.
+- Validation messages are still in English ("The slug has already been taken."): translating them is S10.
+
+### Défi format from S09 on
+
+- Hints only (see section 2, Self-guided pages): requirements, progressive `Indice 1/2/3` in closed `<details>`, observable checks (URLs, test counts), prose-only "Voir des éléments de réponse" for the notes questions. No solution code, no full files.
+- Hints name the tool and the session that introduced it (for example "le scope `published()` (session 06)") so students search their own earlier work.
+
+### Quiz writing
+
+- Distractors have the same length and tone as the correct option; a longer, explanatory correct option gives the answer away (S09 q11 had to be rewritten).
+
+### Proof method that worked for S08-S09
+
+- Read the page as text with a script that keeps code blocks and panel markers, then compare every full-file block with the previous session's end state (rules, imports, layout markup, helper names).
+- Verify framework claims in the `laravel/framework` 13.x and `laravel/laravel` tagged sources (stubs, `Foundation/Exceptions/Handler.php`, `ServeCommand`), not from memory.
+- Render check without CDN access: build the Tailwind CSS locally from the page (`tailwindcss@3` with the page's inline config) and serve `docs/` locally; at 1280 px and 390 px, answer every quiz through its `data-answer`, confirm all steps unlock and the score reaches N / N, and look for elements wider than the viewport outside `pre` and `.overflow-x-auto`. This caught a clipped `whitespace-nowrap` code chip in Figure 9.2. Long inline code in a figure or card uses `break-all`, not `whitespace-nowrap`.
+
+### Still to verify on a lab PC (S09)
+
+- The 403 page text "This action is unauthorized." in the browser.
+- `route:list --middleware=writable` output (8 routes).
+- The "Environment modified. Restarting server..." line under `composer run dev` on Windows.
+- The exact `vendor:publish --tag=laravel-errors` output.
