@@ -1687,8 +1687,15 @@ code .env .env.example lang\fr\validation.php app\Http\Requests\StoreCategoryReq
             </div>
             <p class="text-gray-700 mb-3">Le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lang</code> se place à la racine du projet, à côté de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app</code> et de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes</code>, pas dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources</code>. Aucune commande <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lang:publish</code> n'est nécessaire : nous écrivons nous-mêmes le seul fichier utile. VS Code enregistre en UTF-8 par défaut (indiqué en bas à droite de la fenêtre) : gardez ce réglage, sinon les accents s'afficheront mal.</p>
             <h4 class="font-medium mt-4 mb-2">B. Modifier les fichiers</h4>
-            <p class="text-gray-700 mb-3">Appliquez le Code complet aux six fichiers, dans l'ordre de la carte, et enregistrez chacun. À l'enregistrement de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, le Terminal 1 affiche « Environment modified. Restarting server... » : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan serve</code> redémarre et relit la locale. Lancez ensuite les tests :</p>
+            <p class="text-gray-700 mb-3">Appliquez le Code complet aux six fichiers, dans l'ordre de la carte, et enregistrez chacun. À l'enregistrement de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, le Terminal 1 affiche « Environment modified. Restarting server... » : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan serve</code> redémarre et relit la locale.</p>
             <!-- A VERIFIER : ligne « Environment modified. Restarting server... » sous composer run dev sous Windows (présente dans ServeCommand, non observée sur un poste du labo) -->
+            <p class="text-gray-700 mb-3">Seulement si le Terminal 1 n'affiche pas cette ligne : arrêtez l'application avec Ctrl+C dans le Terminal 1, puis relancez-la avec le bloc ci-dessous.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le Terminal 1 n'affiche pas « Environment modified. Restarting server... », Terminal 1, Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de relance de l'application après la modification de .env (tâche 4)">Copier</button>
+              <pre><code class="language-bash">composer run dev</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Lancez ensuite les tests :</p>
             <h4 class="font-medium mt-4 mb-2">C. Tester</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
@@ -2026,10 +2033,10 @@ class UpdateCategoryRequest extends FormRequest
             <h4 class="font-medium mt-4 mb-2">B. Essayer</h4>
             <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/page-inexistante</code> : la page « Page introuvable » s'affiche dans le layout, avec la barre de navigation.</p>
             <p class="text-gray-700 mb-3">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code> par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=true</code> et enregistrez. Le Terminal 1 affiche « Environment modified. Restarting server... » : le serveur relit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>.</p>
-            <p class="text-gray-700 mb-3">Seulement si le Terminal 1 n'affiche pas « Environment modified. Restarting server... » : arrêtez l'application avec Ctrl+C dans le Terminal 1, puis relancez-la avec le bloc ci-dessous.</p>
-            <p class="text-sm text-gray-600 mb-2">Terminal 1, Bash et PowerShell (identique) :</p>
+            <p class="text-gray-700 mb-3">Arrêtez l'application avec Ctrl+C dans le Terminal 1, puis relancez-la avec le bloc ci-dessous.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si le Terminal 1 n'affiche pas « Environment modified. Restarting server... », Terminal 1, Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande de relance de l'application dans le Terminal 1">Copier</button>
+              <button class="copy-btn" aria-label="Copier la commande de relance de l'application après la modification de .env (tâche 5)">Copier</button>
               <pre><code class="language-bash">composer run dev</code></pre>
             </div>
             <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/admin/categories/create</code> et envoyez le formulaire : la page 503 du site affiche « Le site est en lecture seule. ».</p>
