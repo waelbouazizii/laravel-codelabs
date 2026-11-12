@@ -1078,7 +1078,8 @@ class CategoryController extends Controller
               <pre><code class="language-markup">&lt;x-layout&gt;
     &lt;x-slot:title&gt;Nouvelle catégorie - Mini-CMS&lt;/x-slot:title&gt;
 
-    &lt;x-page-header title="Nouvelle catégorie" subtitle="Le slug sert dans l'adresse de la page publique de la catégorie." /&gt;
+    &lt;h1 class="text-3xl font-bold text-gray-900"&gt;Nouvelle catégorie&lt;/h1&gt;
+    &lt;p class="mt-2 mb-8 text-gray-600"&gt;Le slug sert dans l'adresse de la page publique de la catégorie.&lt;/p&gt;
 
     @if ($errors-&gt;any())
         &lt;x-alert type="error" title="Le formulaire contient des erreurs" class="mb-6 max-w-2xl"&gt;
@@ -1118,7 +1119,8 @@ class CategoryController extends Controller
               <pre><code class="language-markup">&lt;x-layout&gt;
     &lt;x-slot:title&gt;Modifier {{ $category-&gt;name }} - Mini-CMS&lt;/x-slot:title&gt;
 
-    &lt;x-page-header title="Modifier la catégorie" :subtitle="$category-&gt;name" /&gt;
+    &lt;h1 class="text-3xl font-bold text-gray-900"&gt;Modifier la catégorie&lt;/h1&gt;
+    &lt;p class="mt-2 mb-8 text-gray-600"&gt;{{ $category-&gt;name }}&lt;/p&gt;
 
     @if ($errors-&gt;any())
         &lt;x-alert type="error" title="Le formulaire contient des erreurs" class="mb-6 max-w-2xl"&gt;
@@ -1543,7 +1545,8 @@ class UpdateTagRequest extends FormRequest
               <pre><code class="language-markup">&lt;x-layout&gt;
     &lt;x-slot:title&gt;Nouveau tag - Mini-CMS&lt;/x-slot:title&gt;
 
-    &lt;x-page-header title="Nouveau tag" subtitle="Le slug sert dans l'adresse de la page publique du tag." /&gt;
+    &lt;h1 class="text-3xl font-bold text-gray-900"&gt;Nouveau tag&lt;/h1&gt;
+    &lt;p class="mt-2 mb-8 text-gray-600"&gt;Le slug sert dans l'adresse de la page publique du tag.&lt;/p&gt;
 
     @if ($errors-&gt;any())
         &lt;x-alert type="error" title="Le formulaire contient des erreurs" class="mb-6 max-w-2xl"&gt;
@@ -1583,7 +1586,8 @@ class UpdateTagRequest extends FormRequest
               <pre><code class="language-markup">&lt;x-layout&gt;
     &lt;x-slot:title&gt;Modifier {{ $tag-&gt;name }} - Mini-CMS&lt;/x-slot:title&gt;
 
-    &lt;x-page-header title="Modifier le tag" :subtitle="$tag-&gt;name" /&gt;
+    &lt;h1 class="text-3xl font-bold text-gray-900"&gt;Modifier le tag&lt;/h1&gt;
+    &lt;p class="mt-2 mb-8 text-gray-600"&gt;{{ $tag-&gt;name }}&lt;/p&gt;
 
     @if ($errors-&gt;any())
         &lt;x-alert type="error" title="Le formulaire contient des erreurs" class="mb-6 max-w-2xl"&gt;
@@ -1755,7 +1759,7 @@ return [
     ],
 ];</code></pre>
             </div>
-            <p class="text-gray-700 mb-6">Le fichier ne contient que les règles utilisées par les Form Requests du projet, dont <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">regex</code> (le slug des articles) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">min</code> (le contenu d'un article, au moins 20 caractères). Toute autre règle retombe sur le message anglais du framework (Figure 10.2). Laravel choisit lui-même la variante de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">max</code> ou de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">min</code> selon le type du champ. La clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">attributes</code> remplace <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">:attribute</code> par le nom affiché dans le formulaire.</p>
+            <p class="text-gray-700 mb-6">Le fichier ne contient que les règles utilisées par les Form Requests des articles et des catégories : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">required</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">string</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">max</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">min</code> (le contenu d'un article, au moins 20 caractères), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">regex</code> (le slug des articles), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">unique</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">boolean</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">integer</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">exists</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">array</code>. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">nullable</code> n'a pas de message : il n'échoue jamais. Toute autre règle retombe sur le message anglais du framework (Figure 10.2). Laravel choisit lui-même la variante de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">max</code> ou de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">min</code> selon le type du champ. La clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">attributes</code> remplace <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">:attribute</code> par le nom affiché dans le formulaire.</p>
             <p class="text-sm text-gray-600 mb-2">3. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Requests/StoreCategoryRequest.php</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Requests/UpdateCategoryRequest.php</code> :</p>
             <p class="text-gray-700 mb-2">Dans les deux fichiers, juste après la méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">rules()</code>, avant la dernière accolade <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">}</code> du fichier :</p>
             <div class="code-block-wrapper mb-4">
@@ -2021,13 +2025,15 @@ class UpdateCategoryRequest extends FormRequest
             <p class="text-gray-700 mb-3">Remplacez tout le contenu de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">404.blade.php</code> et de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">503.blade.php</code> par le Code complet, et enregistrez. Ne touchez pas aux huit autres vues publiées en session 09.</p>
             <h4 class="font-medium mt-4 mb-2">B. Essayer</h4>
             <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/page-inexistante</code> : la page « Page introuvable » s'affiche dans le layout, avec la barre de navigation.</p>
-            <p class="text-gray-700 mb-3">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code> par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=true</code> et enregistrez. Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/admin/categories/create</code> et envoyez le formulaire : la page 503 du site affiche « Le site est en lecture seule. ».</p>
-            <p class="text-gray-700 mb-3">Remettez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> et enregistrez, puis créez une catégorie pour vérifier que les écritures fonctionnent de nouveau.</p>
-            <p class="text-sm text-gray-600 mb-2">Seulement si le site ne passe pas en lecture seule (ou ne la quitte pas) après l'enregistrement de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> (Bash et PowerShell, identique) :</p>
+            <p class="text-gray-700 mb-3">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code> par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=true</code> et enregistrez. Le Terminal 1 affiche « Environment modified. Restarting server... » : le serveur relit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code>.</p>
+            <p class="text-gray-700 mb-3">Seulement si le Terminal 1 n'affiche pas « Environment modified. Restarting server... » : arrêtez l'application avec Ctrl+C dans le Terminal 1, puis relancez-la avec le bloc ci-dessous.</p>
+            <p class="text-sm text-gray-600 mb-2">Terminal 1, Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier la commande conditionnelle de vidage du cache de configuration">Copier</button>
-              <pre><code class="language-bash">php artisan config:clear</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande de relance de l'application dans le Terminal 1">Copier</button>
+              <pre><code class="language-bash">composer run dev</code></pre>
             </div>
+            <p class="text-gray-700 mb-3">Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/admin/categories/create</code> et envoyez le formulaire : la page 503 du site affiche « Le site est en lecture seule. ».</p>
+            <p class="text-gray-700 mb-3">Remettez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">SITE_READ_ONLY=false</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">.env</code> et enregistrez (même relance du Terminal 1 si le serveur ne redémarre pas seul), puis créez une catégorie pour vérifier que les écritures fonctionnent de nouveau.</p>
             <h4 class="font-medium mt-4 mb-2">C. Tester</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
@@ -2060,7 +2066,8 @@ git commit -m "Style 404 and 503 error pages"</code></pre>
               <pre><code class="language-markup">&lt;x-layout&gt;
     &lt;x-slot:title&gt;Page introuvable - Mini-CMS&lt;/x-slot:title&gt;
 
-    &lt;x-page-header title="Page introuvable" subtitle="L'adresse demandée n'existe pas ou a été déplacée." /&gt;
+    &lt;h1 class="text-3xl font-bold text-gray-900"&gt;Page introuvable&lt;/h1&gt;
+    &lt;p class="mt-2 mb-8 text-gray-600"&gt;L'adresse demandée n'existe pas ou a été déplacée.&lt;/p&gt;
 
     &lt;x-alert type="info" title="Erreur 404" class="max-w-2xl"&gt;
         Vérifiez l'adresse, ou repartez de la page d'accueil.
@@ -2077,7 +2084,8 @@ git commit -m "Style 404 and 503 error pages"</code></pre>
               <pre><code class="language-markup">&lt;x-layout&gt;
     &lt;x-slot:title&gt;Service indisponible - Mini-CMS&lt;/x-slot:title&gt;
 
-    &lt;x-page-header title="Service momentanément indisponible" subtitle="Le site ne peut pas traiter cette demande pour le moment." /&gt;
+    &lt;h1 class="text-3xl font-bold text-gray-900"&gt;Service momentanément indisponible&lt;/h1&gt;
+    &lt;p class="mt-2 mb-8 text-gray-600"&gt;Le site ne peut pas traiter cette demande pour le moment.&lt;/p&gt;
 
     &lt;x-alert type="warning" title="Erreur 503" class="max-w-2xl"&gt;
         {{ $exception-&gt;getMessage() ?: 'Le site est en maintenance. Réessayez dans quelques minutes.' }}
@@ -2088,7 +2096,7 @@ git commit -m "Style 404 and 503 error pages"</code></pre>
     &lt;/p&gt;
 &lt;/x-layout&gt;</code></pre>
             </div>
-            <p class="text-gray-700">Les deux pages reprennent la structure de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">errors/article-introuvable.blade.php</code> (session 09) : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-page-header</code>, un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code>, puis un lien. Les trois pages d'erreur du site se ressemblent donc. Si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort(503)</code> est appelé sans message, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">getMessage()</code> renvoie une chaîne vide et l'opérateur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?:</code> affiche le texte de secours.</p>
+            <p class="text-gray-700">Les deux pages reprennent la structure de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">errors/article-introuvable.blade.php</code> (session 09) : un titre, un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">x-alert</code>, puis un lien. Les trois pages d'erreur du site se ressemblent donc. Si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">abort(503)</code> est appelé sans message, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">getMessage()</code> renvoie une chaîne vide et l'opérateur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?:</code> affiche le texte de secours.</p>
           </div>
 
           <div class="md-card p-6 mt-6">
@@ -2133,7 +2141,7 @@ git commit -m "Style 404 and 503 error pages"</code></pre>
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> La page reste minimale : vous avez modifié une autre vue publiée (par exemple <code class="bg-white px-1 py-0.5 rounded text-xs">minimal.blade.php</code>) au lieu de <code class="bg-white px-1 py-0.5 rounded text-xs">404.blade.php</code>, ou le fichier n'est pas enregistré. <code class="bg-white px-1 py-0.5 rounded text-xs">Unable to locate a class or view for component [page-header].</code> : le composant du défi de la session 04 manque dans <code class="bg-white px-1 py-0.5 rounded text-xs">resources/views/components</code>.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> La page reste minimale : vous avez modifié une autre vue publiée (par exemple <code class="bg-white px-1 py-0.5 rounded text-xs">minimal.blade.php</code>) au lieu de <code class="bg-white px-1 py-0.5 rounded text-xs">404.blade.php</code>, ou le fichier n'est pas enregistré.</p>
             </div>
           </div>
         </section>
@@ -2220,11 +2228,11 @@ function categoryAdminData(array $overrides = []): array
 }
 
 it('lists the categories', function () {
-    Category::factory()-&gt;create(['name' =&gt; 'Laravel', 'slug' =&gt; 'laravel']);
+    Category::factory()-&gt;create(['name' =&gt; 'Cuisine', 'slug' =&gt; 'cuisine']);
 
     $this-&gt;get(route('admin.categories.index'))
         -&gt;assertOk()
-        -&gt;assertSee('Laravel');
+        -&gt;assertSee('Cuisine');
 });
 
 it('creates a category and flashes a message', function () {
@@ -2319,7 +2327,7 @@ it('shows the styled 503 page when the site is read-only', function () {
               <li>Nouveau en session 10 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertSessionHasErrors</code> reçoit un tableau <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">champ =&gt; message</code> et vérifie aussi le texte du message, pas seulement le nom du champ.</li>
               <li>Les fonctions d'aide de Pest sont globales : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">categoryAdminData</code> ne doit reprendre aucun nom déjà utilisé (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">postData</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">taxonomyPostData</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">feedbackPostData</code>).</li>
               <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$this-&gt;withoutVite()</code>, comme dans les tests des sessions 05 à 09 : les pages d'erreur utilisent maintenant le layout, et donc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@vite</code>.</li>
-              <li>Le second argument <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code> de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertSee</code> compare le texte tel quel. Sans lui, Pest échappe l'apostrophe de « l'accueil » en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&amp;#039;</code> alors que la vue l'écrit telle quelle, et le test échoue.</li>
+              <li>Le second argument <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code> de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">assertSee</code> compare le texte tel quel. Sans lui, assertSee échappe l'apostrophe de « l'accueil » en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&amp;#039;</code> alors que la vue l'écrit telle quelle, et le test échoue.</li>
             </ul>
           </div>
 
