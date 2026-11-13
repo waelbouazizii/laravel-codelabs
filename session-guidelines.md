@@ -162,7 +162,7 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - Whether submitting a form without `@csrf` gives `419 Page Expired` on `http://localhost:8000`, in Chrome and in Firefox (see section 6).
 - The compiled form of `{{ $post['title'] }}` in `storage/framework/views` (Figure 4.2 shows `<?php echo e($post['title']); ?>`).
 - Whether the Notions clés of Session 05 (three figures, two tables) fits in 15 minutes with a real group.
-- `Post::create()` with the `#[Fillable]` attribute on the installed 13.x version (issue laravel/framework#59270 was reported on 13.0.0).
+- `Post::create()` with the `#[Fillable]` attribute on the installed 13.x version (issue laravel/framework#59270 was reported on 13.0.0). On a scratch 13.34.0 app (13 Nov 2026), `User::create()` and `$user->posts()->create()` worked in the 57 S11 tests; a lab PC is still to confirm.
 
 ## 6. Theory and figures (Sessions 04 and 05, 8 Oct 2026)
 
@@ -240,3 +240,46 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - `route:list --middleware=writable` output (8 routes).
 - The "Environment modified. Restarting server..." line under `composer run dev` on Windows.
 - The exact `vendor:publish --tag=laravel-errors` output.
+
+## 8. Session 11 (13 Nov 2026)
+
+### Authorization goes before validation
+
+- A store or update action that needs a right checks it in the Form Request's `authorize()`, never as the first line of the controller method. The Form Request is resolved before the method body runs, so a controller check comes after validation: an unauthorized user who sends an invalid form gets the validation errors (a 302 back to the form) instead of a 403, which leaks the rules and contradicts the order taught in Figure 9.2.
+- Pattern: `return $this->user()->can('update', $this->route('post'));` (Policy) or `return $this->user()->can('manage-categories');` (Gate). Actions without a Form Request (index, create, edit, destroy, togglePublication) keep `Gate::authorize(...)` as their first line.
+- The S11 first draft put `Gate::authorize('manage-categories')` in `CategoryController::store()` and `update()`; proof caught it. Check every new Gate or Policy against this rule.
+- Laravel 13: the base `Controller` has no `AuthorizesRequests` trait, so `$this->authorize()` does not exist. Use `Gate::authorize()`.
+
+### Migrations that a student may have run early
+
+- When a page adds a migration, assume some students run `php artisan migrate` before filling the file. The empty migration is then recorded, and a later rollback runs the filled `down()`.
+- A recovery block that depends on `migrate:rollback` must work in that case. On SQLite, `dropColumn('role')` on a column that was never added fails with `no such column: "role"`. The S11 recovery (part E of Étape 1, checked on a scratch 13.34.0 app): put `//` in front of the `dropColumn` line and save, then `migrate:rollback --step=1`, then remove the `//` and save, then `migrate`. Each command block follows the sentence that asks for the edit, and each keeps its "Seulement si ..." label.
+
+### Middleware order
+
+- `auth` is in the framework's middleware priority list and `writable` is not, so `auth` runs first even when `writable` is the outer group (checked in `SortedMiddleware` and `$middlewarePriority`, framework 13.42). From S11 on, a guest write gets a 302 to `/connexion`, never the 503. Tests of the 503 must log in first (`actingAs`).
+
+### Tests after access control
+
+- Test files from S05-S10 that check CRUD, validation or pages log in as an admin in `beforeEach` (`$this->actingAs(User::factory()->admin()->create());`), so later rules do not break them again. Access rights are tested only in `AuthTest` and `AuthorizationTest`.
+- Posts created with the form before S11 have `user_id` null; seeded posts (S07 seeder) have an author. Quiz premises and "Essayer" sentences must say which kind of post they mean.
+
+### Défi route names
+
+- A Défi route must not fall under an existing `x-nav-link` `match` pattern (`posts.*`, `admin.categories.*`), or two menu links get `aria-current="page"`. S11 renamed `posts.mine` to `my-posts`.
+
+### Student project at tag lab-06 (start of S12)
+
+- Routes: public pages, archive, category, tag; a `guest` group (`register`, `register.store`, `login`, `login.store`); `logout` (POST, `auth`); then `writable` around an `auth` group (posts resource `except(['index', 'show'])`, `posts.publication`, `admin.categories.*`, `admin.tags.*`), followed by the public posts resource `only(['index', 'show'])`. The `auth` group comes first, or `/posts/create` matches `/posts/{post}`. `route:list --middleware=auth` lists 19 routes, `--middleware=guest` lists 4, `--middleware=writable` lists 20.
+- `users.role` (`author` by default, `admin`), not in `#[Fillable]`; `User::isAdmin()`; factory state `admin()`; the seeder's `test@example.com` (password `password`) is admin.
+- `Gate::define('manage-categories', ...)` in `AppServiceProvider::boot()`; `Store/UpdateCategoryRequest::authorize()` use it; `CategoryController` index, create, edit, destroy call `Gate::authorize`. `/admin/tags` is open to any logged-in user: protecting it is S12 work.
+- `PostPolicy` with `update` and `delete` (admin, or `$user->id === $post->user_id`); `UpdatePostRequest::authorize()` uses it; `PostController` edit, destroy, togglePublication call `Gate::authorize`; `posts/show.blade.php` wraps the action buttons in `@can`.
+- `store()` uses `$request->user()->posts()->create(...)`.
+- New tests: `AuthTest` (5, helper `authRegisterData`), `AuthorizationTest` (8, helper `authorizationPostData`; 10 with the Défi).
+- Défi (optional): `/mes-articles` (`my-posts`), "Se souvenir de moi".
+
+### Still to verify on a lab PC (S11)
+
+- The 403 page shows "403" and "This action is unauthorized." in the browser (also listed for S09).
+- "Vous êtes déconnecté." appears after logout (flash written after `invalidate()`).
+- Étape 4, part D: `php artisan test` goes red, then green after the test repairs, on a real project at `lab-05b`.
