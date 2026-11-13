@@ -751,8 +751,7 @@ App\Models\User::pluck('role', 'email');
 exit</code></pre>
             </div>
             <p class="text-gray-700 mb-3">La première ligne affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">1</code> : un compte a été modifié. La deuxième liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">test@example.com =&gt; "admin"</code> ; tous les autres comptes sont <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">"author"</code>.</p>
-            <p class="text-gray-700 mb-3">Seulement si la première ligne affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">0</code> : aucun compte <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">test@example.com</code> n'existe dans votre base. Relancez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan tinker</code> (bloc ci-dessus), puis créez-le :</p>
-            <p class="text-sm text-gray-600 mb-2">Seulement si la première ligne affiche 0 (aucun compte test@example.com), dans Tinker :</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si la première ligne affiche 0 (aucun compte test@example.com), relancez php artisan tinker (bloc ci-dessus) et tapez dans Tinker :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier les lignes Tinker de création du compte administrateur">Copier</button>
               <pre><code class="language-php">App\Models\User::factory()-&gt;admin()-&gt;create(['name' =&gt; 'Test User', 'email' =&gt; 'test@example.com']);
@@ -760,11 +759,17 @@ exit</code></pre>
             </div>
             <p class="text-gray-700 mb-3">Son mot de passe est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">password</code>, comme pour tout compte créé par la fabrique.</p>
             <h4 class="font-medium mt-4 mb-2">E. Seulement en cas d'erreur sur la colonne role</h4>
-            <p class="text-sm text-gray-600 mb-2">Seulement si Tinker affiche Unknown column ou no such column: role (la migration a été lancée avant d'être remplie), Bash et PowerShell (identique) :</p>
+            <p class="text-gray-700 mb-3">Seulement si Tinker affiche Unknown column ou no such column: role (la migration a été lancée avant d'être remplie) : dans la méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">down()</code> de la migration <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">add_role_to_users_table</code>, mettez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">//</code> devant la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$table-&gt;dropColumn('role');</code> et enregistrez. L'annulation exécute le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">down()</code> qui est dans le fichier maintenant ; la colonne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> n'existe pas encore, donc ce <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">dropColumn</code> échouerait.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Tinker affiche Unknown column ou no such column: role, une fois le fichier enregistré, Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
-              <button class="copy-btn" aria-label="Copier les commandes de relance de la migration du rôle">Copier</button>
-              <pre><code class="language-bash">php artisan migrate:rollback --step=1
-php artisan migrate</code></pre>
+              <button class="copy-btn" aria-label="Copier la commande d&#x27;annulation de la migration du rôle">Copier</button>
+              <pre><code class="language-bash">php artisan migrate:rollback --step=1</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Retirez ensuite le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">//</code> devant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$table-&gt;dropColumn('role');</code> et enregistrez.</p>
+            <p class="text-sm text-gray-600 mb-2">Seulement si Tinker affiche Unknown column ou no such column: role, une fois le // retiré et le fichier enregistré, Bash et PowerShell (identique) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la commande de relance de la migration du rôle">Copier</button>
+              <pre><code class="language-bash">php artisan migrate</code></pre>
             </div>
             <p class="text-gray-700 mb-3">Puis reprenez la partie D.</p>
             <h4 class="font-medium mt-4 mb-2">F. Valider</h4>
@@ -1052,7 +1057,7 @@ class DatabaseSeeder extends Seeder
             </div>
             <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3">
               <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Nothing to migrate.</code> après avoir rempli le fichier : la migration vide avait déjà été lancée ; utilisez le bloc E. <code class="bg-white px-1 py-0.5 rounded text-xs">Call to undefined method Database\Factories\UserFactory::admin()</code> : la méthode <code class="bg-white px-1 py-0.5 rounded text-xs">admin()</code> manque dans la fabrique.</p>
+              <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">Nothing to migrate.</code> après avoir rempli le fichier : la migration vide avait déjà été lancée ; suivez la partie E. <code class="bg-white px-1 py-0.5 rounded text-xs">Call to undefined method Database\Factories\UserFactory::admin()</code> : la méthode <code class="bg-white px-1 py-0.5 rounded text-xs">admin()</code> manque dans la fabrique.</p>
             </div>
           </div>
 
@@ -2865,14 +2870,14 @@ it('shows the styled 503 page when the site is read-only', function () {
             <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
-              <pre><code class="language-bash">code app/Providers/AppServiceProvider.php app/Http/Controllers/CategoryController.php resources/views/components/navbar.blade.php</code></pre>
+              <pre><code class="language-bash">code app/Providers/AppServiceProvider.php app/Http/Controllers/CategoryController.php app/Http/Requests/StoreCategoryRequest.php app/Http/Requests/UpdateCategoryRequest.php resources/views/components/navbar.blade.php</code></pre>
             </div>
             <p class="text-sm text-gray-600 mb-2">PowerShell :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
-              <pre><code class="language-powershell">code app\Providers\AppServiceProvider.php app\Http\Controllers\CategoryController.php resources\views\components\navbar.blade.php</code></pre>
+              <pre><code class="language-powershell">code app\Providers\AppServiceProvider.php app\Http\Controllers\CategoryController.php app\Http\Requests\StoreCategoryRequest.php app\Http\Requests\UpdateCategoryRequest.php resources\views\components\navbar.blade.php</code></pre>
             </div>
-            <p class="text-gray-700 mb-3">Appliquez le Code complet aux trois fichiers et enregistrez-les.</p>
+            <p class="text-gray-700 mb-3">Appliquez le Code complet aux cinq fichiers et enregistrez-les.</p>
             <h4 class="font-medium mt-4 mb-2">B. Essayer</h4>
             <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
               <li>Dans la fenêtre normale (votre compte auteur) : aucun lien « Catégories » dans le menu, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/admin/categories</code> affiche « 403 » et « This action is unauthorized. ».</li>
@@ -2939,7 +2944,7 @@ class AppServiceProvider extends ServiceProvider
               <button class="copy-btn" aria-label="Copier l&#x27;import de Gate dans CategoryController">Copier</button>
               <pre><code class="language-php">use Illuminate\Support\Facades\Gate;</code></pre>
             </div>
-            <p class="text-gray-700 mb-2">Comme première ligne de chacune des six méthodes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">edit</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">destroy</code>, juste après l'accolade <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{</code> qui ouvre la méthode, suivie d'une ligne vide :</p>
+            <p class="text-gray-700 mb-2">Comme première ligne de chacune des quatre méthodes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">edit</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">destroy</code>, juste après l'accolade <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{</code> qui ouvre la méthode, suivie d'une ligne vide :</p>
             <div class="code-block-wrapper mb-4">
               <button class="copy-btn" aria-label="Copier la vérification du Gate manage-categories">Copier</button>
               <pre><code class="language-php">        Gate::authorize('manage-categories');</code></pre>
@@ -2980,8 +2985,6 @@ class CategoryController extends Controller
 
     public function store(StoreCategoryRequest $request): RedirectResponse
     {
-        Gate::authorize('manage-categories');
-
         Category::create($request-&gt;validated());
 
         return redirect()-&gt;route('admin.categories.index')-&gt;with('success', 'Catégorie créée.');
@@ -2996,8 +2999,6 @@ class CategoryController extends Controller
 
     public function update(UpdateCategoryRequest $request, Category $category): RedirectResponse
     {
-        Gate::authorize('manage-categories');
-
         $category-&gt;update($request-&gt;validated());
 
         return redirect()-&gt;route('admin.categories.index')-&gt;with('success', 'Catégorie mise à jour.');
@@ -3016,6 +3017,122 @@ class CategoryController extends Controller
               </div>
             </details>
             <div class="mt-6"></div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Requests/StoreCategoryRequest.php</code> :</p>
+            <p class="text-gray-700 mb-2">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">authorize()</code>, à la place de la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">return true;</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la ligne authorize de StoreCategoryRequest">Copier</button>
+              <pre><code class="language-php">        return $this-&gt;user()-&gt;can('manage-categories');</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier StoreCategoryRequest.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreCategoryRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return $this-&gt;user()-&gt;can('manage-categories');
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array&lt;string, ValidationRule|array&lt;mixed&gt;|string&gt;
+     */
+    public function rules(): array
+    {
+        return [
+            'name' =&gt; ['required', 'string', 'max:255', 'unique:categories,name'],
+            'slug' =&gt; ['required', 'string', 'max:255', 'unique:categories,slug'],
+        ];
+    }
+
+    /**
+     * Get the custom messages for validator errors.
+     *
+     * @return array&lt;string, string&gt;
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.unique' =&gt; 'Ce slug est déjà utilisé par une autre catégorie.',
+        ];
+    }
+}</code></pre>
+            </div>
+              </div>
+            </details>
+            <div class="mt-6"></div>
+            <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">app/Http/Requests/UpdateCategoryRequest.php</code> :</p>
+            <p class="text-gray-700 mb-2">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">authorize()</code>, à la place de la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">return true;</code> :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier la ligne authorize de UpdateCategoryRequest">Copier</button>
+              <pre><code class="language-php">        return $this-&gt;user()-&gt;can('manage-categories');</code></pre>
+            </div>
+            <details>
+              <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+              <div class="mt-2">
+            <div class="code-block-wrapper ">
+              <button class="copy-btn" aria-label="Copier UpdateCategoryRequest.php de l&#x27;étape 5">Copier</button>
+              <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
+
+class UpdateCategoryRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return $this-&gt;user()-&gt;can('manage-categories');
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array&lt;string, ValidationRule|array&lt;mixed&gt;|string&gt;
+     */
+    public function rules(): array
+    {
+        return [
+            'name' =&gt; ['required', 'string', 'max:255', Rule::unique('categories', 'name')-&gt;ignore($this-&gt;route('category'))],
+            'slug' =&gt; ['required', 'string', 'max:255', Rule::unique('categories', 'slug')-&gt;ignore($this-&gt;route('category'))],
+        ];
+    }
+
+    /**
+     * Get the custom messages for validator errors.
+     *
+     * @return array&lt;string, string&gt;
+     */
+    public function messages(): array
+    {
+        return [
+            'slug.unique' =&gt; 'Ce slug est déjà utilisé par une autre catégorie.',
+        ];
+    }
+}</code></pre>
+            </div>
+              </div>
+            </details>
+            <div class="mt-6"></div>
+            <p class="text-gray-700 mb-6">Pour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code>, la Form Request répond 403 avant tout message de validation, comme le fera <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">UpdatePostRequest</code> à l'Étape 6.</p>
             <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">resources/views/components/navbar.blade.php</code> :</p>
             <p class="text-gray-700 mb-2">Juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;x-nav-link to="about"&gt;À propos&lt;/x-nav-link&gt;</code> :</p>
             <div class="code-block-wrapper mb-4">
@@ -3157,6 +3274,7 @@ class CategoryController extends Controller
               <li>Fenêtre normale (auteur) : un article que vous avez créé affiche Publier ou Dépublier, Modifier et Supprimer. Un article du jeu de données n'en affiche aucun, et son adresse <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/{id}/edit</code> tapée à la main donne une page 403.</li>
               <li>Fenêtre privée (administrateur) : chaque article affiche les boutons et peut être modifié.</li>
             </ul>
+            <p class="text-gray-700 mb-4">Les articles que vous avez écrits avec le formulaire avant cette séance n'ont pas d'auteur (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user_id</code> à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>) : seul un administrateur voit leurs boutons.</p>
             <h4 class="font-medium mt-4 mb-2">D. Tester</h4>
             <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
             <div class="code-block-wrapper mb-4">
@@ -3683,7 +3801,7 @@ it('keeps the category back office for admins', function () {
               Quiz éclair
             </h3>
             <div class="quiz-question mb-6" id="quiz-s11-q11" data-answer="a">
-              <p class="font-medium text-gray-900 mb-3">Un article créé en session 07 a <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user_id</code> à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>. Qui peut le modifier ?</p>
+              <p class="font-medium text-gray-900 mb-3">Un article écrit avec le formulaire en session 08, avant cette séance, a <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user_id</code> à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>. Qui peut le modifier ?</p>
               <div class="space-y-2" role="group" aria-label="Réponses à la question 11">
                 <button type="button" class="quiz-option" data-option="a">Seulement un administrateur</button>
                 <button type="button" class="quiz-option" data-option="b">Tout utilisateur connecté</button>
@@ -3763,7 +3881,7 @@ it('keeps the category back office for admins', function () {
             </h3>
             <p class="text-gray-700 mb-2">Exigences :</p>
             <ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
-              <li>Une page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET /mes-articles</code>, route nommée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.mine</code>, réservée aux utilisateurs connectés.</li>
+              <li>Une page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET /mes-articles</code>, route nommée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">my-posts</code>, réservée aux utilisateurs connectés.</li>
               <li>Elle liste seulement les articles de l'utilisateur connecté, brouillons compris, du plus récent au plus ancien, 4 par page.</li>
               <li>Aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">LazyLoadingViolationException</code>.</li>
               <li>Un lien « Mes articles » dans la barre de navigation, seulement pour un utilisateur connecté.</li>
@@ -3784,7 +3902,7 @@ it('keeps the category back office for admins', function () {
             <details>
               <summary class="cursor-pointer text-sm text-brand font-medium">Indice 3</summary>
               <div class="mt-2">
-            <p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index()</code> utilise déjà la vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> avec un titre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heading</code> : passez « Mes articles ». Dans la barre de navigation, le lien se place dans le bloc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@auth</code>.</p>
+            <p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index()</code> utilise déjà la vue <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> avec un titre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">heading</code> : passez « Mes articles ». Dans la barre de navigation, le lien se place dans le bloc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@auth</code>. Un nom hors de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.*</code>, comme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">my-posts</code>, évite que le lien « Articles » (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">match="posts.*"</code>) soit surligné en même temps.</p>
               </div>
             </details>
             <p class="text-gray-700 mt-4">Vérification observable : dans la fenêtre normale, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000/mes-articles</code> montre vos articles seulement, brouillons compris ; dans une fenêtre de visiteur, la même adresse mène à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/connexion</code>.</p>
@@ -3863,7 +3981,7 @@ Pourquoi la case remember ne doit-elle pas être dans le tableau passé à Auth:
               <summary class="cursor-pointer text-sm text-brand font-medium">Voir des éléments de réponse</summary>
               <div class="mt-2">
             <p class="text-gray-700 mb-3">La relation porte déjà la bonne condition : elle ne vise que les articles de l'utilisateur de la session, et aucun champ de formulaire ni paramètre d'adresse ne peut la diriger vers un autre utilisateur.</p>
-            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">attempt()</code> ajoute chaque clé du tableau à la recherche de l'utilisateur, sauf le mot de passe : il chercherait une colonne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">remember</code> dans la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">users</code>, qui n'existe pas, et la connexion échouerait à chaque fois, avec une erreur SQL.</p>
+            <p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">attempt()</code> ajoute chaque clé du tableau à la recherche de l'utilisateur, sauf le mot de passe : il chercherait une colonne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">remember</code> dans la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">users</code> ; comme elle n'existe pas, la page affiche une erreur SQL (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">no such column: remember</code>) au lieu de connecter l'utilisateur.</p>
               </div>
             </details>
           </div>
