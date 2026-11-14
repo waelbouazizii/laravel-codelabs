@@ -954,6 +954,7 @@ Route::middleware('writable')-&gt;group(function () {
   <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
   <p class="text-sm text-blue-900">Essayez seul pendant 8 minutes, en recopiant ce que vous avez fait pour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">manage-categories</code> en session 11. Comparez seulement ensuite avec le Code complet, rangé fichier par fichier sous « Voir le code complet ».</p>
 </div>
+<p class="text-gray-700 mb-3">Le menu n'a pas encore de lien vers les tags : il faut l'ajouter, puis l'entourer de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@can</code> comme le lien « Catégories ».</p>
 <h4 class="font-medium mt-4 mb-2">A. Ouvrir les fichiers</h4>
 <p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
 <div class="code-block-wrapper mb-4">
@@ -1322,10 +1323,11 @@ class TagController extends Controller
 <p class="text-gray-700 mb-3">Appliquez le Code complet aux quatre fichiers et enregistrez-les.</p>
 <h4 class="font-medium mt-4 mb-2">B. Essayer</h4>
 <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
-  <li>Fenêtre privée (administrateur) : notez l'adresse d'un brouillon. S'il n'y en a pas, créez un article avec la case « Publié » décochée.</li>
-  <li>Dans une fenêtre de visiteur (déconnectez-vous de la fenêtre normale, ou ouvrez une seconde fenêtre privée) : cette adresse affiche une page 403, et le brouillon n'apparaît pas dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>.</li>
-  <li>L'auteur du brouillon voit ce brouillon dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> et ouvre sa page.</li>
+  <li>Fenêtre normale (votre compte auteur) : créez un article avec la case « Publié » décochée, copiez l'adresse de sa page, puis vérifiez qu'il apparaît dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>.</li>
+  <li>Fenêtre privée (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">test@example.com</code>) : collez cette adresse : la page s'affiche, car un administrateur voit tous les brouillons.</li>
+  <li>Toujours dans la fenêtre privée, cliquez sur Déconnexion : vous êtes maintenant un visiteur. La même adresse affiche une page 403, et le brouillon n'apparaît plus dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>. Reconnectez-vous ensuite avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">test@example.com</code> (mot de passe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">password</code>).</li>
 </ol>
+<p class="text-gray-700 mb-3">Toutes les fenêtres privées d'un navigateur partagent la même session : une seconde fenêtre privée serait encore connectée en administrateur.</p>
 <h4 class="font-medium mt-4 mb-2">C. Tester</h4>
 <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
 <div class="code-block-wrapper mb-4">
@@ -1505,18 +1507,20 @@ class Post extends Model
 </details>
 <div class="mt-6"></div>
 <p class="text-gray-700 mb-3">Le scope réutilise <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code> (session 06) : la liste et la page d'un article appliquent la même règle et ne peuvent pas se contredire. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">User</code> est dans le même espace de noms que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code> : aucun import à ajouter.</p>
+<p class="text-gray-700 mb-3">Laravel regroupe déjà entre parenthèses les conditions d'un scope qui contiennent un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">or</code>. La closure écrit ces parenthèses dans le code, et elles restent justes si ces lignes sont un jour copiées hors du scope.</p>
 <figure class="my-4">
   <div class="flex flex-col gap-3">
     <div class="rounded border-2 border-gray-300 bg-white p-3 text-sm">
-      <p class="font-bold text-gray-900 mb-1">Sans la closure de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where()</code></p>
-      <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">where category_id = 3 and is_published = 1 or user_id = 5</code>
+      <p class="font-bold text-gray-900 mb-1">Écrit directement dans un contrôleur</p>
+      <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">Post::where('category_id', 3)-&gt;where('is_published', true)-&gt;orWhere('user_id', 5)</code>
+      <p class="mt-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">where category_id = 3 and is_published = 1 or user_id = 5</code></p>
     </div>
     <div class="rounded border-4 border-indigo-600 bg-indigo-50 p-3 text-sm">
-      <p class="font-bold text-gray-900 mb-1">Avec la closure de <code class="bg-white px-1.5 py-0.5 rounded text-sm">where()</code> (correct)</p>
+      <p class="font-bold text-gray-900 mb-1">Dans le scope visibleTo (correct)</p>
       <code class="bg-white px-1.5 py-0.5 rounded text-sm break-all">where category_id = 3 and (is_published = 1 or user_id = 5)</code>
     </div>
   </div>
-  <figcaption class="mt-2 text-sm text-gray-600">Figure 12.3 - Sans parenthèses, le or fait sortir les brouillons de l'utilisateur 5 de toutes les catégories. Requêtes simplifiées.</figcaption>
+  <figcaption class="mt-2 text-sm text-gray-600">Figure 12.3 - Écrit directement, le or s'applique à toute la requête et ramène tous les articles de l'utilisateur 5. Dans un scope, Laravel place lui-même les conditions du scope entre parenthèses ; la closure de where() rend ces parenthèses visibles dans le code. Requêtes simplifiées.</figcaption>
 </figure>
 <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Controllers/PostController.php</code> :</p>
 <p class="text-gray-700 mb-2">Juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">use Illuminate\Http\RedirectResponse;</code> (cet import avait disparu en session 09 ; il revient pour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$request-&gt;user()</code>) :</p>
@@ -1789,15 +1793,15 @@ class StorePostRequest extends FormRequest
   <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
   <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?User</code>, Laravel refuse tout visiteur sans appeler la méthode de la policy.</p>
 </div>
-<div class="quiz-question mb-6" id="quiz-s12-q06" data-answer="c">
-  <p class="font-medium text-gray-900 mb-3">Pourquoi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">visibleTo</code> place-t-il ses conditions dans une closure passée à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$query-&gt;where()</code> ?</p>
-  <div class="space-y-2" role="group" aria-label="Réponses à la question 6">
-    <button type="button" class="quiz-option" data-option="a">Pour que la requête SQL s'exécute plus vite</button>
-    <button type="button" class="quiz-option" data-option="b">Parce que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code> ne marche que dans une closure</button>
-    <button type="button" class="quiz-option" data-option="c">Pour que le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">orWhere</code> reste entre parenthèses</button>
+<div class="quiz-question mb-6" id="quiz-s12-q10" data-answer="b">
+  <p class="font-medium text-gray-900 mb-3">Dans un contrôleur, sans scope, on écrit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">Post::where('category_id', 3)-&gt;where('is_published', true)-&gt;orWhere('user_id', 5)-&gt;get()</code>. Quels articles de l'utilisateur 5 obtient-on ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 10">
+    <button type="button" class="quiz-option" data-option="a">Seulement ses articles publiés de la catégorie 3</button>
+    <button type="button" class="quiz-option" data-option="b">Tous ses articles, dans toutes les catégories</button>
+    <button type="button" class="quiz-option" data-option="c">Aucun : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">orWhere</code> est ignoré après deux <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where</code></button>
   </div>
   <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Voir la Figure 12.3. Sans parenthèses, le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">or</code> échappe aux autres conditions (catégorie, tag, année).</p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">and</code> passe avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">or</code> : la requête devient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">(category_id = 3 and is_published = 1) or user_id = 5</code>, et ramène aussi les brouillons de l'utilisateur 5. Dans un scope, Laravel aurait mis les conditions du scope entre parenthèses ; ici, seule une closure de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">where()</code> les protège (Figure 12.3).</p>
 </div>
 <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
 </div>
@@ -1812,7 +1816,7 @@ class StorePostRequest extends FormRequest
 </div>
 <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Un visiteur reçoit 403 sur un article publié : le <code class="bg-white px-1 py-0.5 rounded text-xs">?</code> manque dans <code class="bg-white px-1 py-0.5 rounded text-xs break-all">view(?User $user, Post $post)</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">BadMethodCallException</code> qui cite <code class="bg-white px-1 py-0.5 rounded text-xs">visibleTo</code> : le nom de la méthode du modèle doit commencer par <code class="bg-white px-1 py-0.5 rounded text-xs">scope</code>. Les brouillons d'un auteur apparaissent dans d'autres catégories : la closure de <code class="bg-white px-1 py-0.5 rounded text-xs">where()</code> manque.</p>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Un visiteur reçoit 403 sur un article publié : le <code class="bg-white px-1 py-0.5 rounded text-xs">?</code> manque dans <code class="bg-white px-1 py-0.5 rounded text-xs break-all">view(?User $user, Post $post)</code>. <code class="bg-white px-1 py-0.5 rounded text-xs">BadMethodCallException</code> qui cite <code class="bg-white px-1 py-0.5 rounded text-xs">visibleTo</code> : le nom de la méthode du modèle doit commencer par <code class="bg-white px-1 py-0.5 rounded text-xs">scope</code>. Une liste montre les articles d'un auteur dans toutes les catégories : un <code class="bg-white px-1 py-0.5 rounded text-xs">orWhere</code> a été écrit directement dans le contrôleur, hors d'un scope et sans closure de <code class="bg-white px-1 py-0.5 rounded text-xs">where()</code>.</p>
 </div>
 </div>
 
@@ -1957,6 +1961,11 @@ it('opens the back office to an admin', function () {
     $this-&gt;actingAs($admin)
         -&gt;get(route('admin.tags.index'))
         -&gt;assertOk();
+
+    $this-&gt;actingAs($admin)
+        -&gt;get(route('home'))
+        -&gt;assertSee(route('admin.categories.index'))
+        -&gt;assertSee(route('admin.tags.index'));
 });
 
 it('hides the back office links from an author', function () {
@@ -2427,7 +2436,7 @@ code notes\s12-defi.md</code></pre>
 <details>
   <summary class="cursor-pointer text-sm text-brand font-medium">Voir des éléments de réponse</summary>
   <div class="mt-2">
-<p class="text-gray-700 mb-3">1. Si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> était remplissable en masse, un champ ajouté à la main dans le formulaire d'inscription suffirait à créer un compte administrateur. Le contrôleur du niveau 1 affecte l'attribut lui-même, à partir d'une valeur déjà validée et après la vérification de la policy, puis enregistre : seul ce chemin, réservé aux administrateurs, peut changer un rôle.</p>
+<p class="text-gray-700 mb-3">1. Votre contrôleur d'inscription ne passe que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">name</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">password</code> à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create()</code> : un champ <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> ajouté à la main serait ignoré aujourd'hui. Hors de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">#[Fillable]</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> reste protégé même si un contrôleur passe un jour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$request-&gt;all()</code>, ou si une règle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> apparaît dans une Form Request. Le contrôleur du niveau 1 affecte l'attribut lui-même, à partir d'une valeur validée et après la vérification de la policy, puis appelle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">save()</code>.</p>
 <p class="text-gray-700">2. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">false</code> est une réponse définitive : Laravel refuserait alors tout à un auteur, même la modification de ses propres articles. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code> veut dire « pas d'avis » : Laravel continue et demande au Gate ou à la méthode de la Policy concernés.</p>
   </div>
 </details>
