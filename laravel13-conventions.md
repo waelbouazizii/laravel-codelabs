@@ -213,7 +213,7 @@ Create middleware with `php artisan make:middleware EnsureUserIsAdmin`. Use it a
 Skeleton facts (checked against laravel/laravel v13.8.0 to v13.11.0 and framework 13.x, 12 Nov 2026):
 
 - Since skeleton v13.8.0, `withExceptions` already contains the `shouldRenderJsonWhen` call above and the file imports `Illuminate\Http\Request`. Older projects have `//` instead. Pages tell students to keep whichever they have. `session-01.html` still shows the `//` version (known, harmless, fix when Session 01 is next revised).
-- Aliases from S09 on: `writable` => `App\Http\Middleware\EnsureSiteIsWritable` (S09); `admin` arrives in S11. Call `$middleware->alias([...])` once with every alias: a second call replaces the first array.
+- Aliases from S09 on: `writable` => `App\Http\Middleware\EnsureSiteIsWritable` (S09); `admin` (`App\Http\Middleware\EnsureUserIsAdmin`) arrives in S12. Call `$middleware->alias([...])` once with every alias: a second call replaces the first array.
 - Render callbacks (`$exceptions->render(...)`) receive the exception after `prepareException()`: a `ModelNotFoundException` arrives as `NotFoundHttpException`, with the original in `getPrevious()`. A callback typed `ModelNotFoundException` is never called. Test the model with `$e->getPrevious() instanceof ModelNotFoundException && $e->getPrevious()->getModel() === Post::class`.
 - Every web render callback returns `null` first for `$request->is('api/*') || $request->expectsJson()` (same rule as `shouldRenderJsonWhen`), so S13 API errors stay JSON.
 - `php artisan vendor:publish --tag=laravel-errors` copies 10 views to `resources/views/errors`: 401, 402, 403, 404, 419, 429, 500, 503, `layout`, `minimal`.
@@ -225,8 +225,9 @@ Skeleton facts (checked against laravel/laravel v13.8.0 to v13.11.0 and framewor
 
 - Session A: manual auth with `Auth::attempt($credentials)`, `$request->session()->regenerate()`, `Auth::logout()`, `Hash::make()`, routes protected by `auth` and `guest` middleware.
 - Gates in `App\Providers\AppServiceProvider::boot()`: `Gate::define('manage-posts', fn (User $user) => $user->role === 'admin');` then `@can('manage-posts')`, `Gate::authorize(...)`.
-- Policies: `php artisan make:policy PostPolicy --model=Post`, auto-discovered; use `$this->authorize('update', $post)` or `can:update,post` middleware.
+- Policies: `php artisan make:policy PostPolicy --model=Post`, auto-discovered; use `Gate::authorize('update', $post)` (the base Controller has no `AuthorizesRequests` trait) or the `can:update,post` middleware.
 - Session B: `laravel new` with the Livewire starter kit, to compare with the manual version. Never Breeze.
+- A policy method that must accept guests declares `?User $user`; without the `?`, Laravel denies guests without calling the method.
 
 ## 10. API (W7-W8)
 
