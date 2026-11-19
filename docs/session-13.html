@@ -1,0 +1,2680 @@
+<!DOCTYPE html>
+<!--
+  Codelab skeleton template - Atelier Framework Cote Serveur (ISET Sidi Bouzid)
+
+  DO NOT edit the skeleton markup, the navigation JavaScript, or the pinned
+  asset versions below when authoring a session. Copy this file to
+  docs/session-XX.html and only touch:
+    - <title> and the header/course metadata in the sidebar
+    - the <section class="step-panel" ...> blocks (edit, add, remove)
+  See CLAUDE.md for the full rules.
+-->
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Session 13 - Première API REST : install:api et API Resources - Atelier Framework Côté Serveur</title>
+
+<!-- Tailwind Play CDN -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Roboto -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+<!-- Font Awesome 6.4.0 (pinned) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Prism 1.29.0 (pinned): core theme, language components load on demand via autoloader -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
+
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Roboto', 'sans-serif'],
+        },
+        colors: {
+          sidebar: {
+            DEFAULT: '#1f2430',
+            hover: '#2a3040',
+          },
+          brand: {
+            DEFAULT: '#ff3d2e',
+            dark: '#e6291b',
+          },
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Roboto', sans-serif; }
+
+  /* Sidebar */
+  #sidebar {
+    transition: transform 0.25s ease-in-out;
+  }
+  #sidebar::-webkit-scrollbar { width: 6px; }
+  #sidebar::-webkit-scrollbar-thumb { background: #3a4052; border-radius: 4px; }
+
+  .step-link { position: relative; }
+  .step-link.is-active {
+    background-color: rgba(255, 61, 46, 0.15);
+    border-left: 3px solid #ff3d2e;
+    color: #ffffff;
+  }
+  .step-link .step-marker {
+    width: 1.75rem;
+    height: 1.75rem;
+    flex-shrink: 0;
+  }
+  .step-link.is-completed .step-marker .marker-number { display: none; }
+  .step-link.is-completed .step-marker .marker-check { display: flex; }
+  .step-link .step-marker .marker-check { display: none; }
+  .step-link.is-locked { opacity: 0.45; cursor: not-allowed; }
+  .step-link.is-locked:hover { background-color: transparent; }
+
+  /* Progress bar */
+  #progress-track {
+    height: 4px;
+    background: #e5e7eb;
+  }
+  #progress-bar {
+    height: 4px;
+    background: linear-gradient(90deg, #ff3d2e, #ff8a3d);
+    width: 0%;
+    transition: width 0.3s ease-in-out;
+  }
+
+  /* Step panels */
+  .step-panel { display: none; }
+  .step-panel.is-active { display: block; }
+
+  /* Content cards */
+  .md-card {
+    background: #ffffff;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.08);
+    border: 1px solid #e5e7eb;
+  }
+
+  /* Code blocks + copy button */
+  .code-block-wrapper { position: relative; }
+  .code-block-wrapper pre[class*="language-"] {
+    margin: 0;
+    border-radius: 0.5rem;
+    max-height: 32rem;
+  }
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    line-height: 1;
+    padding: 0.4rem 0.6rem;
+    border-radius: 0.375rem;
+    background: rgba(255,255,255,0.1);
+    color: #d4d4d4;
+    border: 1px solid rgba(255,255,255,0.15);
+    cursor: pointer;
+    transition: background 0.15s ease-in-out;
+  }
+  .copy-btn:hover { background: rgba(255,255,255,0.2); }
+  .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
+
+  /* Mobile sidebar */
+  @media (max-width: 767px) {
+    #sidebar {
+      position: fixed;
+      inset: 0 auto 0 0;
+      z-index: 40;
+      transform: translateX(-100%);
+      width: 85vw;
+      max-width: 20rem;
+    }
+    #sidebar.is-open { transform: translateX(0); }
+    #sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 30;
+    }
+    #sidebar-overlay.is-open { display: block; }
+  }
+
+  /* Quiz */
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.6rem 0.9rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    background: #ffffff;
+    cursor: pointer;
+  }
+  .quiz-option:hover:not(:disabled) { background: #f9fafb; }
+  .quiz-option:focus-visible { outline: 2px solid #ff3d2e; outline-offset: 2px; }
+  .quiz-option:disabled { cursor: default; }
+  .quiz-option.is-correct { border-color: #16a34a; background: #f0fdf4; }
+  .quiz-option.is-wrong { border-color: #e11d48; background: #fff1f2; }
+</style>
+</head>
+<body class="bg-gray-50 text-gray-900 antialiased">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- Mobile overlay -->
+  <div id="sidebar-overlay"></div>
+
+  <!-- Sidebar -->
+  <aside id="sidebar" class="bg-sidebar text-gray-300 w-72 flex-shrink-0 flex flex-col overflow-y-auto">
+    <div class="px-5 py-5 border-b border-white/10">
+      <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
+      <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session 13 - Première API REST : install:api et API Resources</p>
+    </div>
+    <nav class="flex-1 py-2" aria-label="Etapes du codelab">
+      <ul id="step-nav-list">
+        <li>
+          <a href="#step-1" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-1">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">1</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Prérequis et objectifs</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-2" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-2">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">2</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Vérification de l'environnement (10 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-3" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-3">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">3</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Notions clés (15 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-4" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-4">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">4</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 1 - Installer l'API (20 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-5" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-5">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">5</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 2 - Premier endpoint (15 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-6" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-6">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">6</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 3 - PostResource (20 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-7" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-7">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">7</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 4 - Relations dans la Resource (20 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-8" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-8">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">8</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 5 - Un article et les erreurs JSON (30 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-9" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-9">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">9</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Étape 6 - Postman et curl.exe (15 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-10" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-10">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">10</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Défi (30 min)</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-11" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-11">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">11</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Grille d'auto-évaluation</span>
+          </a>
+        </li>
+        <li>
+          <a href="#step-12" class="step-link flex items-center gap-3 px-5 py-3 hover:bg-sidebar-hover" data-step="step-12">
+            <span class="step-marker rounded-full bg-white/10 flex items-center justify-center text-xs">
+              <span class="marker-number">12</span>
+              <i class="marker-check fa-solid fa-check items-center justify-center text-brand" aria-hidden="true"></i>
+            </span>
+            <span>Livrable : tag lab-07 (15 min)</span>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <div class="px-5 py-4 border-t border-white/10 text-xs text-gray-500">
+      <a href="index.html" class="hover:text-gray-300"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Retour au sommaire</a>
+    </div>
+  </aside>
+
+  <!-- Main column -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Header -->
+    <header class="bg-white border-b border-gray-200 px-4 md:px-6 py-3 flex items-center gap-4">
+      <button id="sidebar-toggle" class="md:hidden text-gray-600 hover:text-gray-900" aria-label="Ouvrir le menu des etapes">
+        <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
+      </button>
+      <div class="flex-1 min-w-0">
+        <p class="text-xs text-gray-500">Session 13 - Semaine 7</p>
+        <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
+      </div>
+      <div class="flex items-center gap-2">
+        <button id="prev-step" class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2" aria-label="Etape precedente">
+          <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+          <span class="hidden sm:inline">Precedent</span>
+        </button>
+        <button id="next-step" class="px-3 py-2 rounded-md bg-brand text-white hover:bg-brand-dark text-sm flex items-center gap-2" aria-label="Etape suivante">
+          <span class="hidden sm:inline">Suivant</span>
+          <i class="fa-solid fa-chevron-right" aria-hidden="true"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Progress bar -->
+    <div id="progress-track" class="w-full">
+      <div id="progress-bar"></div>
+    </div>
+
+    <!-- Quiz gate message (shown by the navigation script) -->
+    <p id="quiz-gate-msg" class="bg-amber-50 border-b border-amber-200 text-amber-900 text-sm px-4 md:px-6 py-2" role="status" hidden>
+      <i class="fa-solid fa-lock mr-2" aria-hidden="true"></i>Pour passer à l'étape suivante, répondez correctement à toutes les questions du Quiz éclair de cette étape.
+    </p>
+
+    <!-- Content -->
+    <main id="content" class="flex-1 overflow-y-auto">
+      <div class="max-w-4xl mx-auto px-4 md:px-6 py-8 space-y-6">
+
+
+        <!-- Step 1 -->
+        <section id="step-1" class="step-panel is-active" data-title="Prérequis et objectifs">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+  </h3>
+<p class="text-gray-700 leading-relaxed">Ouvrir les articles de Mini-CMS à d'autres programmes : une API JSON en lecture seule, installée avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code>, mise en forme par des API Resources, appelée avec Postman et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code>.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-bullseye text-brand" aria-hidden="true"></i>
+    Objectifs
+  </h3>
+<ol class="list-decimal list-inside text-gray-700 space-y-2">
+  <li>Lancer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan install:api</code> et expliquer ce qu'il ajoute : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code>, Sanctum, le préfixe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api</code>.</li>
+  <li>Exposer des adresses en lecture seule avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::apiResource()</code> limité par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">only(['index', 'show'])</code> et un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Api\PostController</code>, sous des noms de routes uniques préfixés <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::name('api.')</code>).</li>
+  <li>Mettre en forme les réponses avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostResource</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">CategoryResource</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenLoaded</code>, des dates ISO 8601 et des collections paginées.</li>
+  <li>Appeler l'API avec Postman et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code> (pas l'alias <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl</code> de PowerShell) avec l'en-tête <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept: application/json</code>, et lire les erreurs JSON 404, 403 et 422.</li>
+</ol>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Prérequis
+  </h3>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li>Session 12 terminée (<a href="session-12.html" class="underline text-brand">session 12</a>) : tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-06b</code> poussé sur GitHub ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> entièrement vert.</li>
+  <li>Postman téléchargé AVANT la séance depuis <a href="https://www.postman.com/downloads/" class="underline text-brand">https://www.postman.com/downloads/</a> (version Windows 64 bits) : le fichier est volumineux. L'installation se fait à <a href="#step-9" class="underline text-brand">l'Étape 6</a>.</li>
+  <li>Une connexion Internet pour l'Étape 1 (Composer télécharge Sanctum).</li>
+  <li>Le compte administrateur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">test@example.com</code> (mot de passe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">password</code>) dans une fenêtre de navigation privée (Ctrl+Shift+N), comme en session 12.</li>
+</ul>
+<p class="text-gray-700 mb-4">Dans toute la page, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prenom-nom</code> par le nom de dossier choisi en session 01 (minuscules, sans espace ni accent).</p>
+<p class="text-gray-700 mb-4">Seulement si le projet n'est pas sur ce poste : récupérez-le avec les blocs « Seulement si le projet n'est pas sur ce poste » de <a href="session-03.html#step-1" class="underline text-brand">la session 03, Prérequis</a>, puis revenez ici.</p>
+<div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-blue-900">Sur un poste de l'université, faites <a href="#step-12" class="underline text-brand">la partie D du Livrable</a> avant de quitter la salle, même si vous n'avez pas terminé.</p>
+</div>
+<div class="border-l-4 border-amber-500 bg-amber-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-triangle-exclamation text-amber-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-amber-900">Une étape qui se termine par un Quiz éclair est verrouillée : le bouton Suivant et les étapes suivantes du menu restent inaccessibles tant que chaque question de ce quiz n'a pas reçu une bonne réponse. Vous pouvez réessayer autant de fois que nécessaire. Les réponses sont enregistrées dans ce navigateur : en changeant de navigateur, vous devrez y répondre à nouveau.</p>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-diagram-project text-brand" aria-hidden="true"></i>
+    État du projet au départ (tag lab-06b)
+  </h3>
+<ul class="list-disc list-inside text-gray-700 space-y-2">
+  <li>Routes web : pages publiques, inscription et connexion, back-office ; le middleware <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">admin</code> protège tout <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/admin</code>.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPolicy</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">view</code> (brouillons protégés), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">create</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">delete</code> ; le scope <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">visibleTo</code> sur la liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code>.</li>
+  <li>Tests : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">AuthTest</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">AuthorizationTest</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">AdminAccessTest</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostVisibilityTest</code>, en plus des fichiers des sessions précédentes.</li>
+  <li>Aucune route d'API : le fichier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> n'existe pas encore.</li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-clock text-brand" aria-hidden="true"></i>
+    Déroulement
+  </h3>
+<div class="overflow-x-auto ">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Partie</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Durée</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><td class="px-3 py-2 align-top">Vérification de l'environnement</td><td class="px-3 py-2 align-top">10 min</td></tr>
+      <tr class="border-b border-gray-100"><td class="px-3 py-2 align-top">Notions clés</td><td class="px-3 py-2 align-top">15 min</td></tr>
+      <tr class="border-b border-gray-100"><td class="px-3 py-2 align-top">Étapes 1 à 6</td><td class="px-3 py-2 align-top">120 min (20, 15, 20, 20, 30, 15)</td></tr>
+      <tr class="border-b border-gray-100"><td class="px-3 py-2 align-top">Défi</td><td class="px-3 py-2 align-top">30 min</td></tr>
+      <tr class="border-b border-gray-100"><td class="px-3 py-2 align-top">Livrable</td><td class="px-3 py-2 align-top">15 min</td></tr>
+      <tr><td class="px-3 py-2 align-top"><strong>Total</strong></td><td class="px-3 py-2 align-top"><strong>190 min (3h10)</strong></td></tr>
+    </tbody>
+  </table>
+</div>
+<p class="text-gray-700 mt-3">15 questions de quiz éclair ; leur temps est compris dans les durées.</p>
+</div>
+
+        </section>
+
+        <!-- Step 2 -->
+        <section id="step-2" class="step-panel" data-title="Vérification de l&#x27;environnement (10 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 10 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Vérifier que le dépôt est à l'état de fin de session 12, sans aucune route d'API, que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code> répond, puis démarrer l'application.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<p class="text-gray-700 mb-3">Dans le Terminal 1, placez-vous dans le projet :</p>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash de placement dans le projet">Copier</button>
+  <pre><code class="language-bash">cd /c/dev/prenom-nom/mini-cms</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell de placement dans le projet">Copier</button>
+  <pre><code class="language-powershell">cd C:\dev\prenom-nom\mini-cms</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Puis, toujours dans le Terminal 1 :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les commandes de vérification de l&#x27;environnement">Copier</button>
+  <pre><code class="language-bash">git status
+git tag -l "lab-06*"
+php artisan route:list --path=api
+curl.exe --version
+composer run dev</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Laissez le Terminal 1 ouvert : toutes les commandes suivantes se tapent dans le Terminal 2. Dans VS Code, ouvrez le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> (Fichier &gt; Ouvrir le dossier), puis Terminal &gt; Nouveau terminal. Dans le Terminal 2, lancez les tests :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de lancement des tests de la vérification">Copier</button>
+  <pre><code class="language-bash">php artisan test</code></pre>
+</div>
+<div class="overflow-x-auto ">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Commande</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Résultat attendu</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Sinon</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">git status</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">nothing to commit, working tree clean</code></td><td class="px-3 py-2 align-top">Terminez le <a href="session-12.html#step-11" class="underline text-brand">Livrable de la session 12</a>.</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">git tag -l "lab-06*"</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">lab-06</code> et <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">lab-06b</code></td><td class="px-3 py-2 align-top">Terminez le <a href="session-12.html#step-11" class="underline text-brand">Livrable de la session 12</a>.</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">php artisan route:list --path=api</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">ERROR Your application doesn't have any routes matching the given criteria.</code> (aucune route d'API pour l'instant)</td><td class="px-3 py-2 align-top">Si des routes <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/</code> s'affichent, le projet n'est pas à <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">lab-06b</code> : reprenez <a href="session-12.html" class="underline text-brand">la session 12</a>.</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">curl.exe --version</code></th><td class="px-3 py-2 align-top">une ligne qui commence par <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">curl 8</code> (le numéro exact varie)</td><td class="px-3 py-2 align-top">Utilisez Git Bash (Git for Windows, <a href="session-01.html" class="underline text-brand">session 01</a>), qui fournit <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">curl.exe</code>.</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">php artisan test</code></th><td class="px-3 py-2 align-top">Tous les tests passent</td><td class="px-3 py-2 align-top">Reprenez <a href="session-12.html#step-7" class="underline text-brand">la session 12, Tâche 4</a>.</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">composer run dev</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">http://localhost:8000</code> ouvre la page d'accueil</td><td class="px-3 py-2 align-top">Reprenez <a href="session-12.html#step-2" class="underline text-brand">la vérification de l'environnement de la session 12</a>. L'adresse <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">http://127.0.0.1:8000</code> est équivalente ; n'ouvrez pas l'adresse de Vite sur le port 5173.</td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Postman</th><td class="px-3 py-2 align-top">le fichier d'installation est dans Téléchargements</td><td class="px-3 py-2 align-top">Téléchargez-le maintenant : il sera installé à <a href="#step-9" class="underline text-brand">l'Étape 6, partie A</a>.</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-gray-700">Aucun fichier à écrire : cette partie vérifie uniquement le dépôt, les routes, les outils et les tests.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Copie de travail propre ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-06</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-06b</code> listés.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --path=api</code> n'affiche aucune route.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe --version</code> affiche une ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl 8</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> : tous les tests passent.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le Terminal 1 reste ouvert sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer run dev</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">http://localhost:8000</code> affiche la page d'accueil.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le fichier d'installation de Postman est dans Téléchargements.</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> L'API va exposer les données que la session 12 a protégées, brouillons compris. Une suite verte au départ prouve ensuite que l'ajout de l'API ne casse rien sur le site.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 3 -->
+        <section id="step-3" class="step-panel" data-title="Notions clés (15 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-sitemap text-brand" aria-hidden="true"></i>
+    Deuxième passage sur MVC : une Resource à la place de la vue
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+  </h3>
+<figure class="my-4">
+              <div class="overflow-x-auto">
+                <svg viewBox="0 0 760 362" width="760" height="362" class="w-full h-auto min-w-[640px]" role="img" aria-labelledby="s13-mvc-title s13-mvc-desc" xmlns="http://www.w3.org/2000/svg" font-family="Roboto, Arial, sans-serif" font-size="13">
+                  <title id="s13-mvc-title">Cycle d'une requête vers l'API de Mini-CMS : une Resource à la place de la vue</title>
+                  <desc id="s13-mvc-desc">Étape 1 : un client (navigateur, curl.exe ou Postman) envoie GET /api/posts avec l'en-tête Accept: application/json. Le routeur lit routes/api.php, sous le préfixe /api. Étape 2 : Api\PostController passe par la Form Request et le Gate, puis lance la requête. Étape 3 : le modèle lit les articles, leurs catégories et leurs auteurs dans SQLite. Étape 4 : la méthode toArray() de PostResource, encadrée en gras car c'est le sujet de la session, transforme chaque modèle en JSON. Étape 5 : le client reçoit 200 en JSON, ou une erreur 403, 404 ou 422, elle aussi en JSON.</desc>
+                  <defs>
+                    <marker id="s13-mvc-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse">
+                      <path d="M0,0 L10,5 L0,10 z" fill="#374151"/>
+                    </marker>
+                  </defs>
+                  <g fill="#ffffff" stroke="#374151" stroke-width="2">
+                    <rect x="10" y="40" width="116" height="64" rx="8"/>
+                    <rect x="214" y="40" width="116" height="64" rx="8"/>
+                    <rect x="418" y="40" width="116" height="64" rx="8"/>
+                    <rect x="406" y="158" width="140" height="56" rx="8"/>
+                    <rect x="396" y="266" width="160" height="56" rx="8"/>
+                  </g>
+                  <rect x="620" y="40" width="132" height="64" rx="8" fill="#eef2ff" stroke="#4338ca" stroke-width="4"/>
+                  <g fill="#111827" text-anchor="middle">
+                    <text x="68" y="64" font-weight="700">Client</text>
+                    <text x="68" y="82" font-size="11">navigateur,</text>
+                    <text x="68" y="96" font-size="11">curl.exe, Postman</text>
+                    <text x="272" y="64" font-weight="700">Routeur</text>
+                    <text x="272" y="82" font-size="11">routes/api.php</text>
+                    <text x="272" y="96" font-size="11">(/api)</text>
+                    <text x="476" y="68" font-weight="700">Contrôleur</text>
+                    <text x="476" y="88" font-size="11">Api\PostController</text>
+                    <text x="686" y="68" font-weight="700">Resource</text>
+                    <text x="686" y="88" font-size="11">PostResource (JSON)</text>
+                    <text x="476" y="182" font-weight="700">Modèle Post</text>
+                    <text x="476" y="202" font-size="12">Post, Category, User</text>
+                    <text x="476" y="290" font-weight="700">Base SQLite</text>
+                    <text x="476" y="310" font-size="11">tables de Mini-CMS</text>
+                    <text x="680" y="126" font-weight="700" fill="#4338ca" text-anchor="end">Sujet de la session</text>
+                  </g>
+                  <g stroke="#374151" stroke-width="2" fill="none" marker-end="url(#s13-mvc-arrow)">
+                    <line x1="126" y1="72" x2="210" y2="72"/>
+                    <line x1="330" y1="72" x2="414" y2="72"/>
+                    <line x1="476" y1="104" x2="476" y2="152"/>
+                    <line x1="476" y1="218" x2="476" y2="262" marker-start="url(#s13-mvc-arrow)"/>
+                    <line x1="534" y1="72" x2="616" y2="72"/>
+                    <path d="M686,104 V346 H68 V109"/>
+                  </g>
+                  <g fill="#111827" font-size="12">
+                    <text x="10" y="14">1. GET /api/posts</text>
+                    <text x="10" y="30">+ Accept: application/json</text>
+                    <text x="374" y="28" text-anchor="middle">2. Form Request, Gate, puis la requête</text>
+                    <text x="466" y="148" text-anchor="end">3. lecture des données</text>
+                    <text x="466" y="245" text-anchor="end">SELECT dans SQLite</text>
+                    <text x="577" y="62" text-anchor="middle">4. toArray()</text>
+                    <text x="577" y="90" text-anchor="middle" font-size="11">de la Resource</text>
+                    <text x="240" y="338" text-anchor="middle">5. 200 en JSON, ou 403, 404, 422 en JSON</text>
+                  </g>
+                </svg>
+              </div>
+<figcaption class="mt-2 text-sm text-gray-600">Figure 13.1 - L'API suit le même trajet que le site ; seule la dernière étape change : une Resource transforme le modèle en JSON à la place d'une vue Blade.</figcaption>
+</figure>
+<p class="text-gray-700 mb-3">Une API sert des données, pas des pages. Un autre programme (une application mobile, un script, un autre site) lit le JSON et décide lui-même de l'affichage.</p>
+<p class="text-gray-700 mb-3">REST : chaque adresse désigne une ressource (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/3</code>), le verbe HTTP dit l'action, et le code de statut dit le résultat.</p>
+<p class="text-gray-700">Idée reçue à écarter : « l'API est une seconde application ». Elle lit la même base avec les mêmes modèles ; seule la porte d'entrée change.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-door-open text-brand" aria-hidden="true"></i>
+    Deux portes vers les mêmes modèles
+  </h3>
+<figure class="my-4">
+<div class="overflow-x-auto ">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium"></th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Site (`routes/web.php`)</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">API (`routes/api.php`)</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Adresse</th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/posts/3</code></td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api/posts/3</code> (préfixe <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api</code> ajouté par Laravel)</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Groupe de middlewares</th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">web</code> : session, cookies, protection CSRF</td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api</code> : aucune session, aucun cookie</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Utilisateur connecté</th><td class="px-3 py-2 align-top">lu dans la session</td><td class="px-3 py-2 align-top">aucun ici ; les jetons Sanctum arrivent en session 15</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Réponse</th><td class="px-3 py-2 align-top">une vue Blade (HTML)</td><td class="px-3 py-2 align-top">une Resource (JSON)</td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Erreur 404</th><td class="px-3 py-2 align-top">la page « Article introuvable » (session 09)</td><td class="px-3 py-2 align-top">un objet JSON avec une clé <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">message</code></td></tr>
+    </tbody>
+  </table>
+</div>
+<figcaption class="mt-2 text-sm text-gray-600">Figure 13.2 - Même modèle, deux portes : le site garde une session, l'API répond à chaque requête sans se souvenir de la précédente.</figcaption>
+</figure>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-table-list text-brand" aria-hidden="true"></i>
+    Aide-mémoire, à consulter pendant les étapes
+  </h3>
+<div class="overflow-x-auto mb-4">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Action</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Verbe et adresse</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Quand</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">index</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">GET /api/posts</code></td><td class="px-3 py-2 align-top">aujourd'hui</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">show</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">GET /api/posts/{post}</code></td><td class="px-3 py-2 align-top">aujourd'hui</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">store</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">POST /api/posts</code></td><td class="px-3 py-2 align-top">session 15</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">update</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">PUT/PATCH /api/posts/{post}</code></td><td class="px-3 py-2 align-top">session 15</td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">destroy</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">DELETE /api/posts/{post}</code></td><td class="px-3 py-2 align-top">session 15</td></tr>
+    </tbody>
+  </table>
+</div>
+<div class="overflow-x-auto ">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Statut</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Sens</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">200</th><td class="px-3 py-2 align-top">la réponse contient les données</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">401</th><td class="px-3 py-2 align-top">connexion requise (jeton, session 15)</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">403</th><td class="px-3 py-2 align-top">client connu mais refusé</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">404</th><td class="px-3 py-2 align-top">introuvable</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">422</th><td class="px-3 py-2 align-top">données envoyées invalides : la clé <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">errors</code> dit quoi corriger</td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">500</th><td class="px-3 py-2 align-top">erreur du serveur</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q01" data-answer="a">
+  <p class="font-medium text-gray-900 mb-3">Une application mobile veut afficher les articles de Mini-CMS. Pourquoi lui fournir <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> plutôt que la page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts</code> ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 1">
+    <button type="button" class="quiz-option" data-option="a">Le HTML mêle données et mise en page : l'application devrait le découper</button>
+    <button type="button" class="quiz-option" data-option="b">Un téléphone ne peut pas ouvrir une page servie par Laravel</button>
+    <button type="button" class="quiz-option" data-option="c">Le JSON est chiffré, alors que le HTML circule en clair</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le JSON ne transporte que les données, dans une structure stable ; le HTML change à chaque retouche du design et l'application casserait. JSON n'est pas chiffré : c'est HTTPS qui chiffre.</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q02" data-answer="b">
+  <p class="font-medium text-gray-900 mb-3">Un client reçoit 422 en réponse à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">GET /api/posts?per_page=500</code>. Que doit-il faire ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 2">
+    <button type="button" class="quiz-option" data-option="a">Réessayer plus tard : le serveur est surchargé</button>
+    <button type="button" class="quiz-option" data-option="b">Corriger le paramètre qu'il a envoyé, puis renvoyer</button>
+    <button type="button" class="quiz-option" data-option="c">Se connecter, puis renvoyer la même requête</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Les codes 4xx désignent une erreur du client ; 422 signale des données invalides et la clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">errors</code> dit lesquelles. 401 demanderait une connexion, 5xx une panne du serveur.</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q03" data-answer="c">
+  <p class="font-medium text-gray-900 mb-3">Après <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code>, où l'API lit-elle les articles ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 3">
+    <button type="button" class="quiz-option" data-option="a">Dans une copie de la base créée par Sanctum</button>
+    <button type="button" class="quiz-option" data-option="b">Dans la table <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">personal_access_tokens</code></button>
+    <button type="button" class="quiz-option" data-option="c">Dans la même base, avec le même modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code></button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>L'API est une autre porte vers les mêmes modèles. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">personal_access_tokens</code> rangera les jetons de connexion de la session 15 ; elle ne contient aucun article.</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une requête vers l'API suit le même cycle qu'une page du site : routeur, contrôleur, modèle. Seule la dernière étape change : une Resource remplace la vue, et le client choisit lui-même comment afficher les données.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 4 -->
+        <section id="step-4" class="step-panel" data-title="Étape 1 - Installer l&#x27;API (20 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Installer la couche API de Laravel et comprendre chaque fichier qu'elle ajoute.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Installer</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande d&#x27;installation de l&#x27;API">Copier</button>
+  <pre><code class="language-bash">php artisan install:api</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Composer télécharge Sanctum (une à quelques minutes). À la question <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">One new database migration has been published. Would you like to run all pending database migrations? (yes/no) [yes]</code>, appuyez sur Entrée (yes). Le dernier message demande d'ajouter <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HasApiTokens</code> au modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">User</code> : ne l'ajoutez pas aujourd'hui, ce trait sert aux jetons de la session 15.</p>
+<p class="text-gray-700 mb-3">Si Composer affiche un message d'erreur rouge pendant le téléchargement, vérifiez la connexion Internet, puis relancez l'installation avec le bloc ci-dessous. Le message <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">API routes file already exists.</code> est alors normal : le fichier a déjà été créé au premier essai.</p>
+<p class="text-sm text-gray-600 mb-2">Seulement si l'installation de Composer a échoué (message d'erreur rouge pendant le téléchargement de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/sanctum</code>) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de relance de l&#x27;installation de l&#x27;API">Copier</button>
+  <pre><code class="language-bash">php artisan install:api</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">B. Lire ce qui a changé</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les commandes de lecture des changements de install:api">Copier</button>
+  <pre><code class="language-bash">git status
+git diff bootstrap/app.php composer.json</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">C. Point de contrôle</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les commandes de contrôle des routes et des migrations de l&#x27;étape 1">Copier</button>
+  <pre><code class="language-bash">php artisan route:list --path=api
+php artisan migrate:status</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">D. Essayer</h4>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li>Dans la fenêtre normale, connecté avec votre compte, ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/user</code>.</li>
+</ul>
+<h4 class="font-medium mt-4 mb-2">E. Tester</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de test de l&#x27;étape 1">Copier</button>
+  <pre><code class="language-bash">php artisan test</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">F. Valider</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 1">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Installer l'API avec install:api"</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-gray-700 mb-3">Aucun fichier à écrire : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code> a tout généré. Lisez les fichiers ci-dessous.</p>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> (contenu complet, généré) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier routes/api.php généré">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request-&gt;user();
+})-&gt;middleware('auth:sanctum');</code></pre>
+</div>
+<p class="text-gray-700 mb-6">Gardez cette route telle quelle : elle sert en session 15.</p>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code> :</p>
+<p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code> a ajouté une ligne juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">web: __DIR__.'/../routes/web.php',</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la ligne api ajoutée dans bootstrap/app.php">Copier</button>
+  <pre><code class="language-php">        api: __DIR__.'/../routes/api.php',</code></pre>
+</div>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+  <div class="mt-2">
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier bootstrap/app.php de l&#x27;étape 1">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+use App\Http\Middleware\EnsureSiteIsWritable;
+use App\Http\Middleware\EnsureUserIsAdmin;
+use App\Models\Post;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+return Application::configure(basePath: dirname(__DIR__))
+    -&gt;withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    -&gt;withMiddleware(function (Middleware $middleware): void {
+        $middleware-&gt;alias([
+            'writable' =&gt; EnsureSiteIsWritable::class,
+            'admin' =&gt; EnsureUserIsAdmin::class,
+        ]);
+    })
+    -&gt;withExceptions(function (Exceptions $exceptions): void {
+        $exceptions-&gt;shouldRenderJsonWhen(
+            fn (Request $request) =&gt; $request-&gt;is('api/*') || $request-&gt;expectsJson(),
+        );
+
+        $exceptions-&gt;render(function (NotFoundHttpException $e, Request $request) {
+            if ($request-&gt;is('api/*') || $request-&gt;expectsJson()) {
+                return null;
+            }
+
+            $previous = $e-&gt;getPrevious();
+
+            if ($previous instanceof ModelNotFoundException &amp;&amp; $previous-&gt;getModel() === Post::class) {
+                return response()-&gt;view('errors.article-introuvable', [], 404);
+            }
+
+            return null;
+        });
+    })-&gt;create();</code></pre>
+</div>
+<p class="text-gray-700 mt-3">Gardez votre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withExceptions</code> tel qu'il est : si vous avez fait les défis des sessions 09 ou 10, votre fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code> passe aussi <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">recentPosts</code> à la vue ou gère « Catégorie introuvable » ; si votre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withExceptions</code> n'a pas l'appel <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">shouldRenderJsonWhen</code>, ne l'ajoutez pas.</p>
+  </div>
+</details>
+<div class="mt-6"></div>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.json</code> , dans le bloc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">"require"</code> (extrait, pour lecture) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les lignes du bloc require de composer.json">Copier</button>
+  <pre><code class="language-json">        "laravel/framework": "^13.0",
+        "laravel/sanctum": "^4.0",
+        "laravel/tinker": "^3.0"</code></pre>
+</div>
+<p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/sanctum</code> arrive entre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/framework</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/tinker</code> : Composer range les paquets par ordre alphabétique. Le numéro de version de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/framework</code> peut être différent dans votre fichier.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Messages, dans l'ordre : les lignes de Composer, puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">INFO Published API routes file.</code>, la question sur les migrations, la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">create_personal_access_tokens_table</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">DONE</code>, puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">INFO API scaffolding installed. Please add the [Laravel\Sanctum\HasApiTokens] trait to your User model.</code></span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git status</code> : modifiés <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.json</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.lock</code> ; nouveaux <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">config/sanctum.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">database/migrations/&lt;date&gt;_create_personal_access_tokens_table.php</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code>. Seulement si <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.lock</code> montre aussi d'autres paquets mis à jour (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/framework</code>...) : c'est l'option <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">--with-all-dependencies</code> de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code>, rien à corriger.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --path=api</code> : 1 route, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET|HEAD api/user</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate:status</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">create_personal_access_tokens_table</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/user</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">{"message":"Unauthenticated."}</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q04" data-answer="a">
+  <p class="font-medium text-gray-900 mb-3">Un camarade clone votre dépôt après ce commit et lance <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer install</code>. Et Sanctum ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 4">
+    <button type="button" class="quiz-option" data-option="a">Il est installé : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.json</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.lock</code> le listent</button>
+    <button type="button" class="quiz-option" data-option="b">Il manque : il faut relancer <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan install:api</code></button>
+    <button type="button" class="quiz-option" data-option="c">Il manque : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> n'est jamais envoyé sur GitHub</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">vendor/</code> est ignoré par Git (session 02), mais <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.lock</code> fixe la version exacte et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer install</code> la télécharge. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code> ne se lance qu'une fois : ses fichiers sont commités.</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q05" data-answer="c">
+  <p class="font-medium text-gray-900 mb-3">Connecté sur le site dans ce navigateur, vous ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/user</code>. Que voyez-vous ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 5">
+    <button type="button" class="quiz-option" data-option="a">Votre profil en JSON, puisque vous êtes connecté</button>
+    <button type="button" class="quiz-option" data-option="b">Une redirection vers la page <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/connexion</code></button>
+    <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">{"message":"Unauthenticated."}</code> avec le statut 401</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le groupe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api</code> ne démarre aucune session : le cookie du site est ignoré, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">auth:sanctum</code> attend un jeton (session 15). La réponse est en JSON car l'adresse commence par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">shouldRenderJsonWhen</code>, session 09).</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">install:api</code> ajoute une seconde porte (<code class="bg-white px-1 py-0.5 rounded text-xs">routes/api.php</code>, sous <code class="bg-white px-1 py-0.5 rounded text-xs">/api</code>) et un outil d'authentification par jetons, Sanctum. Sanctum est installé maintenant, mais il ne servira qu'en session 15 : aujourd'hui, toute l'API est publique et en lecture seule.</p>
+</div>
+<div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">API routes file already exists.</code> au second essai : normal, le fichier existe déjà. un avertissement qui commence par <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Unable to automatically add API route definition to</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">web:</code> de <code class="bg-white px-1 py-0.5 rounded text-xs">bootstrap/app.php</code> a été modifiée ; ajoutez la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">api:</code> à la main, juste après elle. Une erreur réseau de Composer : relancez le bloc « Seulement si ».</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 5 -->
+        <section id="step-5" class="step-panel" data-title="Étape 2 - Premier endpoint (15 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Répondre à <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET /api/posts</code> avec les articles publiés, d'abord sans mise en forme, pour voir ce que Laravel envoie tout seul.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Créer le contrôleur</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de création du contrôleur de l&#x27;API">Copier</button>
+  <pre><code class="language-bash">php artisan make:controller Api/PostController --api --model=Post</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Le dossier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Api</code> sépare ce contrôleur de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostController</code> (le site) : même nom de classe, autre espace de noms.</p>
+<h4 class="font-medium mt-4 mb-2">B. Ouvrir les fichiers</h4>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 2">Copier</button>
+  <pre><code class="language-bash">code app/Http/Controllers/Api/PostController.php routes/api.php</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 2">Copier</button>
+  <pre><code class="language-powershell">code app\Http\Controllers\Api\PostController.php routes\api.php</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Appliquez le Code complet aux deux fichiers et enregistrez-les.</p>
+<h4 class="font-medium mt-4 mb-2">C. Essayer</h4>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li>Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts</code> dans le navigateur. Chrome et Edge : cochez « Impression élégante » en haut de la page ; Firefox affiche le JSON déjà mis en forme.</li>
+  <li>Cherchez la clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user</code> du premier article : notez ce qu'elle contient.</li>
+</ul>
+<h4 class="font-medium mt-4 mb-2">D. Point de contrôle</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de liste des routes de l&#x27;API de l&#x27;étape 2">Copier</button>
+  <pre><code class="language-bash">php artisan route:list --path=api</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Puis vérifiez que les noms de routes peuvent être mis en cache, comme lors d'une mise en production, et videz ce cache aussitôt :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les commandes de mise en cache et de vidage des routes">Copier</button>
+  <pre><code class="language-bash">php artisan route:cache
+php artisan route:clear</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">E. Valider</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 2">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Ajouter le premier endpoint de l'API"</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Controllers/Api/PostController.php</code> (contenu complet, à la place du fichier généré) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier Api/PostController.php de l&#x27;étape 2">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\Post;
+
+class PostController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        return Post::published()-&gt;with('user')-&gt;latest('id')-&gt;paginate(5);
+    }
+}</code></pre>
+</div>
+<ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">destroy</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> générés sont supprimés : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> revient à l'Étape 5, les écritures en session 15.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code> est le scope de la session 06 : l'API publique ne montre aucun brouillon.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with('user')</code> est volontaire ici, pour voir ce que contient un modèle envoyé tel quel.</li>
+</ul>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> (contenu complet) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier routes/api.php de l&#x27;étape 2">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\Api\PostController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request-&gt;user();
+})-&gt;middleware('auth:sanctum');
+
+Route::name('api.')-&gt;group(function () {
+    Route::apiResource('posts', PostController::class)-&gt;only(['index']);
+});</code></pre>
+</div>
+<p class="text-gray-700">Le site a déjà des routes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.show</code> ; le préfixe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.</code> donne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.posts.index</code>. Laravel charge les routes de l'API avant celles du site.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> : les clés <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">current_page</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code> (5 articles), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">first_page_url</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">from</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">last_page</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">last_page_url</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">next_page_url</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">path</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prev_page_url</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">to</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">total</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque article a <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user_id</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code> en entier, des dates comme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">2026-11-14T09:30:00.000000Z</code>, et un objet <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email_verified_at</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --path=api</code> : 2 routes, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/posts</code> nommée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.posts.index</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Api\PostController@index</code>) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/user</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:cache</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">INFO Routes cached successfully.</code>, puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:clear</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">INFO Route cache cleared successfully.</code></span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q06" data-answer="b">
+  <p class="font-medium text-gray-900 mb-3">Dans la réponse brute de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code>, quel problème la clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user</code> pose-t-elle ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 6">
+    <button type="button" class="quiz-option" data-option="a">Elle montre le mot de passe haché de chaque auteur</button>
+    <button type="button" class="quiz-option" data-option="b">Elle montre l'e-mail et le rôle de chaque auteur</button>
+    <button type="button" class="quiz-option" data-option="c">Aucun : une API en lecture seule ne divulgue rien</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">#[Hidden]</code> ne masque que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">password</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">remember_token</code> (session 11). <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email_verified_at</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> partent chez n'importe quel client : une Resource choisit les champs envoyés (Étape 3).</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q07" data-answer="a">
+  <p class="font-medium text-gray-900 mb-3">On retire <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::name('api.')</code> autour de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">apiResource</code>. Que fait <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan route:cache</code> ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 7">
+    <button type="button" class="quiz-option" data-option="a">Il échoue : le nom <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts.index</code> est déjà pris par une autre route</button>
+    <button type="button" class="quiz-option" data-option="b">Il réussit, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('posts.index')</code> mène désormais à l'API</button>
+    <button type="button" class="quiz-option" data-option="c">Il réussit : chaque fichier de routes a ses propres noms</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Les noms sont communs à tout le projet. En développement, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route()</code> garde la route du site, chargée en dernier, et le doublon passe inaperçu ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:cache</code>, lancé lors des mises en production, refuse deux routes du même nom.</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Renvoyer un modèle ou une pagination depuis un contrôleur donne du JSON automatiquement, mais expose toutes les colonnes et les relations chargées. Un préfixe de nom (<code class="bg-white px-1 py-0.5 rounded text-xs">api.</code>) évite que deux routes portent le même nom.</p>
+</div>
+<div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Target class [App\Http\Controllers\Api\PostController] does not exist.</code> : la commande a oublié <code class="bg-white px-1 py-0.5 rounded text-xs">Api/</code>, ou le <code class="bg-white px-1 py-0.5 rounded text-xs">namespace</code> du fichier est faux. Un 404 sur <code class="bg-white px-1 py-0.5 rounded text-xs">/api/posts</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">bootstrap/app.php</code> n'a pas la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">api:</code>, ou un cache de routes est resté actif (<code class="bg-white px-1 py-0.5 rounded text-xs">php artisan route:clear</code>).</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 6 -->
+        <section id="step-6" class="step-panel" data-title="Étape 3 - PostResource (20 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Choisir les champs envoyés, formater les dates en ISO 8601, et obtenir la pagination standard des Resources.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Créer la Resource</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de création de PostResource">Copier</button>
+  <pre><code class="language-bash">php artisan make:resource PostResource</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">B. Ouvrir les fichiers</h4>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 3">Copier</button>
+  <pre><code class="language-bash">code app/Http/Resources/PostResource.php app/Http/Controllers/Api/PostController.php</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 3">Copier</button>
+  <pre><code class="language-powershell">code app\Http\Resources\PostResource.php app\Http\Controllers\Api\PostController.php</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Appliquez le Code complet aux deux fichiers et enregistrez-les.</p>
+<h4 class="font-medium mt-4 mb-2">C. Essayer</h4>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li>Rechargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts</code>.</li>
+  <li>Ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts?page=2</code>.</li>
+</ul>
+<h4 class="font-medium mt-4 mb-2">D. Valider</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 3">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Ajouter PostResource"</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Resources/PostResource.php</code> (contenu complet) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier PostResource.php de l&#x27;étape 3">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array&lt;string, mixed&gt;
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' =&gt; $this-&gt;id,
+            'title' =&gt; $this-&gt;title,
+            'slug' =&gt; $this-&gt;slug,
+            'excerpt' =&gt; $this-&gt;excerpt,
+            'published_at' =&gt; $this-&gt;published_at?-&gt;toIso8601String(),
+            'url' =&gt; route('posts.show', $this-&gt;resource),
+        ];
+    }
+}</code></pre>
+</div>
+<ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$this-&gt;title</code> lit la colonne du modèle enveloppé ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$this-&gt;resource</code> est le modèle lui-même.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">?-&gt;</code> protège une date <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">url</code> mène à la page du site : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route('posts.show')</code> reste la route du site grâce au préfixe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.</code> de l'Étape 2.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code> revient dans le défi.</li>
+</ul>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Controllers/Api/PostController.php</code> :</p>
+<p class="text-gray-700 mb-2">Juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">use App\Http\Controllers\Controller;</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier l&#x27;import de PostResource">Copier</button>
+  <pre><code class="language-php">use App\Http\Resources\PostResource;</code></pre>
+</div>
+<p class="text-gray-700 mb-2">Juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">use App\Models\Post;</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier l&#x27;import de AnonymousResourceCollection">Copier</button>
+  <pre><code class="language-php">use Illuminate\Http\Resources\Json\AnonymousResourceCollection;</code></pre>
+</div>
+<p class="text-gray-700 mb-2">À la place de toute la méthode <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index()</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la méthode index de l&#x27;étape 3">Copier</button>
+  <pre><code class="language-php">    public function index(): AnonymousResourceCollection
+    {
+        $posts = Post::published()-&gt;latest('id')-&gt;paginate(5);
+
+        return PostResource::collection($posts);
+    }</code></pre>
+</div>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+  <div class="mt-2">
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier Api/PostController.php de l&#x27;étape 3">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
+class PostController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): AnonymousResourceCollection
+    {
+        $posts = Post::published()-&gt;latest('id')-&gt;paginate(5);
+
+        return PostResource::collection($posts);
+    }
+}</code></pre>
+</div>
+  </div>
+</details>
+<div class="mt-6"></div>
+<p class="text-gray-700 mb-4"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with('user')</code> disparaît : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostResource</code> n'affiche pas encore d'auteur (Étape 4).</p>
+<figure class="my-4">
+<div class="grid gap-3">
+  <div class="rounded border-2 border-gray-300 bg-white p-3">
+    <p class="font-bold text-gray-900">Modèle envoyé tel quel (Étape 2)</p>
+    <p class="text-xs text-gray-500 mb-2">un article de data, avec son auteur</p>
+    <div class="space-y-0.5">
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">{</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "id": 12,</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "user_id": 1,</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "category_id": 2,</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "title": "Premier article",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "slug": "premier-article",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "excerpt": "Un premier article de Mini-CMS.",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "body": "Le contenu complet du premier article.",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "is_published": true,</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "published_at": "2026-11-14T09:30:00.000000Z",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "created_at": "2026-11-14T09:30:00.000000Z",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "updated_at": "2026-11-14T09:30:00.000000Z",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "user": {</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "id": 1,</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "name": "Test User",</code>
+<div class="flex items-center gap-2 border-l-4 border-rose-600 pl-2"><code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "email": "test@example.com",</code><span class="text-xs font-bold text-rose-700 whitespace-nowrap">visible par tous</span></div>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "email_verified_at": "2026-11-14T09:00:00.000000Z",</code>
+<div class="flex items-center gap-2 border-l-4 border-rose-600 pl-2"><code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "role": "admin",</code><span class="text-xs font-bold text-rose-700 whitespace-nowrap">visible par tous</span></div>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "created_at": "2026-11-14T09:00:00.000000Z",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "updated_at": "2026-11-14T09:00:00.000000Z"</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  }</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">}</code>
+    </div>
+  </div>
+  <div class="rounded border-2 border-gray-300 bg-white p-3">
+    <p class="font-bold text-gray-900">PostResource (Étape 3)</p>
+    <p class="text-xs text-gray-500 mb-2">le même article, mis en forme</p>
+    <div class="space-y-0.5">
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">{</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "id": 12,</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "title": "Premier article",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "slug": "premier-article",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "excerpt": "Un premier article de Mini-CMS.",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "published_at": "2026-11-14T09:30:00+00:00",</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "url": "http://localhost:8000/posts/12"</code>
+<code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">}</code>
+    </div>
+  </div>
+</div>
+<figcaption class="mt-2 text-sm text-gray-600">Figure 13.3 - La Resource est un contrat : le client reçoit les champs choisis, et rien de plus. Valeurs d'exemple, extrait simplifié.</figcaption>
+</figure>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Trois clés de premier niveau : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">first</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">last</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prev</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">next</code>) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">current_page</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">from</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">last_page</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">path</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">to</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">total</code>).</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque article a exactement <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">id</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">title</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">slug</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">excerpt</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">url</code> ; aucun <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user_id</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code> ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code> se termine par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">+00:00</code>. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">url</code> ouvre bien la page de l'article.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?page=2</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta.current_page</code> vaut 2, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.prev</code> n'est plus <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>.</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q08" data-answer="c">
+  <p class="font-medium text-gray-900 mb-3">Dans la réponse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code>, où un client trouve-t-il l'adresse de la page suivante ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 8">
+    <button type="button" class="quiz-option" data-option="a">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta.next_page_url</code></button>
+    <button type="button" class="quiz-option" data-option="b">Dans le dernier élément de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code></button>
+    <button type="button" class="quiz-option" data-option="c">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code></button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Une collection paginée de Resources range <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">first</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">last</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">prev</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">next</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code>, et le reste dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta</code>. Sur la dernière page, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code> vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>.</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q09" data-answer="a">
+  <p class="font-medium text-gray-900 mb-3">Pourquoi écrire <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">toIso8601String()</code> plutôt que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">format('d/m/Y')</code> ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 9">
+    <button type="button" class="quiz-option" data-option="a">Pour un format standard, avec l'heure et le fuseau horaire</button>
+    <button type="button" class="quiz-option" data-option="b">Pour une réponse plus courte à transmettre au client</button>
+    <button type="button" class="quiz-option" data-option="c">Parce que le JSON refuse les barres obliques</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">2026-11-14T09:30:00+00:00</code> se lit sans ambiguïté dans tous les langages ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">11/12</code> peut être lu jour/mois ou mois/jour. Le client formate lui-même pour son affichage.</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une Resource sépare la forme publique de la réponse de la structure de la table : renommer une colonne ne change que <code class="bg-white px-1 py-0.5 rounded text-xs">toArray()</code>, et les clients ne cassent pas. Elle choisit aussi ce qui sort : ni e-mail ni rôle.</p>
+</div>
+<div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Class "App\Http\Controllers\Api\PostResource" not found</code> : l'import <code class="bg-white px-1 py-0.5 rounded text-xs break-all">use App\Http\Resources\PostResource;</code> manque. <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Call to a member function toIso8601String() on null</code> : le <code class="bg-white px-1 py-0.5 rounded text-xs whitespace-nowrap">?-&gt;</code> manque.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 7 -->
+        <section id="step-7" class="step-panel" data-title="Étape 4 - Relations dans la Resource (20 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 20 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Ajouter l'auteur et la catégorie sans déclencher une requête par article.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Essayer d'abord la mauvaise version</h4>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture de PostResource">Copier</button>
+  <pre><code class="language-bash">code app/Http/Resources/PostResource.php</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de PostResource">Copier</button>
+  <pre><code class="language-powershell">code app\Http\Resources\PostResource.php</code></pre>
+</div>
+<p class="text-gray-700 mb-2">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">toArray()</code>, juste après la ligne qui commence par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'published_at' =&gt;</code>, ajoutez temporairement cette ligne, enregistrez, puis rechargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la ligne temporaire author">Copier</button>
+  <pre><code class="language-php">            'author' =&gt; $this-&gt;user?-&gt;name,</code></pre>
+</div>
+<p class="text-gray-700 mb-3">La page affiche une erreur 500 en JSON dont le <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">message</code> est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">Attempted to lazy load [user] on model [App\\Models\\Post] but lazy loading is disabled.</code> : c'est <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">preventLazyLoading</code> (session 07) qui détecte une requête SQL par article.</p>
+<h4 class="font-medium mt-4 mb-2">B. Créer la Resource des catégories</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de création de CategoryResource">Copier</button>
+  <pre><code class="language-bash">php artisan make:resource CategoryResource</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">C. Ouvrir les fichiers</h4>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 4">Copier</button>
+  <pre><code class="language-bash">code app/Http/Resources/CategoryResource.php app/Http/Resources/PostResource.php app/Http/Controllers/Api/PostController.php</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 4">Copier</button>
+  <pre><code class="language-powershell">code app\Http\Resources\CategoryResource.php app\Http\Resources\PostResource.php app\Http\Controllers\Api\PostController.php</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Appliquez le Code complet aux trois fichiers (il remplace la ligne temporaire) et enregistrez-les. Rechargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code>.</p>
+<h4 class="font-medium mt-4 mb-2">D. Expérience</h4>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index()</code>, retirez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'category'</code> du <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with()</code>, enregistrez et rechargez : la clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code> disparaît de chaque article, sans erreur.</li>
+  <li>Remettez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'category'</code> et enregistrez.</li>
+</ul>
+<h4 class="font-medium mt-4 mb-2">E. Valider</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 4">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Ajouter CategoryResource et le chargement anticipe"</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Resources/CategoryResource.php</code> (contenu complet) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier CategoryResource.php">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class CategoryResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array&lt;string, mixed&gt;
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' =&gt; $this-&gt;id,
+            'name' =&gt; $this-&gt;name,
+            'slug' =&gt; $this-&gt;slug,
+        ];
+    }
+}</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Resources/PostResource.php</code> :</p>
+<p class="text-gray-700 mb-2">À la place de la ligne temporaire <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">'author' =&gt; $this-&gt;user?-&gt;name,</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les lignes author et category">Copier</button>
+  <pre><code class="language-php">            'author' =&gt; $this-&gt;whenLoaded('user', fn () =&gt; $this-&gt;user-&gt;name),
+            'category' =&gt; new CategoryResource($this-&gt;whenLoaded('category')),</code></pre>
+</div>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+  <div class="mt-2">
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier PostResource.php de l&#x27;étape 4">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class PostResource extends JsonResource
+{
+    /**
+     * Transform the resource into an array.
+     *
+     * @return array&lt;string, mixed&gt;
+     */
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' =&gt; $this-&gt;id,
+            'title' =&gt; $this-&gt;title,
+            'slug' =&gt; $this-&gt;slug,
+            'excerpt' =&gt; $this-&gt;excerpt,
+            'published_at' =&gt; $this-&gt;published_at?-&gt;toIso8601String(),
+            'author' =&gt; $this-&gt;whenLoaded('user', fn () =&gt; $this-&gt;user-&gt;name),
+            'category' =&gt; new CategoryResource($this-&gt;whenLoaded('category')),
+            'url' =&gt; route('posts.show', $this-&gt;resource),
+        ];
+    }
+}</code></pre>
+</div>
+  </div>
+</details>
+<div class="mt-6"></div>
+<p class="text-gray-700 mb-6"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">CategoryResource</code> est dans le même espace de noms que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostResource</code> : aucun import n'est nécessaire.</p>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Controllers/Api/PostController.php</code> :</p>
+<p class="text-gray-700 mb-2">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index()</code>, à la place de la ligne qui commence par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$posts =</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la ligne de requête avec chargement anticipé">Copier</button>
+  <pre><code class="language-php">        $posts = Post::published()-&gt;with('user', 'category')-&gt;latest('id')-&gt;paginate(5);</code></pre>
+</div>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+  <div class="mt-2">
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier Api/PostController.php de l&#x27;étape 4">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+
+class PostController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(): AnonymousResourceCollection
+    {
+        $posts = Post::published()-&gt;with('user', 'category')-&gt;latest('id')-&gt;paginate(5);
+
+        return PostResource::collection($posts);
+    }
+}</code></pre>
+</div>
+  </div>
+</details>
+<div class="mt-6"></div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Partie A : la <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code> s'affiche.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque article a <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> (un nom, ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code> pour un article sans auteur créé avant la session 11) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{id, name, slug}</code> ou <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>).</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Partie D : sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'category'</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with()</code>, la clé disparaît ; aucune erreur.</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q10" data-answer="b">
+  <p class="font-medium text-gray-900 mb-3">Dans une méthode qui renvoie un seul article, on oublie de charger <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code>. Que contient la réponse ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 10">
+    <button type="button" class="quiz-option" data-option="a">Une erreur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code></button>
+    <button type="button" class="quiz-option" data-option="b">Les clés <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code> sont absentes</button>
+    <button type="button" class="quiz-option" data-option="c">Les clés <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code> valent <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code></button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenLoaded</code> ne lit que les relations déjà chargées ; sinon la clé est retirée, sans requête SQL. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code> signifie « chargée mais vide ».</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q11" data-answer="b">
+  <p class="font-medium text-gray-900 mb-3">En production, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">preventLazyLoading</code> est désactivé (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">! app()-&gt;isProduction()</code>). La liste écrit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">$this-&gt;user-&gt;name</code> sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with('user')</code>. Que se passe-t-il ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 11">
+    <button type="button" class="quiz-option" data-option="a">La même <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code> qu'en local</button>
+    <button type="button" class="quiz-option" data-option="b">La liste marche, avec une requête SQL de plus par article</button>
+    <button type="button" class="quiz-option" data-option="c">La clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> disparaît de chaque article</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans l'exception, Laravel charge l'auteur article par article : le problème N+1 de la session 07, invisible mais lent. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with()</code> dans le contrôleur l'évite ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenLoaded</code> empêche la Resource de le déclencher.</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le contrôleur décide quoi charger ; la Resource ne fait que lire ce qui est déjà chargé. Laravel ne lève l'exception que pour une liste de plusieurs modèles : un article seul ne la déclenche pas.</p>
+</div>
+<div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Attempted to lazy load [user] on model [App\Models\Post] but lazy loading is disabled.</code> : la Resource lit une relation que le contrôleur n'a pas chargée avec <code class="bg-white px-1 py-0.5 rounded text-xs">with()</code>. <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Attempt to read property "name" on null</code> : <code class="bg-white px-1 py-0.5 rounded text-xs whitespace-nowrap">$this-&gt;user-&gt;name</code> est écrit hors de <code class="bg-white px-1 py-0.5 rounded text-xs">whenLoaded</code>, et un article n'a pas d'auteur.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 8 -->
+        <section id="step-8" class="step-panel" data-title="Étape 5 - Un article et les erreurs JSON (30 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Ajouter <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">GET /api/posts/{post}</code>, valider le paramètre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code>, et lire les réponses 404, 403 et 422.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Créer la Form Request</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de création de IndexPostRequest">Copier</button>
+  <pre><code class="language-bash">php artisan make:request Api/IndexPostRequest</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">B. Ouvrir les fichiers</h4>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-bash">code routes/api.php app/Http/Controllers/Api/PostController.php app/Http/Requests/Api/IndexPostRequest.php lang/fr/validation.php</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture des fichiers de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-powershell">code routes\api.php app\Http\Controllers\Api\PostController.php app\Http\Requests\Api\IndexPostRequest.php lang\fr\validation.php</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Appliquez le Code complet aux quatre fichiers et enregistrez-les. Contrôlez ensuite les routes :</p>
+<h4 class="font-medium mt-4 mb-2">C. Point de contrôle</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de liste des routes de l&#x27;API de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-bash">php artisan route:list --path=api</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">D. Trouver un brouillon</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de recherche d&#x27;un brouillon">Copier</button>
+  <pre><code class="language-bash">php artisan tinker --execute="echo App\Models\Post::where('is_published', false)-&gt;value('id');"</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Notez le numéro affiché : c'est un brouillon.</p>
+<p class="text-gray-700 mb-3">Seulement si la commande n'affiche aucun numéro : dans la fenêtre normale, créez un article avec la case « Publié » décochée, puis relancez la commande :</p>
+<p class="text-sm text-gray-600 mb-2">Seulement si la commande n'affiche aucun numéro, Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de recherche d&#x27;un brouillon à relancer">Copier</button>
+  <pre><code class="language-bash">php artisan tinker --execute="echo App\Models\Post::where('is_published', false)-&gt;value('id');"</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">E. Essayer</h4>
+<p class="text-gray-700 mb-3">Dans le navigateur, remplacez 12 par le numéro de votre brouillon, et 3 par le numéro d'un article publié visible dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> :</p>
+<ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts/3</code></li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts/999</code></li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts/12</code></li>
+  <li>la même adresse dans la fenêtre privée (administrateur)</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts?per_page=2</code>, puis l'adresse de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code></li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts?per_page=500</code></li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts?per_page=abc</code></li>
+</ol>
+<h4 class="font-medium mt-4 mb-2">F. Valider</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes de commit de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Ajouter show et la validation de per_page"</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routes/api.php</code> :</p>
+<p class="text-gray-700 mb-2">À la place de la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">Route::apiResource('posts', PostController::class)-&gt;only(['index']);</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la ligne apiResource avec show">Copier</button>
+  <pre><code class="language-php">    Route::apiResource('posts', PostController::class)-&gt;only(['index', 'show']);</code></pre>
+</div>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+  <div class="mt-2">
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier routes/api.php de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+use App\Http\Controllers\Api\PostController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+
+Route::get('/user', function (Request $request) {
+    return $request-&gt;user();
+})-&gt;middleware('auth:sanctum');
+
+Route::name('api.')-&gt;group(function () {
+    Route::apiResource('posts', PostController::class)-&gt;only(['index', 'show']);
+});</code></pre>
+</div>
+  </div>
+</details>
+<div class="mt-6"></div>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Requests/Api/IndexPostRequest.php</code> (contenu complet, à la place du fichier généré) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier IndexPostRequest.php">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Requests\Api;
+
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Foundation\Http\FormRequest;
+
+class IndexPostRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array&lt;string, ValidationRule|array&lt;mixed&gt;|string&gt;
+     */
+    public function rules(): array
+    {
+        return [
+            'per_page' =&gt; ['nullable', 'integer', 'min:1', 'max:50'],
+        ];
+    }
+}</code></pre>
+</div>
+<ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">authorize()</code> renvoie <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">true</code> : la liste est publique, et la requête du contrôleur ne lit que des articles publiés. Pour cette raison, la commande <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git grep "return true;"</code> de la session 12 affiche maintenant ce fichier : c'est attendu.</li>
+  <li>Une Form Request valide aussi les paramètres d'adresse d'une requête GET.</li>
+</ul>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">app/Http/Controllers/Api/PostController.php</code> (contenu complet) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier Api/PostController.php de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\IndexPostRequest;
+use App\Http\Resources\PostResource;
+use App\Models\Post;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Gate;
+
+class PostController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(IndexPostRequest $request): AnonymousResourceCollection
+    {
+        $perPage = (int) ($request-&gt;validated('per_page') ?? 5);
+
+        $posts = Post::published()
+            -&gt;with('user', 'category')
+            -&gt;latest('id')
+            -&gt;paginate($perPage)
+            -&gt;withQueryString();
+
+        return PostResource::collection($posts);
+    }
+
+    /**
+     * Display the specified resource.
+     */
+    public function show(Post $post): PostResource
+    {
+        Gate::authorize('view', $post);
+
+        return new PostResource($post-&gt;load('user', 'category'));
+    }
+}</code></pre>
+</div>
+<ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?? 5</code> couvre une adresse sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?per_page=</code> vide (Laravel transforme la chaîne vide en <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>).</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withQueryString()</code> garde <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code> dans les liens de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code>.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Gate::authorize('view')</code> réutilise <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPolicy::view</code> de la session 12 : dans l'API, l'utilisateur est toujours un visiteur.</li>
+</ul>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lang/fr/validation.php</code> :</p>
+<p class="text-gray-700 mb-2">Dans le tableau <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">'attributes'</code>, juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">'password' =&gt; 'mot de passe',</code> :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier le nom lisible du champ per_page">Copier</button>
+  <pre><code class="language-php">        'per_page' =&gt; 'nombre par page',</code></pre>
+</div>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir le fichier complet à ce stade</summary>
+  <div class="mt-2">
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier lang/fr/validation.php de l&#x27;étape 5">Copier</button>
+  <pre><code class="language-php">&lt;?php
+
+return [
+    'array' =&gt; 'Le champ :attribute doit être une liste.',
+    'boolean' =&gt; 'Le champ :attribute doit être vrai ou faux.',
+    'confirmed' =&gt; 'La confirmation du champ :attribute ne correspond pas.',
+    'email' =&gt; 'Le champ :attribute doit être une adresse e-mail valide.',
+    'exists' =&gt; 'La valeur sélectionnée pour le champ :attribute est invalide.',
+    'integer' =&gt; 'Le champ :attribute doit être un nombre entier.',
+    'max' =&gt; [
+        'array' =&gt; 'Le champ :attribute ne doit pas contenir plus de :max éléments.',
+        'file' =&gt; 'Le fichier :attribute ne doit pas dépasser :max kilo-octets.',
+        'numeric' =&gt; 'Le champ :attribute ne doit pas dépasser :max.',
+        'string' =&gt; 'Le champ :attribute ne doit pas dépasser :max caractères.',
+    ],
+    'min' =&gt; [
+        'array' =&gt; 'Le champ :attribute doit contenir au moins :min éléments.',
+        'file' =&gt; 'Le fichier :attribute doit faire au moins :min kilo-octets.',
+        'numeric' =&gt; 'Le champ :attribute doit être au moins égal à :min.',
+        'string' =&gt; 'Le champ :attribute doit contenir au moins :min caractères.',
+    ],
+    'regex' =&gt; 'Le format du champ :attribute est invalide.',
+    'required' =&gt; 'Le champ :attribute est obligatoire.',
+    'string' =&gt; 'Le champ :attribute doit être une chaîne de caractères.',
+    'unique' =&gt; 'La valeur du champ :attribute est déjà utilisée.',
+
+    'attributes' =&gt; [
+        'body' =&gt; 'contenu',
+        'category_id' =&gt; 'catégorie',
+        'email' =&gt; 'adresse e-mail',
+        'excerpt' =&gt; 'extrait',
+        'is_published' =&gt; 'publication',
+        'name' =&gt; 'nom',
+        'password' =&gt; 'mot de passe',
+        'per_page' =&gt; 'nombre par page',
+        'slug' =&gt; 'slug',
+        'tags' =&gt; 'tags',
+        'tags.*' =&gt; 'tag',
+        'title' =&gt; 'titre',
+    ],
+];</code></pre>
+</div>
+  </div>
+</details>
+<div class="mt-6"></div>
+<figure class="my-4">
+<div class="overflow-x-auto ">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Adresse</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Qui répond</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Statut</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Corps (APP_DEBUG=false)</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api/posts/3</code> (publié)</th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">show()</code></td><td class="px-3 py-2 align-top">200</td><td class="px-3 py-2 align-top">un objet <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">data</code> avec l'article complet</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api/posts/999</code></th><td class="px-3 py-2 align-top">liaison du modèle, avant le contrôleur</td><td class="px-3 py-2 align-top">404</td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">{"message": "No query results for model [App\\Models\\Post] 999"}</code></td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api/posts/12</code> (brouillon)</th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">Gate::authorize('view')</code> dans <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">show()</code></td><td class="px-3 py-2 align-top">403</td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">{"message": "This action is unauthorized."}</code></td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api/posts?per_page=500</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">IndexPostRequest</code>, avant le contrôleur</td><td class="px-3 py-2 align-top">422</td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">{"message": "Le champ nombre par page ne doit pas dépasser 50.", "errors": {"per_page": ["Le champ nombre par page ne doit pas dépasser 50."]}}</code></td></tr>
+    </tbody>
+  </table>
+</div>
+<figcaption class="mt-2 text-sm text-gray-600">Figure 13.4 - Chaque couche répond avec son propre code ; en local (APP_DEBUG=true), les corps 404 et 403 ajoutent aussi exception, file, line et trace. Les numéros d'articles sont un exemple.</figcaption>
+</figure>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --path=api</code> : 3 routes (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/posts</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/posts/{post}</code> nommée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.posts.show</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/user</code>).</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>1 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">{"data": {</code> suivi de l'article, avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>2 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">message</code> vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">No query results for model [App\Models\Post] 999</code>, suivi de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">exception</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">file</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">line</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">trace</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>3 et 4 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">message</code> vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">This action is unauthorized.</code>, y compris dans la fenêtre administrateur.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>5 : 2 articles, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta.per_page</code> vaut 2, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=2&amp;page=2</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>6 : statut 422, message en français.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>7 : « Le champ nombre par page doit être un nombre entier. »</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q12" data-answer="c">
+  <p class="font-medium text-gray-900 mb-3">Un visiteur ouvre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/999</code> (aucun article 999), puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/12</code> (un brouillon). Quels statuts reçoit-il ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 12">
+    <button type="button" class="quiz-option" data-option="a">403 puis 404</button>
+    <button type="button" class="quiz-option" data-option="b">404 dans les deux cas</button>
+    <button type="button" class="quiz-option" data-option="c">404 puis 403</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>La liaison du modèle cherche l'article avant le contrôleur : 999 donne 404. L'article 12 existe, donc <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show()</code> s'exécute et la Policy refuse le brouillon : 403 (Figure 13.4).</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q13" data-answer="b">
+  <p class="font-medium text-gray-900 mb-3">Dans la fenêtre privée, connecté en administrateur, vous ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/12</code> (un brouillon). Résultat ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 13">
+    <button type="button" class="quiz-option" data-option="a">L'article en JSON : un administrateur voit les brouillons</button>
+    <button type="button" class="quiz-option" data-option="b">403 : l'API ne lit pas le cookie de session du site</button>
+    <button type="button" class="quiz-option" data-option="c">Une redirection vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/connexion</code>, puis l'article</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le groupe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api</code> n'a pas de session : Laravel ne sait pas qui vous êtes et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPolicy::view</code> reçoit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>. Un client de l'API s'identifiera avec un jeton en session 15.</p>
+</div>
+<div class="quiz-question mb-6" id="quiz-s13-q14" data-answer="a">
+  <p class="font-medium text-gray-900 mb-3">Sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">-&gt;withQueryString()</code>, vous ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts?per_page=2</code>. Que vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code> ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 14">
+    <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts?page=2</code>, et la page 2 revient à 5 articles</button>
+    <button type="button" class="quiz-option" data-option="b"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">/api/posts?per_page=2&amp;page=2</code>, comme demandé</button>
+    <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>, car <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code> désactive la pagination</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withQueryString()</code>, les liens ne contiennent que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">page</code> ; le client qui les suit perd son <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page</code>.</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> 404, 403 et 422 viennent de trois couches différentes : la liaison du modèle, la Policy, la Form Request. Le client lit le code pour savoir quoi faire. En production, <code class="bg-white px-1 py-0.5 rounded text-xs">APP_DEBUG=false</code> : seul <code class="bg-white px-1 py-0.5 rounded text-xs">message</code> reste, et aucune trace ne fuit.</p>
+</div>
+<div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Le champ per page ne doit pas dépasser 50.</code> : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">per_page</code> manque dans <code class="bg-white px-1 py-0.5 rounded text-xs">attributes</code> (Laravel remplace alors le tiret bas par une espace). Un brouillon renvoie 200 : <code class="bg-white px-1 py-0.5 rounded text-xs">Gate::authorize</code> manque en tête de <code class="bg-white px-1 py-0.5 rounded text-xs">show()</code>. <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Target class [App\Http\Requests\Api\IndexPostRequest] does not exist.</code> : le <code class="bg-white px-1 py-0.5 rounded text-xs break-all">namespace App\Http\Requests\Api</code> est faux.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 9 -->
+        <section id="step-9" class="step-panel" data-title="Étape 6 - Postman et curl.exe (15 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Appeler l'API comme le ferait un autre programme, en précisant le format attendu avec l'en-tête <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code>.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Installer Postman</h4>
+<p class="text-gray-700 mb-3">Lancez le fichier téléchargé (Prérequis). Au premier démarrage, choisissez le lien qui permet de continuer sans compte (lightweight API Client).<!-- A VERIFIER : libellé exact du lien et droits d'administration de l'installeur --></p>
+<p class="text-gray-700 mb-3">Seulement si Postman ne s'installe pas : faites les parties B et C avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code> (partie D) et le navigateur, et capturez le navigateur au Livrable.</p>
+<h4 class="font-medium mt-4 mb-2">B. Liste</h4>
+<ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+  <li>Nouvelle requête (bouton +), méthode GET, adresse <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/posts?per_page=2</code>.</li>
+  <li>Onglet Headers : clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code>, valeur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">application/json</code>.</li>
+  <li>Send. Dans la réponse, choisissez l'affichage Pretty du Body.</li>
+</ol>
+<h4 class="font-medium mt-4 mb-2">C. Erreur 422</h4>
+<p class="text-gray-700 mb-3">Même requête avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=500</code>, puis Send.</p>
+<h4 class="font-medium mt-4 mb-2">D. curl.exe, dans le Terminal 2</h4>
+<p class="text-gray-700 mb-3">Dans PowerShell, tapez toujours <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl</code> seul y lance une autre commande, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Invoke-WebRequest</code>.</p>
+<p class="text-gray-700 mb-2">D1. La liste :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande curl.exe de la liste">Copier</button>
+  <pre><code class="language-bash">curl.exe -s -H "Accept: application/json" "http://localhost:8000/api/posts?per_page=2"</code></pre>
+</div>
+<p class="text-gray-700 mb-2">D2. L'erreur 422 :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande curl.exe de l&#x27;erreur 422">Copier</button>
+  <pre><code class="language-bash">curl.exe -s -H "Accept: application/json" "http://localhost:8000/api/posts?per_page=500"</code></pre>
+</div>
+<p class="text-gray-700 mb-2">D3. Les en-têtes d'une erreur 404 du site, sans puis avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code> :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes curl.exe des en-têtes 404">Copier</button>
+  <pre><code class="language-bash">curl.exe -I http://localhost:8000/posts/999
+curl.exe -I -H "Accept: application/json" http://localhost:8000/posts/999</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-gray-700">Aucun fichier à écrire : cette étape appelle l'API déjà écrite.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Postman, partie B : statut 200, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code> avec 2 articles, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=2</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Postman, partie C : statut 422, message en français, accents lisibles.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>D1 et D2 : du JSON sur une seule ligne ; les accents apparaissent sous la forme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">\u00e9</code> et les barres obliques sous la forme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">\/</code> : c'est l'encodage JSON par défaut de Laravel, que Postman et le navigateur décodent.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>D3 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HTTP/1.1 404 Not Found</code> les deux fois ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">Content-Type: text/html; charset=UTF-8</code> sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">application/json</code> avec.</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-question text-brand" aria-hidden="true"></i>
+    Quiz éclair
+  </h3>
+<div class="quiz-question mb-6" id="quiz-s13-q15" data-answer="c">
+  <p class="font-medium text-gray-900 mb-3"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">curl.exe -I http://localhost:8000/posts/999</code>, sans en-tête <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code>. Quel <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Content-Type</code> reçoit-on ?</p>
+  <div class="space-y-2" role="group" aria-label="Réponses à la question 15">
+    <button type="button" class="quiz-option" data-option="a"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">application/json</code>, comme pour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/999</code></button>
+    <button type="button" class="quiz-option" data-option="b">Aucun : une réponse 404 n'a pas de corps</button>
+    <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">text/html</code> : la page « Article introuvable » (session 09)</button>
+  </div>
+  <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> est une route du site et le client n'a pas demandé de JSON : la fonction <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">render</code> de la session 09 renvoie sa vue. Avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept: application/json</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">expectsJson()</code> est vrai et la même erreur part en JSON.</p>
+</div>
+<p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> L'en-tête <code class="bg-white px-1 py-0.5 rounded text-xs">Accept</code> dit ce que le client veut recevoir. Sous <code class="bg-white px-1 py-0.5 rounded text-xs">/api/</code>, Mini-CMS répond toujours en JSON ; ailleurs, c'est l'en-tête qui décide entre la page HTML et le JSON.</p>
+</div>
+<div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Une erreur qui cite <code class="bg-white px-1 py-0.5 rounded text-xs">Invoke-WebRequest</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">curl</code> a été tapé sans <code class="bg-white px-1 py-0.5 rounded text-xs">.exe</code> dans PowerShell. <code class="bg-white px-1 py-0.5 rounded text-xs break-all">curl: (7) Failed to connect to localhost port 8000</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">composer run dev</code> est arrêté dans le Terminal 1.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 10 -->
+        <section id="step-10" class="step-panel" data-title="Défi (30 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 30 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed mb-4">Enrichir seul la Resource des articles, puis répondre par écrit à deux questions.</p>
+<div class="overflow-x-auto mb-4">
+  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
+    <thead class="bg-gray-50">
+      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Niveau</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Durée conseillée</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Contenu</th></tr>
+    </thead>
+    <tbody>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">1</th><td class="px-3 py-2 align-top">10 min</td><td class="px-3 py-2 align-top">Les tags de chaque article</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">2</th><td class="px-3 py-2 align-top">10 min</td><td class="px-3 py-2 align-top">Le contenu sur la page d'un article</td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Notes</th><td class="px-3 py-2 align-top">10 min</td><td class="px-3 py-2 align-top">Deux questions écrites</td></tr>
+    </tbody>
+  </table>
+</div>
+<p class="text-gray-700">Le défi est facultatif. Faites les niveaux dans l'ordre ; ouvrez un indice seulement après avoir essayé : chacun en dit un peu plus que le précédent.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-tags text-brand" aria-hidden="true"></i>
+    Niveau 1 - Les tags de chaque article
+  </h3>
+<p class="text-gray-700 mb-2">Exigences :</p>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li>Une clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tags</code> (la liste des noms des tags) dans chaque article de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> et dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/{post}</code>.</li>
+  <li>Aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code>.</li>
+  <li>La clé disparaît si les tags ne sont pas chargés.</li>
+</ul>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Indice 1</summary>
+  <div class="mt-2">
+<p class="text-gray-700 mb-2">Même mécanisme que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> (Étape 4).</p>
+  </div>
+</details>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Indice 2</summary>
+  <div class="mt-2">
+<p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">pluck()</code> sur une collection (sessions 07 et 08) donne une liste de valeurs ; chargez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tags</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index()</code> et dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show()</code>, avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with()</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">load()</code> (session 07).</p>
+  </div>
+</details>
+<p class="text-gray-700 mt-4">Vérification observable : un article du jeu de données affiche deux noms dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tags</code>.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-file-lines text-brand" aria-hidden="true"></i>
+    Niveau 2 - Le contenu sur la page d'un article
+  </h3>
+<p class="text-gray-700 mb-2">Exigences :</p>
+<ul class="list-disc list-inside text-gray-700 space-y-1 mb-4">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code> présent dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/{post}</code>, absent de chaque article de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code>.</li>
+</ul>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Indice 1</summary>
+  <div class="mt-2">
+<p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">JsonResource</code> propose <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">when(condition, valeur)</code> : la clé est retirée quand la condition est fausse (documentation Laravel, page Eloquent: API Resources, partie Conditional Attributes).</p>
+  </div>
+</details>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Indice 2</summary>
+  <div class="mt-2">
+<p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">toArray()</code> reçoit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">$request</code> ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">routeIs()</code> (session 04) avec le nom de la route <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> de l'API (Étape 5).</p>
+  </div>
+</details>
+<p class="text-gray-700 mt-4">Vérification observable : Ctrl+F <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code> dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> ne trouve rien ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/3</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code>.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-pen-to-square text-brand" aria-hidden="true"></i>
+    Notes - Deux questions écrites
+  </h3>
+<p class="text-gray-700 mb-3">Auto-vérification écrite : créez le fichier de notes et ouvrez-le dans VS Code.</p>
+<p class="text-sm text-gray-600 mb-2">Bash (Git Bash) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande Bash de création des notes du défi">Copier</button>
+  <pre><code class="language-bash">mkdir -p notes
+code notes/s13-defi.md</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">PowerShell :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande PowerShell de création des notes du défi">Copier</button>
+  <pre><code class="language-powershell">New-Item -ItemType Directory -Force notes
+code notes\s13-defi.md</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">notes/s13-defi.md</code> (contenu complet) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier le contenu des notes du défi">Copier</button>
+  <pre><code class="language-markup"># Session 13 - Défi
+
+/api/posts/3 affiche tags avec des noms : oui / non
+/api/posts ne contient aucun body, /api/posts/3 en contient un : oui / non
+Aucune LazyLoadingViolationException : oui / non
+
+Pourquoi ne pas envoyer body dans la liste, et qui en profite ?
+Un brouillon renvoie 403. Quel avantage aurait un 404 pour un brouillon ?</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Répondez à chaque question dans le fichier et enregistrez-le, puis seulement ensuite ouvrez les éléments de réponse.</p>
+<details>
+  <summary class="cursor-pointer text-sm text-brand font-medium">Voir des éléments de réponse</summary>
+  <div class="mt-2">
+<p class="text-gray-700 mb-3">1. La liste reste légère : moins d'octets à transmettre, une réponse plus rapide sur un téléphone. Le client ne charge le contenu complet que lorsque la personne ouvre un article.</p>
+<p class="text-gray-700">2. Un 404 ne révèle pas qu'un brouillon existe avec ce numéro, alors que 403 confirme son existence. Le site fait le même choix que l'API (403, session 12) : une seule règle, dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPolicy</code>, sert aux deux portes.</p>
+  </div>
+</details>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Résultat et vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Niveau 1 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/3</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tags</code> avec des noms ; aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Niveau 2 : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> ne contient aucun <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts/3</code> en contient un.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vos notes sont rédigées et comparées aux éléments de réponse.</span></li>
+</ul>
+<p class="text-gray-700 mb-3 mt-4">Quand tout est vérifié, enregistrez le défi dans Git :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier les commandes de commit du défi">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Defi : tags et contenu dans l'API"</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Une même Resource sert la liste et la page d'un article : les attributs conditionnels adaptent la réponse sans dupliquer la classe. La relation se charge toujours dans le contrôleur, jamais dans la Resource.</p>
+</div>
+</div>
+
+        </section>
+
+        <!-- Step 11 -->
+        <section id="step-11" class="step-panel" data-title="Grille d&#x27;auto-évaluation">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-clipboard-check text-brand" aria-hidden="true"></i>
+    Grille d'auto-évaluation
+  </h3>
+<div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+  <p class="text-gray-700">Score des quiz : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
+  <button type="button" data-quiz-reset class="px-3 py-2 rounded-md border border-gray-300 text-gray-600 hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed text-sm flex items-center gap-2">
+    <i class="fa-solid fa-rotate-left" aria-hidden="true"></i>
+    <span>Recommencer les quiz</span>
+  </button>
+</div>
+<p class="text-sm text-gray-600 mb-3">Cochez chaque point avant le livrable. Les captures, le README, le tag et le push sont vérifiés dans la partie suivante.</p>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">composer.json</code> contient <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/sanctum</code> ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">migrate:status</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">create_personal_access_tokens_table</code> avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Ran</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:list --path=api</code> affiche 3 routes, dont <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.posts.index</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api.posts.show</code> ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:cache</code> puis <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">route:clear</code> réussissent.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code> (articles publiés seulement), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta</code> ; aucune clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">email</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">role</code> ni <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">user_id</code> ; <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published_at</code> se termine par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">+00:00</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque article a <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code> ; aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>999 donne 404, un brouillon 403 (même en administrateur), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=500</code> donne 422 en français, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=2</code> se retrouve dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe -I</code> sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">text/html</code> sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">application/json</code> avec.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La commande ci-dessous n'affiche rien : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HasApiTokens</code> attend la session 15.</span></li>
+</ul>
+<div class="mt-6"></div>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de recherche de la grille">Copier</button>
+  <pre><code class="language-bash">git grep -n HasApiTokens -- app</code></pre>
+</div>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">php artisan test</code> est entièrement vert.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Seulement si vous avez fait le défi : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tags</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">body</code> comme demandé.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>J'ai répondu aux 15 questions des quiz éclair.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">git log --oneline lab-06b..HEAD</code> affiche au moins cinq commits.</span></li>
+</ul>
+</div>
+
+        </section>
+
+        <!-- Step 12 -->
+        <section id="step-12" class="step-panel" data-title="Livrable : tag lab-07 (15 min)">
+<div class="md-card p-6">
+  <h3 class="text-xl font-medium mb-2 flex items-center gap-2">
+    <i class="fa-solid fa-flag text-brand" aria-hidden="true"></i>
+    Objectif
+    <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> 15 min</span>
+  </h3>
+<p class="text-gray-700 leading-relaxed">Capturer deux réponses de l'API dans Postman, mettre à jour le README, puis poser et publier le tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-07</code>.</p>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-terminal text-brand" aria-hidden="true"></i>
+    Commandes
+  </h3>
+<h4 class="font-medium mb-2">A. Captures et README</h4>
+<ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
+  <li>Capturez chaque fenêtre ci-dessous avec Win+Shift+S, comme en session 01.</li>
+  <li>Enregistrez les captures dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">C:\dev\prenom-nom\mini-cms\screenshots\</code>, tout en minuscules : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s13-postman-liste.png</code> (Postman, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">GET http://localhost:8000/api/posts?per_page=2</code>, avec le corps qui montre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta</code>) et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s13-postman-422.png</code> (Postman, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=500</code>, avec le statut 422 et le message).</li>
+  <li>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>, remplacez la section « État actuel » par le premier bloc de la carte « Code complet », ajoutez les lignes du deuxième bloc à la fin du tableau « Routes disponibles », ajoutez le troisième bloc à la fin de la section des captures, puis enregistrez.</li>
+</ol>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-6">
+  <button class="copy-btn" aria-label="Copier la commande d&#x27;ouverture du README">Copier</button>
+  <pre><code class="language-bash">code README.md</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">B. Commit et tag, dans le Terminal 2</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-6">
+  <button class="copy-btn" aria-label="Copier les commandes de commit et de tag du livrable">Copier</button>
+  <pre><code class="language-bash">git add -A
+git commit -m "Mettre a jour le README pour lab-07"
+git tag lab-07
+git log --oneline --decorate -3</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">C. Publier</h4>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la commande de push du livrable">Copier</button>
+  <pre><code class="language-bash">git push origin main --tags</code></pre>
+</div>
+<p class="text-gray-700 mb-3">Puis contrôlez les tags publiés :</p>
+<p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
+<div class="code-block-wrapper mb-6">
+  <button class="copy-btn" aria-label="Copier la commande de contrôle des tags publiés">Copier</button>
+  <pre><code class="language-bash">git ls-remote --tags origin</code></pre>
+</div>
+<h4 class="font-medium mt-4 mb-2">D. Seulement si vous avez travaillé sur un poste de l'université : nettoyer le poste</h4>
+            <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-blue-900">Sur votre ordinateur personnel, ne supprimez rien : Git Credential Manager garde votre identifiant et vos prochains push se feront sans reconnexion.</p>
+            </div>
+            <div class="border-l-4 border-red-600 bg-red-50 p-4 rounded flex gap-3 mb-4">
+              <i class="fa-solid fa-triangle-exclamation text-red-600 mt-0.5" aria-hidden="true"></i>
+              <p class="text-sm text-red-900">Poste de l'université : faites cette partie avant de quitter la salle, même si vous n'avez pas terminé le reste de la séance. Sans elle, la personne suivante sur ce poste peut pousser en votre nom et accéder à votre compte GitHub.</p>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, Bash (Git Bash) :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes Bash de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-bash">MSYS_NO_PATHCONV=1 cmdkey /delete:git:https://github.com
+MSYS_NO_PATHCONV=1 cmdkey /list | grep -i github</code></pre>
+            </div>
+            <p class="text-sm text-gray-600 mb-2">Seulement si vous avez travaillé sur un poste de l'université, PowerShell :</p>
+            <div class="code-block-wrapper mb-4">
+              <button class="copy-btn" aria-label="Copier les commandes PowerShell de suppression et de contrôle de l&#x27;identifiant GitHub">Copier</button>
+              <pre><code class="language-powershell">cmdkey /delete:git:https://github.com
+cmdkey /list | Select-String github</code></pre>
+            </div>
+            <p class="text-gray-700 mb-3">Alternative à la première commande : Panneau de configuration, Gestionnaire d'identification, Informations d'identification Windows, entrée <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">git:https://github.com</code>, Supprimer.</p>
+            <p class="text-gray-700 mb-2">Toujours sur un poste de l'université :</p>
+            <ol class="list-decimal list-inside text-gray-700 space-y-1">
+              <li>Sur github.com, avatar en haut à droite, Sign out, puis confirmez.</li>
+              <li>Faites de même dans chaque navigateur ouvert par Git Credential Manager.</li>
+              <li>Si vous avez accepté d'enregistrer votre mot de passe dans le navigateur, supprimez-le dans ses paramètres.</li>
+              <li>Fermez toutes les fenêtres du navigateur, y compris la fenêtre de navigation privée de cette séance.</li>
+            </ol>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-code text-brand" aria-hidden="true"></i>
+    Code complet
+  </h3>
+<p class="text-sm text-gray-600 mb-2">Premier bloc : section « État actuel » de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">README.md</code>.</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier la section État actuel">Copier</button>
+  <pre><code class="language-markup">## État actuel (tag lab-07)
+
+- API JSON en lecture seule, installée avec `php artisan install:api` (Sanctum installé ; les jetons arrivent en session 15).
+- `GET /api/posts` : articles publiés, paginés (`?per_page=` de 1 à 50, 5 par défaut), avec auteur et catégorie.
+- `GET /api/posts/{post}` : un article publié ; un brouillon renvoie 403 et un numéro inconnu 404, en JSON.
+- Réponses mises en forme par `PostResource` et `CategoryResource` : ni e-mail ni rôle des auteurs, dates ISO 8601.
+- Testée avec Postman et `curl.exe -H "Accept: application/json"`.</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">Deuxième bloc : lignes à ajouter à la fin du tableau « Routes disponibles ».</p>
+<div class="code-block-wrapper mb-4">
+  <button class="copy-btn" aria-label="Copier les lignes des routes de l&#x27;API">Copier</button>
+  <pre><code class="language-markup">| GET | `/api/posts` | `api.posts.index` | `Api\PostController@index` |
+| GET | `/api/posts/{post}` | `api.posts.show` | `Api\PostController@show` |</code></pre>
+</div>
+<p class="text-sm text-gray-600 mb-2">Troisième bloc : à ajouter à la fin de la section des captures.</p>
+<div class="code-block-wrapper ">
+  <button class="copy-btn" aria-label="Copier la section des captures de la session 13">Copier</button>
+  <pre><code class="language-markup">### Session 13
+
+![Postman : réponse JSON de GET /api/posts?per_page=2, avec data, links et meta](screenshots/s13-postman-liste.png)
+
+![Postman : réponse 422 de GET /api/posts?per_page=500, avec le message en français](screenshots/s13-postman-422.png)</code></pre>
+</div>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-circle-check text-brand" aria-hidden="true"></i>
+    Résultat attendu
+  </h3>
+<ul class="list-disc list-inside text-gray-700 space-y-1">
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">git log --oneline --decorate -3</code> montre le commit « Mettre a jour le README pour lab-07 » avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">tag: lab-07</code>.</li>
+  <li>Le push affiche une ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">[new tag]</code> pour <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-07</code>.</li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-list-check text-brand" aria-hidden="true"></i>
+    Vérification
+  </h3>
+<ul class="space-y-2 text-gray-700">
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Sur GitHub, la page Tags du dépôt liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-07</code>, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">git ls-remote --tags origin</code> liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-07</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les captures <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s13-postman-liste.png</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">s13-postman-422.png</code> s'affichent dans le README sur GitHub.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">git log --oneline lab-06b..lab-07</code> affiche au moins six commits (sept avec le défi).</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : l'identifiant GitHub est supprimé et le navigateur est déconnecté de github.com.</span></li>
+</ul>
+</div>
+<div class="md-card p-6 mt-6">
+  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
+    <i class="fa-solid fa-lightbulb text-brand" aria-hidden="true"></i>
+    À retenir
+  </h3>
+<div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 ">
+  <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-07</code> ouvre la semaine 7 : les données du site sont lisibles par n'importe quel programme. La session 14 ajoute les catégories et les tags à l'API, des filtres, des tests Pest de l'API et une collection Postman.</p>
+</div>
+</div>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- Prism core + autoloader (pinned 1.29.0) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+<script>
+  Prism.plugins.autoloader.languages_path = 'https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/';
+</script>
+
+<!-- Navigation JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var panels = Array.prototype.slice.call(document.querySelectorAll('.step-panel'));
+  var stepIds = panels.map(function (p) { return p.id; });
+  var sidebarLinks = Array.prototype.slice.call(document.querySelectorAll('.step-link'));
+  var titleEl = document.getElementById('current-step-title');
+  var prevBtn = document.getElementById('prev-step');
+  var nextBtn = document.getElementById('next-step');
+  var progressBar = document.getElementById('progress-bar');
+  var gateMsg = document.getElementById('quiz-gate-msg');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebar-overlay');
+  var sidebarToggle = document.getElementById('sidebar-toggle');
+
+  var storageKey = 'codelab-progress:' + window.location.pathname;
+
+  function loadCompleted() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCompleted(list) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(list));
+    } catch (e) {
+      /* localStorage unavailable: navigation still works without persistence */
+    }
+  }
+
+  var completed = loadCompleted();
+
+  function indexOfStep(id) {
+    var idx = stepIds.indexOf(id);
+    return idx === -1 ? 0 : idx;
+  }
+
+  function markCompleted(idx) {
+    var id = stepIds[idx];
+    if (completed.indexOf(id) === -1) {
+      completed.push(id);
+      saveCompleted(completed);
+    }
+  }
+
+  // Quiz gate: a question is finished once the quiz script has marked its
+  // correct option with .is-correct (first try or after retries).
+  function isPanelQuizDone(panel) {
+    var questions = panel.querySelectorAll('.quiz-question');
+    for (var i = 0; i < questions.length; i++) {
+      var answer = questions[i].getAttribute('data-answer');
+      var correct = questions[i].querySelector('.quiz-option[data-option="' + answer + '"]');
+      if (!correct || !correct.classList.contains('is-correct')) return false;
+    }
+    return true;
+  }
+
+  // Furthest step the student may open: the first step whose Quiz eclair is
+  // not finished. Every later step stays locked.
+  function maxReachableIndex() {
+    for (var i = 0; i < panels.length; i++) {
+      if (!isPanelQuizDone(panels[i])) return i;
+    }
+    return panels.length - 1;
+  }
+
+  function updateSidebarState(activeId, maxIdx) {
+    sidebarLinks.forEach(function (link) {
+      var id = link.getAttribute('data-step');
+      var locked = indexOfStep(id) > maxIdx;
+      link.classList.toggle('is-active', id === activeId);
+      link.classList.toggle('is-locked', locked);
+      link.classList.toggle('is-completed', !locked && completed.indexOf(id) !== -1 && id !== activeId);
+      if (locked) {
+        link.setAttribute('aria-disabled', 'true');
+      } else {
+        link.removeAttribute('aria-disabled');
+      }
+    });
+  }
+
+  function updateGate(idx) {
+    var maxIdx = maxReachableIndex();
+    if (prevBtn) prevBtn.disabled = idx === 0;
+    if (nextBtn) nextBtn.disabled = idx >= maxIdx;
+    if (gateMsg) gateMsg.hidden = !(idx === maxIdx && idx < panels.length - 1);
+    updateSidebarState(stepIds[idx], maxIdx);
+  }
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('is-open');
+    if (sidebarOverlay) sidebarOverlay.classList.remove('is-open');
+  }
+
+  function showStep(idx, options) {
+    options = options || {};
+    if (idx < 0) idx = 0;
+    if (idx > panels.length - 1) idx = panels.length - 1;
+
+    var maxIdx = maxReachableIndex();
+    var clamped = idx > maxIdx;
+    if (clamped) idx = maxIdx;
+
+    var id = stepIds[idx];
+
+    panels.forEach(function (panel, i) {
+      panel.classList.toggle('is-active', i === idx);
+    });
+
+    if (titleEl) {
+      titleEl.textContent = panels[idx].getAttribute('data-title') || panels[idx].id;
+    }
+
+    if (progressBar) {
+      var pct = ((idx + 1) / panels.length) * 100;
+      progressBar.style.width = pct + '%';
+    }
+
+    if (idx > 0) {
+      for (var i = 0; i < idx; i++) {
+        markCompleted(i);
+      }
+    }
+
+    updateGate(idx);
+
+    if (!options.skipHash || clamped) {
+      if (history.replaceState) {
+        history.replaceState(null, '', '#' + id);
+      } else {
+        window.location.hash = id;
+      }
+    }
+
+    document.getElementById('content').scrollTop = 0;
+    closeMobileSidebar();
+  }
+
+  function currentIndex() {
+    var hash = window.location.hash.replace('#', '');
+    return indexOfStep(hash);
+  }
+
+  // Sidebar links: native anchor navigation updates location.hash, which
+  // fires 'hashchange'; we just react to that in one place.
+  window.addEventListener('hashchange', function () {
+    showStep(currentIndex(), { skipHash: true });
+  });
+
+  // A locked step cannot be opened from the sidebar: go to the step whose
+  // quiz must be finished first.
+  sidebarLinks.forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      if (link.classList.contains('is-locked')) {
+        e.preventDefault();
+        showStep(maxReachableIndex());
+      }
+    });
+  });
+
+  // The quiz script handles the click on the option first; the click then
+  // bubbles here and the lock is recomputed.
+  document.addEventListener('click', function (e) {
+    var option = e.target && e.target.closest ? e.target.closest('.quiz-option') : null;
+    if (option) updateGate(currentIndex());
+  });
+
+  if (prevBtn) {
+    prevBtn.addEventListener('click', function () {
+      showStep(currentIndex() - 1);
+    });
+  }
+
+  if (nextBtn) {
+    nextBtn.addEventListener('click', function () {
+      showStep(currentIndex() + 1);
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    var tag = (e.target && e.target.tagName) || '';
+    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
+
+    if (e.key === 'ArrowLeft') {
+      showStep(currentIndex() - 1);
+    } else if (e.key === 'ArrowRight') {
+      showStep(currentIndex() + 1);
+    }
+  });
+
+  if (sidebarToggle) {
+    sidebarToggle.addEventListener('click', function () {
+      sidebar.classList.add('is-open');
+      sidebarOverlay.classList.add('is-open');
+    });
+  }
+  if (sidebarOverlay) {
+    sidebarOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Copy-to-clipboard for every code block.
+  Array.prototype.slice.call(document.querySelectorAll('.copy-btn')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var wrapper = btn.closest('.code-block-wrapper');
+      var codeEl = wrapper ? wrapper.querySelector('code') : null;
+      if (!codeEl) return;
+
+      var text = codeEl.textContent;
+      var done = function () {
+        var original = btn.textContent;
+        btn.textContent = 'Copie';
+        btn.classList.add('copied');
+        setTimeout(function () {
+          btn.textContent = original;
+          btn.classList.remove('copied');
+        }, 2000);
+      };
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () {
+          fallbackCopy(text);
+          done();
+        });
+      } else {
+        fallbackCopy(text);
+        done();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try { document.execCommand('copy'); } catch (e) { /* ignore */ }
+    document.body.removeChild(ta);
+  }
+
+  function init() {
+    showStep(currentIndex(), { skipHash: true });
+    if (window.location.hash) {
+      // Normalize the hash (e.g. redirect #foo -> #step-1 if invalid).
+      history.replaceState(null, '', '#' + stepIds[currentIndex()]);
+    }
+
+    if (window.Prism) {
+      Prism.highlightAll();
+    }
+  }
+
+  // The quiz script below restores saved answers while the page is parsed:
+  // the first render waits for it so the lock reflects those answers.
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+})();
+</script>
+
+<!-- Quiz JavaScript - do not modify when authoring a session -->
+<script>
+(function () {
+  'use strict';
+
+  var questions = Array.prototype.slice.call(document.querySelectorAll('.quiz-question'));
+  if (!questions.length) return;
+
+  var storageKey = 'codelab-quiz:' + window.location.pathname;
+
+  function loadState() {
+    try {
+      var raw = window.localStorage.getItem(storageKey);
+      return raw ? JSON.parse(raw) : {};
+    } catch (e) {
+      return {};
+    }
+  }
+
+  function saveState(state) {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(state));
+    } catch (e) {
+      /* localStorage unavailable: the quiz still works without persistence */
+    }
+  }
+
+  var state = loadState();
+
+  function updateScores() {
+    var firstTry = 0;
+    questions.forEach(function (question) {
+      var entry = state[question.id];
+      if (entry && entry.done && entry.tries === 1) firstTry++;
+    });
+    Array.prototype.slice.call(document.querySelectorAll('[data-quiz-score]')).forEach(function (el) {
+      el.textContent = firstTry + ' / ' + questions.length;
+    });
+  }
+
+  questions.forEach(function (question) {
+    var options = Array.prototype.slice.call(question.querySelectorAll('.quiz-option'));
+    var feedback = question.querySelector('.quiz-feedback');
+    var explain = question.querySelector('.quiz-explain');
+    var answer = question.getAttribute('data-answer');
+
+    function showFeedback(text) {
+      if (!feedback) return;
+      feedback.textContent = text;
+      feedback.hidden = false;
+    }
+
+    function finish() {
+      options.forEach(function (option) {
+        option.disabled = true;
+        if (option.getAttribute('data-option') === answer) {
+          option.classList.add('is-correct');
+        }
+      });
+      if (explain) explain.hidden = false;
+    }
+
+    if (state[question.id] && state[question.id].done) {
+      finish();
+      showFeedback('Bonne réponse.');
+    }
+
+    options.forEach(function (option) {
+      option.addEventListener('click', function () {
+        var entry = state[question.id] || { tries: 0, done: false };
+        if (entry.done) return;
+
+        entry.tries += 1;
+
+        if (option.getAttribute('data-option') === answer) {
+          entry.done = true;
+          showFeedback(entry.tries === 1 ? 'Bonne réponse du premier coup.' : 'Bonne réponse.');
+          finish();
+        } else {
+          option.classList.add('is-wrong');
+          option.disabled = true;
+          showFeedback('Pas encore. Relisez la question et réessayez.');
+        }
+
+        state[question.id] = entry;
+        saveState(state);
+        updateScores();
+      });
+    });
+  });
+
+  Array.prototype.slice.call(document.querySelectorAll('[data-quiz-reset]')).forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      state = {};
+      saveState(state);
+      window.location.reload();
+    });
+  });
+
+  updateScores();
+})();
+</script>
+
+</body>
+</html>
