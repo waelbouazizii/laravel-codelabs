@@ -211,10 +211,10 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Week: W7 — Type: A — Tag: `lab-07`
 - Learning outcomes:
   1. Run `php artisan install:api` and explain what it adds (`routes/api.php`, Sanctum, `/api` prefix).
-  2. Expose read-only endpoints with `Route::apiResource(...)->only(['index', 'show'])` and an `Api\PostController`.
+  2. Expose read-only endpoints with `Route::apiResource(...)->only(['index', 'show'])` and an `Api\PostController`, under unique `api.` route names (`Route::name('api.')`).
   3. Shape responses with `PostResource` / `CategoryResource`, `whenLoaded`, ISO 8601 dates and paginated collections.
   4. Call the API with Postman and `curl.exe` (not the PowerShell `curl` alias) with `Accept: application/json`, and read 404/422 JSON errors.
-- Key commands: `php artisan install:api`, `php artisan make:controller Api/PostController --api --model=Post`, `php artisan make:resource PostResource`, `php artisan make:resource CategoryResource`, `php artisan route:list --path=api`.
+- Key commands: `php artisan install:api`, `php artisan make:controller Api/PostController --api --model=Post`, `php artisan make:resource PostResource`, `php artisan make:resource CategoryResource`, `php artisan route:list --path=api`, `php artisan make:request Api/IndexPostRequest`, `php artisan route:cache`, `php artisan route:clear`, `curl.exe -I`.
 - Reuses: S07-S08 models and eager loading, S09 exception handling.
 - Note: write endpoints and tokens are not taught here (S15).
 
@@ -273,7 +273,7 @@ A session must not use a concept listed here with a later session number.
 | Validation messages, `assertSessionHasErrors` | S10 |
 | Manual auth, `auth`/`guest` middleware, Gates, Policies | S11 |
 | `admin` middleware alias, Livewire starter kit (comparison only) | S12 |
-| `install:api`, `apiResource`, API Resources, Postman, `curl.exe` | S13 |
+| `install:api`, `apiResource`, API Resources, Postman, `curl.exe`, `withQueryString()`, `route:cache` / `route:clear`, `when()` in a resource (Défi only) | S13 |
 | API filters, JSON assertions | S14 |
 | Sanctum tokens, `auth:sanctum` | S15 |
 
@@ -282,7 +282,8 @@ A session must not use a concept listed here with a later session number.
 - Whether `laravel new` initializes a Git repository and makes a first commit automatically (affects S01 deliverable).
 - `laravel new` prompts after the frontend-stack question (testing framework, database, Laravel Boost, npm). The first two prompts were verified on 30 Sep 2026.
 - `make:test` output format with Pest installed.
-- `install:api` prompts (migrations for `personal_access_tokens`).
+- `install:api` on the lab network: download time of `composer require --with-all-dependencies` (one migration prompt, verified in framework 13.43 source).
+- Postman lightweight API Client: exact label of the link to continue without an account, and whether the installer needs admin rights.
 - Livewire starter kit install flow and internet bandwidth for `npm install` in S12.
 - Node.js LTS present on every lab PC (S01 blocker if missing).
 - VS Code and its `code` command available on every lab PC.

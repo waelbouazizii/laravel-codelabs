@@ -242,12 +242,24 @@ This creates `routes/api.php`, installs Sanctum and registers the API routes (pr
 use App\Http\Controllers\Api\PostController;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('posts', PostController::class)->only(['index', 'show']);
+Route::name('api.')->group(function () {
+    Route::apiResource('posts', PostController::class)->only(['index', 'show']);
 
-Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('posts', PostController::class)->except(['index', 'show']);
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('posts', PostController::class)->except(['index', 'show']);
+    });
 });
 ```
+
+API facts (framework 13.43.0, sanctum 4.5.0 source, 19 Nov 2026):
+
+- `install:api` runs `composer require --with-all-dependencies laravel/sanctum:^4.0` (may also update `laravel/framework` and Symfony packages), publishes `config/sanctum.php` and the `create_personal_access_tokens_table` migration, copies `routes/api.php` (stub: `GET /user` with `auth:sanctum`), adds `api: __DIR__.'/../routes/api.php',` after the `web:` line of `withRouting`, asks one question "One new database migration has been published. Would you like to run all pending database migrations? (yes/no) [yes]", then prints "API scaffolding installed. Please add the [Laravel\Sanctum\HasApiTokens] trait to your User model." `HasApiTokens` is added in S15 only. Run again, it re-requires Sanctum, prints "API routes file already exists." and does not edit `bootstrap/app.php` twice.
+- API routes are registered before web routes (`ApplicationBuilder`). Same route names: `route()` returns the web route (last wins) and `route:cache` throws "Another route has already been assigned name [...]". API route names are always prefixed `api.`.
+- The `api` middleware group is only `SubstituteBindings` (no session, no cookies): `$request->user()` is null and Gate/Policy checks see a guest, even in a browser logged in on the site.
+- JSON responses use encoding options 0: curl shows `\u00e9` and `\/`. With `APP_DEBUG=true`, error bodies add `exception`, `file`, `line` and `trace`; without debug, only `message`. Validation errors are always `{message, errors}`.
+- `whenLoaded('rel')` returns a missing value (key removed) when the relation is not loaded, `null` when it is loaded but empty; `new CategoryResource(null)` inside a resource becomes `null`.
+- `LazyLoadingViolationException` is thrown only for models retrieved in a list of more than one model.
+- `make:resource` has a `--json-api` option (JSON:API resources): not taught.
 
 ```php
 namespace App\Http\Resources;
