@@ -593,7 +593,7 @@ composer run dev</code></pre>
     <tbody>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Adresse</th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/posts/3</code></td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api/posts/3</code> (préfixe <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">/api</code> ajouté par Laravel)</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Groupe de middlewares</th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">web</code> : session, cookies, protection CSRF</td><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api</code> : aucune session, aucun cookie</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Utilisateur connecté</th><td class="px-3 py-2 align-top">lu dans la session</td><td class="px-3 py-2 align-top">aucun ici ; les jetons Sanctum arrivent en session 15</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Utilisateur connecté</th><td class="px-3 py-2 align-top">lu dans la session</td><td class="px-3 py-2 align-top">aucun ici ; les jetons Sanctum arrivent en session 14</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Réponse</th><td class="px-3 py-2 align-top">une vue Blade (HTML)</td><td class="px-3 py-2 align-top">une Resource (JSON)</td></tr>
       <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Erreur 404</th><td class="px-3 py-2 align-top">la page « Article introuvable » (session 09)</td><td class="px-3 py-2 align-top">un objet JSON avec une clé <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">message</code></td></tr>
     </tbody>
@@ -615,9 +615,9 @@ composer run dev</code></pre>
     <tbody>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">index</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">GET /api/posts</code></td><td class="px-3 py-2 align-top">aujourd'hui</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">show</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">GET /api/posts/{post}</code></td><td class="px-3 py-2 align-top">aujourd'hui</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">store</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">POST /api/posts</code></td><td class="px-3 py-2 align-top">session 15</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">update</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">PUT/PATCH /api/posts/{post}</code></td><td class="px-3 py-2 align-top">session 15</td></tr>
-      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">destroy</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">DELETE /api/posts/{post}</code></td><td class="px-3 py-2 align-top">session 15</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">store</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">POST /api/posts</code></td><td class="px-3 py-2 align-top">session 14</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">update</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">PUT/PATCH /api/posts/{post}</code></td><td class="px-3 py-2 align-top">session 14</td></tr>
+      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">destroy</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">DELETE /api/posts/{post}</code></td><td class="px-3 py-2 align-top">session 14</td></tr>
     </tbody>
   </table>
 </div>
@@ -628,7 +628,7 @@ composer run dev</code></pre>
     </thead>
     <tbody>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">200</th><td class="px-3 py-2 align-top">la réponse contient les données</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">401</th><td class="px-3 py-2 align-top">connexion requise (jeton, session 15)</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">401</th><td class="px-3 py-2 align-top">connexion requise (jeton, session 14)</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">403</th><td class="px-3 py-2 align-top">client connu mais refusé</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">404</th><td class="px-3 py-2 align-top">introuvable</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">422</th><td class="px-3 py-2 align-top">données envoyées invalides : la clé <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">errors</code> dit quoi corriger</td></tr>
@@ -670,7 +670,7 @@ composer run dev</code></pre>
     <button type="button" class="quiz-option" data-option="c">Dans la même base, avec le même modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Post</code></button>
   </div>
   <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>L'API est une autre porte vers les mêmes modèles. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">personal_access_tokens</code> rangera les jetons de connexion de la session 15 ; elle ne contient aucun article.</p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>L'API est une autre porte vers les mêmes modèles. <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">personal_access_tokens</code> rangera les jetons de connexion de la session 14 ; elle ne contient aucun article.</p>
 </div>
 <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
 </div>
@@ -708,7 +708,7 @@ composer run dev</code></pre>
   <button class="copy-btn" aria-label="Copier la commande d&#x27;installation de l&#x27;API">Copier</button>
   <pre><code class="language-bash">php artisan install:api</code></pre>
 </div>
-<p class="text-gray-700 mb-3">Composer télécharge Sanctum (une à quelques minutes). À la question <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">One new database migration has been published. Would you like to run all pending database migrations? (yes/no) [yes]</code>, appuyez sur Entrée (yes). Le dernier message demande d'ajouter <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HasApiTokens</code> au modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">User</code> : ne l'ajoutez pas aujourd'hui, ce trait sert aux jetons de la session 15.</p>
+<p class="text-gray-700 mb-3">Composer télécharge Sanctum (une à quelques minutes). À la question <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">One new database migration has been published. Would you like to run all pending database migrations? (yes/no) [yes]</code>, appuyez sur Entrée (yes). Le dernier message demande d'ajouter <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HasApiTokens</code> au modèle <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">User</code> : ne l'ajoutez pas aujourd'hui, ce trait sert aux jetons de la session 14.</p>
 <p class="text-sm text-gray-600 mb-2">Seulement si Composer a affiché une erreur rouge pendant le téléchargement de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">laravel/sanctum</code>, Bash et PowerShell (identique) :</p>
 <div class="code-block-wrapper mb-4">
   <button class="copy-btn" aria-label="Copier la commande de relance de l&#x27;installation de l&#x27;API">Copier</button>
@@ -765,7 +765,7 @@ Route::get('/user', function (Request $request) {
     return $request-&gt;user();
 })-&gt;middleware('auth:sanctum');</code></pre>
 </div>
-<p class="text-gray-700 mb-6">Gardez cette route telle quelle : elle sert en session 15.</p>
+<p class="text-gray-700 mb-6">Gardez cette route telle quelle : elle sert en session 14.</p>
 <p class="text-sm text-gray-600 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">bootstrap/app.php</code> :</p>
 <p class="text-gray-700 mb-2"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">install:api</code> a ajouté une ligne juste après la ligne <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">web: __DIR__.'/../routes/web.php',</code> :</p>
 <div class="code-block-wrapper mb-4">
@@ -880,7 +880,7 @@ return Application::configure(basePath: dirname(__DIR__))
     <button type="button" class="quiz-option" data-option="c"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">{"message":"Unauthenticated."}</code> avec le statut 401</button>
   </div>
   <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le groupe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api</code> ne démarre aucune session : le cookie du site est ignoré, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">auth:sanctum</code> attend un jeton (session 15). La réponse est en JSON car l'adresse commence par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">shouldRenderJsonWhen</code>, session 09).</p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le groupe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api</code> ne démarre aucune session : le cookie du site est ignoré, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">auth:sanctum</code> attend un jeton (session 14). La réponse est en JSON car l'adresse commence par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api/</code> (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">shouldRenderJsonWhen</code>, session 09).</p>
 </div>
 <p class="text-sm text-gray-600">Score de la session : <span data-quiz-score>0 / 0</span> (bonnes réponses au premier essai)</p>
 </div>
@@ -891,7 +891,7 @@ return Application::configure(basePath: dirname(__DIR__))
   </h3>
 <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 mb-4">
   <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">install:api</code> ajoute une seconde porte (<code class="bg-white px-1 py-0.5 rounded text-xs">routes/api.php</code>, sous <code class="bg-white px-1 py-0.5 rounded text-xs">/api</code>) et un outil d'authentification par jetons, Sanctum. Sanctum est installé maintenant, mais il ne servira qu'en session 15 : aujourd'hui, toute l'API est publique et en lecture seule.</p>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> <code class="bg-white px-1 py-0.5 rounded text-xs">install:api</code> ajoute une seconde porte (<code class="bg-white px-1 py-0.5 rounded text-xs">routes/api.php</code>, sous <code class="bg-white px-1 py-0.5 rounded text-xs">/api</code>) et un outil d'authentification par jetons, Sanctum. Sanctum est installé maintenant, mais il ne servira qu'en session 14 : aujourd'hui, toute l'API est publique et en lecture seule.</p>
 </div>
 <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
@@ -988,7 +988,7 @@ class PostController extends Controller
 }</code></pre>
 </div>
 <ul class="list-disc list-inside text-gray-700 space-y-2 mb-6">
-  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">destroy</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> générés sont supprimés : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> revient à l'Étape 5, les écritures en session 15.</li>
+  <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">store</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">update</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">destroy</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> générés sont supprimés : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> revient à l'Étape 5, les écritures en session 14.</li>
   <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code> est le scope de la session 06 : l'API publique ne montre aucun brouillon.</li>
   <li><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with('user')</code> est volontaire ici, pour voir ce que contient un modèle envoyé tel quel.</li>
 </ul>
@@ -1843,7 +1843,7 @@ return [
     <button type="button" class="quiz-option" data-option="c">Une redirection vers <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/connexion</code>, puis l'article</button>
   </div>
   <p class="quiz-feedback text-sm font-medium text-gray-900 mt-3" aria-live="polite" hidden></p>
-  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le groupe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api</code> n'a pas de session : Laravel ne sait pas qui vous êtes et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPolicy::view</code> reçoit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>. Un client de l'API s'identifiera avec un jeton en session 15.</p>
+  <p class="quiz-explain text-sm text-gray-700 mt-1" hidden>Le groupe <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api</code> n'a pas de session : Laravel ne sait pas qui vous êtes et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostPolicy::view</code> reçoit <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">null</code>. Un client de l'API s'identifiera avec un jeton en session 14.</p>
 </div>
 <div class="quiz-question mb-6" id="quiz-s13-q14" data-answer="a">
   <p class="font-medium text-gray-900 mb-3">Sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">-&gt;withQueryString()</code>, vous ouvrez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/posts?per_page=2</code>. Que vaut <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code> ?</p>
@@ -2139,7 +2139,7 @@ git commit -m "Defi : tags et contenu dans l'API"</code></pre>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Chaque article a <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">author</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">category</code> ; aucune <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">LazyLoadingViolationException</code>.</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>999 donne 404, un brouillon 403 (même en administrateur), <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=500</code> donne 422 en français, et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">per_page=2</code> se retrouve dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links.next</code>.</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe -I</code> sur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/posts/999</code> : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">text/html</code> sans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Accept</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">application/json</code> avec.</span></li>
-  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La commande ci-dessous n'affiche rien : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HasApiTokens</code> attend la session 15.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>La commande ci-dessous n'affiche rien : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">HasApiTokens</code> attend la session 14.</span></li>
 </ul>
 <div class="mt-6"></div>
 <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
@@ -2244,7 +2244,7 @@ cmdkey /list | Select-String github</code></pre>
   <button class="copy-btn" aria-label="Copier la section État actuel">Copier</button>
   <pre><code class="language-markup">## État actuel (tag lab-07)
 
-- API JSON en lecture seule, installée avec `php artisan install:api` (Sanctum installé ; les jetons arrivent en session 15).
+- API JSON en lecture seule, installée avec `php artisan install:api` (Sanctum installé ; les jetons arrivent en session 14).
 - `GET /api/posts` : articles publiés, paginés (`?per_page=` de 1 à 50, 5 par défaut), avec auteur et catégorie.
 - `GET /api/posts/{post}` : un article publié ; un brouillon renvoie 403 et un numéro inconnu 404, en JSON.
 - Réponses mises en forme par `PostResource` et `CategoryResource` : ni e-mail ni rôle des auteurs, dates ISO 8601.
@@ -2295,7 +2295,7 @@ cmdkey /list | Select-String github</code></pre>
   </h3>
 <div class="border-l-4 border-indigo-500 bg-indigo-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-lightbulb text-indigo-500 mt-0.5" aria-hidden="true"></i>
-  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-07</code> ouvre la semaine 7 : les données du site sont lisibles par n'importe quel programme. La session 14 ajoute les catégories et les tags à l'API, des filtres, des tests Pest de l'API et une collection Postman.</p>
+  <p class="text-sm text-indigo-900"><strong>Pourquoi ?</strong> Le tag <code class="bg-white px-1 py-0.5 rounded text-xs">lab-07</code> ouvre la semaine 7 : les données du site sont lisibles par n'importe quel programme. La session 14 ajoute les catégories et des filtres à l'API, ses tests Pest, et les jetons Sanctum pour écrire.</p>
 </div>
 </div>
 
