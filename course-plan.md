@@ -1,7 +1,7 @@
 # course-plan.md
 
 Atelier Framework Côté Serveur — Laravel 13.x / PHP 8.3+ — 3e année MDW (MDW32, MDW33), ISET Sidi Bouzid.
-16 sessions of about 3h10, 2 per week over 8 weeks. This file is the sequencing authority: a session may only use concepts introduced in the same or an earlier session (see the Concept Index at the end).
+16 session slots of about 3h10, 2 per week over 8 weeks. Since 19 Nov 2026 the course ends with S14 (S14 and S15 merged into one class) and S16 is a take-home final submission; see Calendar buffer. This file is the sequencing authority: a session may only use concepts introduced in the same or an earlier session (see the Concept Index at the end).
 
 ## Evolving student project: Mini-CMS
 
@@ -13,19 +13,19 @@ Every student builds one application, `mini-cms`, from S01 to S16, in one GitHub
 | `Post` (title, slug, body, is_published, published_at) | S05 | First model, CRUD |
 | `Category` (1:N with Post), `Tag` (N:N via `post_tag`) | S07 | Relationships |
 | `User` as author, `role` column (`author` / `admin`) | S07 (author link), S11 (auth, role) | Ownership, authorization |
-| Read-only JSON API `/api/posts`, `/api/categories` | S13 | API Resources |
-| Token-protected write API | S15 | Sanctum |
+| Read-only JSON API `/api/posts`, `/api/categories` | S13 (posts), S14 (categories, filters) | API Resources |
+| Token-protected write API | S14 | Sanctum |
 
 Final result: a small publishing platform with public pages, an authenticated back office (authors manage their own posts, admins manage categories and tags), a JSON API, and a green Pest suite.
 
 ## Conventions for the whole course
 
-- Session file: `docs/session-XX.html`, XX = 01 to 16.
-- Session A (odd numbers) = guided codelab. Session B (even numbers) = applied sprint + assessment on the same repository. B sessions keep the 7-part structure from CLAUDE.md; in a B session, "Guided Steps" are sprint tasks with checkpoints, and the Assessment Checklist is graded.
-- Git tags: Session A of week W produces `lab-0W`, Session B produces `lab-0Wb` (week 1: `lab-01`, `lab-01b`; week 8: `lab-08`, `lab-08b`).
-- Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`. SQLite stays the default database for all 16 sessions; PostgreSQL is an optional driver switch in S08 and is never required afterwards.
+- Session file: `docs/session-XX.html`, XX = 01 to 16. S15 is retired: there is no `docs/session-15.html` and no S15 card in `docs/index.html`.
+- Session A (odd numbers) = guided codelab. Session B (even numbers) = applied sprint + assessment on the same repository. B sessions keep the 7-part structure from CLAUDE.md; in a B session, "Guided Steps" are sprint tasks with checkpoints, and the Assessment Checklist is graded. Exceptions: S14 is a guided codelab (A format) in a B slot, and S16 is a take-home submission (B format, no class).
+- Git tags: Session A of week W produces `lab-0W`, Session B produces `lab-0Wb` (week 1: `lab-01`, `lab-01b`; week 8: `lab-08`, `lab-08b`). Exception: S14 produces two tags, `lab-07b` (middle of the session) and `lab-08` (end of the session).
+- Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`. SQLite stays the default database for all sessions; PostgreSQL is an optional driver switch in S08 and is never required afterwards.
 - Windows PCs (mostly personal laptops, some university lab PCs): every command that differs between bash and PowerShell is given in both.
-- Repositories are public (portfolio). To limit copying, the Git history is graded: small meaningful commits between tags, one tag per session, commits authored with the student's own identity.
+- Repositories are public (portfolio). To limit copying, the Git history is graded: small meaningful commits between tags, one tag per session (two in S14), commits authored with the student's own identity.
 - Toolchain: PHP 8.3+, Composer, Laravel installer (composer global require laravel/installer), Node.js LTS + npm (required by Vite / `composer run dev`, installed separately from PHP), Git for Windows, VS Code (the `code` command is used from S01).
 
 ## Overview
@@ -45,9 +45,9 @@ Final result: a small publishing platform with public pages, an authenticated ba
 | S11 | W6 | A | Authentification manuelle, Gates et Policies | lab-06 |
 | S12 | W6 | B | Sprint : autorisations et comparaison avec le starter kit Livewire | lab-06b |
 | S13 | W7 | A | Première API REST : install:api et API Resources | lab-07 |
-| S14 | W7 | B | Sprint : API complète, tests et collection Postman | lab-07b |
-| S15 | W8 | A | Authentification API par jetons Sanctum | lab-08 |
-| S16 | W8 | B | Soutenance du projet final | lab-08b |
+| S14 | W7 | A (créneau B) | API complète et authentification par jetons Sanctum | lab-07b, lab-08 |
+| S15 | — | — | Fusionnée avec S14 (pas de séance) | — |
+| S16 | W8 | B (à distance) | Livraison finale du projet | lab-08b |
 
 ---
 
@@ -211,46 +211,55 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Week: W7 — Type: A — Tag: `lab-07`
 - Learning outcomes:
   1. Run `php artisan install:api` and explain what it adds (`routes/api.php`, Sanctum, `/api` prefix).
-  2. Expose read-only endpoints with `Route::apiResource(...)->only(['index', 'show'])` and an `Api\PostController`, under unique `api.` route names (`Route::name('api.')`).
+  2. Expose read-only endpoints with `Route::apiResource(...)->only(['index', 'show'])` and an `Api\PostController`.
   3. Shape responses with `PostResource` / `CategoryResource`, `whenLoaded`, ISO 8601 dates and paginated collections.
   4. Call the API with Postman and `curl.exe` (not the PowerShell `curl` alias) with `Accept: application/json`, and read 404/422 JSON errors.
-- Key commands: `php artisan install:api`, `php artisan make:controller Api/PostController --api --model=Post`, `php artisan make:resource PostResource`, `php artisan make:resource CategoryResource`, `php artisan route:list --path=api`, `php artisan make:request Api/IndexPostRequest`, `php artisan route:cache`, `php artisan route:clear`, `curl.exe -I`.
+- Key commands: `php artisan install:api`, `php artisan make:controller Api/PostController --api --model=Post`, `php artisan make:resource PostResource`, `php artisan make:resource CategoryResource`, `php artisan route:list --path=api`.
 - Reuses: S07-S08 models and eager loading, S09 exception handling.
-- Note: write endpoints and tokens are not taught here (S15).
+- Note: filters, JSON assertions, write endpoints and tokens are not taught here (S14).
 
-### S14 — Sprint : API complète, tests et collection Postman
-- Week: W7 — Type: B — Tag: `lab-07b`
+### S14 — API complète et authentification par jetons Sanctum
+- Week: W7 — Type: A, guided codelab in a B slot (merge of the former S14 sprint and S15 codelab; last class of the course, see Calendar buffer) — Tags: `lab-07b` (end of Étape 3), `lab-08` (end of session)
 - Learning outcomes:
-  1. Add read endpoints for categories and tags, and query-string filters (`?category=`, `?tag=`).
-  2. Test the API with Pest (`getJson`, `assertJsonPath`, `assertJsonCount`, `assertJsonStructure`).
-  3. Export a Postman collection into the repository (`docs/postman/`).
-- Key commands: `php artisan make:controller Api/CategoryController --api --model=Category`, `php artisan test --filter=Api`, `curl.exe -H "Accept: application/json" http://127.0.0.1:8000/api/posts`.
+  1. Add read endpoints for categories (`Api\CategoryController`, index and show, reusing the S13 `CategoryResource`) and the query-string filters `?category=` and `?tag=` on `/api/posts`.
+  2. Test the read API with Pest (`getJson`, `assertJsonPath`, `assertJsonCount`, `assertJsonStructure`).
+  3. Add `HasApiTokens` to `User`, issue tokens with `createToken('api')->plainTextToken` from an `Api\AuthController` login endpoint, and revoke the current token on logout.
+  4. Protect the post write endpoints (`store`, `update`, `destroy`) with `auth:sanctum`, reusing `StorePostRequest` / `UpdatePostRequest` and `PostPolicy` (JSON 401/403/422). Authorization stays in the Form Request's `authorize()` (session-guidelines.md, section 8); `destroy` calls `Gate::authorize('delete', $post)` first.
+  5. Test protected endpoints with `Sanctum::actingAs` in Pest and call them with `Authorization: Bearer <token>` in Postman.
+- Guided steps (120 min):
+
+  | Étape | Content | Min |
+  |---|---|---|
+  | 1 | `Api\CategoryController` (index, show) with `CategoryResource`, `withCount` | 15 |
+  | 2 | `?category=` and `?tag=` filters on `Api\PostController` (exact slug match, eager loading kept) | 20 |
+  | 3 | Pest read-API tests (`getJson`, JSON assertions), commit, tag `lab-07b` | 20 |
+  | 4 | `HasApiTokens`, `Api\AuthController` login and logout | 25 |
+  | 5 | `auth:sanctum` write routes reusing Form Requests and `PostPolicy` | 25 |
+  | 6 | Pest tests with `Sanctum::actingAs` (401, 403, 422, 201) | 15 |
+
+- Independent Challenge (30 min, hints only): a Postman collection with `{{base_url}}` and `{{token}}` variables (the login request stores the token), exported to `docs/postman/`.
+- Moved to S16 homework (former S14 sprint tasks): `Api\TagController` (index, show) with `TagResource`, tests for the `?tag=` filter, and a `curl.exe` Bearer example in the README.
+- Key commands: `php artisan make:controller Api/CategoryController --api --model=Category`, `php artisan make:controller Api/AuthController`, `php artisan route:list --path=api`, `php artisan test --filter=Api`, `curl.exe -H "Accept: application/json" "http://localhost:8000/api/posts?category=<slug>"`.
 - Portability: the `?category=` and `?tag=` filters compare slugs exactly, so they behave the same on SQLite and PostgreSQL.
-- Assessment focus: consistent JSON shape, pagination, API tests green, collection committed.
-- Reuses: S13 API layer.
+- Deliverable: push `main`, `lab-07b` and `lab-08`; the Livrable panel links to `docs/session-16.html` and states the S16 deadline.
+- Assessment focus: consistent JSON shape and pagination, filters work, 401 without a token, 403 on another author's post, 422 on an invalid body, API tests green, both tags on GitHub.
+- Reuses: S13 API layer, S11 policies, S09 Form Requests and JSON exception rule, S07-S08 relations and eager loading.
 
 ## Week 8
 
-### S15 — Authentification API par jetons Sanctum
-- Week: W8 — Type: A — Tag: `lab-08`
-- Learning outcomes:
-  1. Add `HasApiTokens` to `User` and issue tokens with `createToken('api')->plainTextToken` from an `Api\AuthController` login endpoint.
-  2. Protect write endpoints with `auth:sanctum` and revoke the current token on logout.
-  3. Reuse `PostPolicy` and Form Requests for API writes (JSON 401/403/422).
-  4. Test protected endpoints with `Sanctum::actingAs` in Pest and with `Authorization: Bearer <token>` in Postman and `curl.exe`.
-- Key commands: `php artisan make:controller Api/AuthController`, `php artisan route:list --path=api`, `php artisan test`.
-- Reuses: S11 policies, S09 Form Requests, S13-S14 API.
+### S15 — retired (merged into S14)
+- No class, no page, no index card, no tag of its own: `lab-08` is produced at the end of S14.
 
-### S16 — Soutenance du projet final
-- Week: W8 — Type: B — Tag: `lab-08b`
+### S16 — Livraison finale du projet
+- Week: W8 — Type: B, take-home (no class) — Tag: `lab-08b`
+- `docs/session-16.html` keeps the 7-part structure of a B session: Prerequisites & Objectives; Environment check = clean clone; Concept Brief = rubric and deadline; "Guided Steps" = submission tasks with checkpoints; Independent Challenge = optional bonus; graded Assessment Checklist; Deliverable. Durations on the page are estimates for home work. No Quiz éclair.
 - Learning outcomes:
-  1. Deliver a working Mini-CMS from a clean clone (`composer install`, `npm install`, `.env`, `php artisan key:generate`, `migrate:fresh --seed`).
-  2. Demonstrate web and API features in a 5-minute demo and answer questions on the architecture.
-  3. Present a green Pest suite and a final README (setup, features, API documentation, screenshots).
-- Key commands: `git clone`, `composer install`, `copy .env.example .env` (PowerShell) / `cp .env.example .env` (bash), `php artisan key:generate`, `php artisan migrate:fresh --seed`, `php artisan test`, `git tag lab-08b`, `git push origin --tags`.
-- The clean-clone delivery is graded on SQLite, whatever database the student used locally.
-- Assessment focus: final rubric (functionality, code conventions, tests, Git history and tags, README, demo).
-- Timing: 5-minute demos for ~30 students take about 2h30 plus transitions. Run demos in parallel pairs or cap at 4 minutes + 1 minute questions; students who do not demo are graded from a recorded screencast linked in the README.
+  1. Finish the S14 homework: `Api\TagController` (index, show) with `TagResource`, tests for the `?tag=` filter.
+  2. Deliver a working Mini-CMS from a clean clone (`composer install`, `npm install`, `.env`, `php artisan key:generate`, `migrate:fresh --seed`, `php artisan test`), on SQLite.
+  3. Write the final README: setup (bash and PowerShell), features, API documentation (endpoints, login, Bearer token, error codes, one `curl.exe` example), screenshots, and a "Choix d'architecture" section answering, in the student's own words: why API writes go through `PostPolicy`; why `preventLazyLoading` is on; why the API uses tokens instead of the session.
+  4. Record a screencast demo (4 minutes maximum) of the web and API features, linked in the README.
+- Key commands: `php artisan make:resource TagResource`, `php artisan make:controller Api/TagController --api --model=Tag`, `git clone`, `composer install`, `copy .env.example .env` (PowerShell) / `cp .env.example .env` (bash), `php artisan key:generate`, `php artisan migrate:fresh --seed`, `php artisan test`, `git tag lab-08b`, `git push origin --tags`.
+- Grading: the instructor clones the repository at `lab-08b` and runs it on SQLite, whatever database the student used locally. The tag must be on GitHub before the deadline announced in S14. Rubric: functionality, code conventions, tests, Git history and tags, README (including "Choix d'architecture"), demo video.
 - Reuses: the whole project.
 
 ---
@@ -273,17 +282,17 @@ A session must not use a concept listed here with a later session number.
 | Validation messages, `assertSessionHasErrors` | S10 |
 | Manual auth, `auth`/`guest` middleware, Gates, Policies | S11 |
 | `admin` middleware alias, Livewire starter kit (comparison only) | S12 |
-| `install:api`, `apiResource`, API Resources, Postman, `curl.exe`, `withQueryString()`, `route:cache` / `route:clear`, `when()` in a resource (Défi only) | S13 |
-| API filters, JSON assertions | S14 |
-| Sanctum tokens, `auth:sanctum` | S15 |
+| `install:api`, `apiResource`, API Resources, Postman, `curl.exe` | S13 |
+| API filters, JSON assertions, Sanctum tokens, `auth:sanctum`, `Sanctum::actingAs` | S14 |
+
+S15 is retired. S16 introduces no new concept.
 
 ## Points to verify on a lab PC before the course
 
 - Whether `laravel new` initializes a Git repository and makes a first commit automatically (affects S01 deliverable).
 - `laravel new` prompts after the frontend-stack question (testing framework, database, Laravel Boost, npm). The first two prompts were verified on 30 Sep 2026.
 - `make:test` output format with Pest installed.
-- `install:api` on the lab network: download time of `composer require --with-all-dependencies` (one migration prompt, verified in framework 13.43 source).
-- Postman lightweight API Client: exact label of the link to continue without an account, and whether the installer needs admin rights.
+- `install:api` prompts (migrations for `personal_access_tokens`).
 - Livewire starter kit install flow and internet bandwidth for `npm install` in S12.
 - Node.js LTS present on every lab PC (S01 blocker if missing).
 - VS Code and its `code` command available on every lab PC.
@@ -291,8 +300,12 @@ A session must not use a concept listed here with a later session number.
 - S07 add-column migration with foreign keys (`foreignId()->nullable()->constrained()->nullOnDelete()`) runs cleanly on SQLite.
 - `cmdkey /delete:git:https://github.com` removes the stored GitHub credential on the lab PCs.
 - PostgreSQL for Windows on a student laptop: installer rights, `pdo_pgsql` and `pgsql` available in the php.net build, creation of the `mini_cms` database, and `migrate:fresh --seed` on PostgreSQL with the S07 migrations.
-- Where the official php.net PowerShell command installs PHP, and whether Composer-Setup.exe adds the Composer global vendorin folder to the PATH.
+- Where the official php.net PowerShell command installs PHP, and whether Composer-Setup.exe adds the Composer global `vendor\bin` folder to the PATH.
+- S14: whether a logout test using `Sanctum::actingAs` can delete `currentAccessToken()`, or whether the logout test must log in through the API to get a real token first.
+- S14: whether the 120-minute guided part fits with a real group, since it now carries the former S14 sprint and the S15 codelab.
 
 ## Calendar buffer
 
 No buffer week is planned. If a holiday or exam period removes a session, merge the B session into the next A session (sprint tasks become homework) rather than dropping content; tags keep their numbering.
+
+Applied on 19 Nov 2026: the course ends with S14. The former S14 sprint and S15 codelab were merged into one guided S14 class (`lab-07b` and `lab-08`); the sprint tasks that did not fit (tag endpoints, tag filter tests, `curl.exe` documentation) moved to S16, which became a take-home final submission (`lab-08b`) graded from a clean clone and a screencast instead of a live soutenance.
