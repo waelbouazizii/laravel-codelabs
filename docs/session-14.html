@@ -467,10 +467,10 @@ composer run dev</code></pre>
       <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Commande</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Résultat attendu</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Sinon</th></tr>
     </thead>
     <tbody>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">git status</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">nothing to commit, working tree clean</code></td><td class="px-3 py-2 align-top">—</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">git status</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">nothing to commit, working tree clean</code></td><td class="px-3 py-2 align-top">Terminez le <a href="session-13.html#step-12" class="underline text-brand">Livrable de la session 13</a>.</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">git tag -l "lab-07*"</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">lab-07</code> seulement</td><td class="px-3 py-2 align-top">Terminez le <a href="session-13.html#step-12" class="underline text-brand">Livrable de la session 13</a>.</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">php artisan route:list --path=api</code></th><td class="px-3 py-2 align-top">3 routes : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/posts</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/posts/{post}</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/user</code></td><td class="px-3 py-2 align-top">—</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">git grep -n HasApiTokens -- app</code></th><td class="px-3 py-2 align-top">aucune ligne</td><td class="px-3 py-2 align-top">—</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">php artisan route:list --path=api</code></th><td class="px-3 py-2 align-top">3 routes : <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/posts</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/posts/{post}</code>, <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">api/user</code></td><td class="px-3 py-2 align-top">Si le nombre diffère, le projet n'est pas à <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">lab-07</code> : reprenez <a href="session-13.html" class="underline text-brand">la session 13</a>.</td></tr>
+      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs break-all">git grep -n HasApiTokens -- app</code></th><td class="px-3 py-2 align-top">aucune ligne</td><td class="px-3 py-2 align-top">Retirez ces lignes de <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">User</code> : l'Étape 4 les ajoute.</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">php artisan test</code></th><td class="px-3 py-2 align-top">Tous les tests passent</td><td class="px-3 py-2 align-top">Reprenez <a href="session-13.html" class="underline text-brand">la session 13</a>.</td></tr>
       <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">composer run dev</code></th><td class="px-3 py-2 align-top"><code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">http://localhost:8000</code> ouvre la page d'accueil</td><td class="px-3 py-2 align-top">L'adresse <code class="bg-gray-100 px-1 py-0.5 rounded text-xs whitespace-nowrap">http://127.0.0.1:8000</code> est équivalente ; n'ouvrez pas l'adresse de Vite sur le port 5173.</td></tr>
       <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Postman</th><td class="px-3 py-2 align-top">s'ouvre</td><td class="px-3 py-2 align-top">Réinstallez-le avec le fichier de <a href="session-13.html#step-9" class="underline text-brand">la session 13, Étape 6</a>.</td></tr>
@@ -976,13 +976,13 @@ Route::name('api.')-&gt;group(function () {
 </div>
 <p class="text-gray-700 mb-3">Appliquez le Code complet aux trois fichiers et enregistrez-les.</p>
 <h4 class="font-medium mt-4 mb-2">B. Trouver un slug</h4>
+<p class="text-gray-700 mb-3">Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm break-all">http://localhost:8000/api/categories</code> (Étape 1), notez le slug d'une catégorie dont <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts_count</code> vaut au moins 2.</p>
 <p class="text-sm text-gray-600 mb-2">Bash et PowerShell (identique) :</p>
 <div class="code-block-wrapper mb-4">
-  <button class="copy-btn" aria-label="Copier les commandes de recherche des slugs">Copier</button>
-  <pre><code class="language-bash">php artisan tinker --execute="echo App\Models\Category::orderBy('name')-&gt;value('slug');"
-php artisan tinker --execute="echo App\Models\Tag::orderBy('name')-&gt;value('slug');"</code></pre>
+  <button class="copy-btn" aria-label="Copier la commande de recherche du slug d&#x27;un tag">Copier</button>
+  <pre><code class="language-bash">php artisan tinker --execute="echo App\Models\Tag::whereRelation('posts', 'is_published', true)-&gt;orderBy('name')-&gt;value('slug');"</code></pre>
 </div>
-<p class="text-gray-700 mb-3">La première ligne affichée est le slug d'une catégorie, la seconde celui d'un tag. Notez-les.</p>
+<p class="text-gray-700 mb-3">La ligne affichée est le slug d'un tag qui a au moins un article publié. Notez-le.</p>
 <h4 class="font-medium mt-4 mb-2">C. Essayer</h4>
 <p class="text-gray-700 mb-3">Dans le navigateur, remplacez <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;categorie&gt;</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">&lt;tag&gt;</code> par les slugs notés :</p>
 <ol class="list-decimal list-inside text-gray-700 space-y-1 mb-4">
@@ -1239,7 +1239,7 @@ return [
 </div>
 <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> « le champ category » dans le message : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">'category'</code> manque dans <code class="bg-white px-1 py-0.5 rounded text-xs">attributes</code>. Le filtre est ignoré : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">when</code> manque, ou le paramètre est écrit <code class="bg-white px-1 py-0.5 rounded text-xs">categorie</code> dans l'adresse. <code class="bg-white px-1 py-0.5 rounded text-xs break-all">LazyLoadingViolationException</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">with()</code> a été retiré de la requête.</p>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> « le champ category » dans le message : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">'category'</code> manque dans <code class="bg-white px-1 py-0.5 rounded text-xs">attributes</code>. Le filtre est ignoré : la ligne <code class="bg-white px-1 py-0.5 rounded text-xs">when</code> manque, ou le paramètre est écrit <code class="bg-white px-1 py-0.5 rounded text-xs">categorie</code> dans l'adresse. <code class="bg-white px-1 py-0.5 rounded text-xs">author</code> et <code class="bg-white px-1 py-0.5 rounded text-xs">category</code> absents de chaque article : <code class="bg-white px-1 py-0.5 rounded text-xs">with()</code> a été retiré de la requête, et <code class="bg-white px-1 py-0.5 rounded text-xs">whenLoaded</code> retire alors les clés.</p>
 </div>
 </div>
 
@@ -1425,7 +1425,7 @@ it('returns a JSON 404 for an unknown category', function () {
 </div>
 <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Expected response status code [200] but received 422.</code> : un slug du test n'est pas celui créé par la factory. <code class="bg-white px-1 py-0.5 rounded text-xs">Cannot redeclare function</code> ne peut pas arriver ici : ce fichier n'a besoin d'aucune fonction d'aide, n'en copiez aucune.</p>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Expected response status code [200] but received 422.</code> : un slug du test n'est pas celui créé par la factory. <code class="bg-white px-1 py-0.5 rounded text-xs break-all">Failed asserting that an array has the key 'author'.</code> : <code class="bg-white px-1 py-0.5 rounded text-xs">with()</code> a été retiré de <code class="bg-white px-1 py-0.5 rounded text-xs">index()</code>, et <code class="bg-white px-1 py-0.5 rounded text-xs">whenLoaded</code> retire alors la clé.</p>
 </div>
 </div>
 
@@ -2359,7 +2359,7 @@ it('revokes the current token on logout', function () {
   <button class="copy-btn" aria-label="Copier la commande PowerShell d&#x27;ouverture de la collection exportée">Copier</button>
   <pre><code class="language-powershell">code docs\postman\mini-cms.postman_collection.json</code></pre>
 </div>
-<p class="text-gray-700 mt-4">Vérification observable : dans VS Code, Ctrl+F <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">|</code> ne trouve rien dans le fichier. Si un résultat apparaît, videz la valeur de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">token</code> dans les variables de la collection, puis exportez de nouveau.</p>
+<p class="text-gray-700 mt-4">Vérification observable : dans VS Code, Ctrl+F <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">|</code> ne trouve aucun <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">|</code> suivi de lettres ou de chiffres (un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">||</code> dans votre script est normal). Si un résultat apparaît, videz la valeur de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">token</code> dans les variables de la collection, puis exportez de nouveau.</p>
 </div>
 <div class="md-card p-6 mt-6">
   <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
@@ -2407,7 +2407,7 @@ Pourquoi les écritures de l'API passent-elles par les Form Requests et PostPoli
   </h3>
 <ul class="space-y-2 text-gray-700">
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Niveau 1 : Connexion, puis Créer un article sans rien coller, donne 201.</span></li>
-  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Niveau 2 : le fichier exporté existe et ne contient aucun <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">|</code>.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Niveau 2 : le fichier exporté existe, et Ctrl+F <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">|</code> ne trouve aucun <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">|</code> suivi de lettres ou de chiffres (un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">||</code> dans votre script est normal).</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Vos notes sont rédigées et comparées aux éléments de réponse.</span></li>
 </ul>
 <p class="text-gray-700 mb-3 mt-4">Quand tout est vérifié, enregistrez le défi dans Git :</p>
