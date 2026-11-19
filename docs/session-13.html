@@ -1200,7 +1200,7 @@ class PostController extends Controller
 <p class="text-gray-700 mb-4"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">with('user')</code> disparaît : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">PostResource</code> n'affiche pas encore d'auteur (Étape 4).</p>
 <figure class="my-4">
 <div class="grid gap-3">
-  <div class="rounded border-2 border-gray-300 bg-white p-3">
+  <div class="min-w-0 rounded border-2 border-gray-300 bg-white p-3">
     <p class="font-bold text-gray-900">Modèle envoyé tel quel (Étape 2)</p>
     <p class="text-xs text-gray-500 mb-2">un article de data, avec son auteur</p>
     <div class="space-y-0.5">
@@ -1219,16 +1219,16 @@ class PostController extends Controller
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  "user": {</code>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "id": 1,</code>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "name": "Test User",</code>
-<div class="flex items-center gap-2 border-l-4 border-rose-600 pl-2"><code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "email": "test@example.com",</code><span class="text-xs font-bold text-rose-700 whitespace-nowrap">visible par tous</span></div>
+<div class="flex items-center gap-2 border-l-4 border-rose-600 pl-2"><code class="block min-w-0 bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "email": "test@example.com",</code><span class="text-xs font-bold text-rose-700 whitespace-nowrap">visible par tous</span></div>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "email_verified_at": "2026-11-14T09:00:00.000000Z",</code>
-<div class="flex items-center gap-2 border-l-4 border-rose-600 pl-2"><code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "role": "admin",</code><span class="text-xs font-bold text-rose-700 whitespace-nowrap">visible par tous</span></div>
+<div class="flex items-center gap-2 border-l-4 border-rose-600 pl-2"><code class="block min-w-0 bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "role": "admin",</code><span class="text-xs font-bold text-rose-700 whitespace-nowrap">visible par tous</span></div>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "created_at": "2026-11-14T09:00:00.000000Z",</code>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">    "updated_at": "2026-11-14T09:00:00.000000Z"</code>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">  }</code>
 <code class="block bg-gray-100 px-2 py-0.5 rounded text-xs whitespace-nowrap overflow-x-auto">}</code>
     </div>
   </div>
-  <div class="rounded border-2 border-gray-300 bg-white p-3">
+  <div class="min-w-0 rounded border-2 border-gray-300 bg-white p-3">
     <p class="font-bold text-gray-900">PostResource (Étape 3)</p>
     <p class="text-xs text-gray-500 mb-2">le même article, mis en forme</p>
     <div class="space-y-0.5">
