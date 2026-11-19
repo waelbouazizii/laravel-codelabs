@@ -301,7 +301,7 @@ S15 is retired. S16 introduces no new concept.
 - `cmdkey /delete:git:https://github.com` removes the stored GitHub credential on the lab PCs.
 - PostgreSQL for Windows on a student laptop: installer rights, `pdo_pgsql` and `pgsql` available in the php.net build, creation of the `mini_cms` database, and `migrate:fresh --seed` on PostgreSQL with the S07 migrations.
 - Where the official php.net PowerShell command installs PHP, and whether Composer-Setup.exe adds the Composer global `vendor\bin` folder to the PATH.
-- S14: whether a logout test using `Sanctum::actingAs` can delete `currentAccessToken()`, or whether the logout test must log in through the API to get a real token first.
+- S14: resolved in source (19 Nov 2026): the actingAs token is a mock, so the logout test logs in with a real token.
 - S14: whether the 120-minute guided part fits with a real group, since it now carries the former S14 sprint and the S15 codelab.
 
 ## Calendar buffer

@@ -253,13 +253,19 @@ Route::name('api.')->group(function () {
 
 API facts (framework 13.43.0, sanctum 4.5.0 source, 19 Nov 2026):
 
-- `install:api` runs `composer require --with-all-dependencies laravel/sanctum:^4.0` (may also update `laravel/framework` and Symfony packages), publishes `config/sanctum.php` and the `create_personal_access_tokens_table` migration, copies `routes/api.php` (stub: `GET /user` with `auth:sanctum`), adds `api: __DIR__.'/../routes/api.php',` after the `web:` line of `withRouting`, asks one question "One new database migration has been published. Would you like to run all pending database migrations? (yes/no) [yes]", then prints "API scaffolding installed. Please add the [Laravel\Sanctum\HasApiTokens] trait to your User model." `HasApiTokens` is added in S15 only. Run again, it re-requires Sanctum, prints "API routes file already exists." and does not edit `bootstrap/app.php` twice.
+- `install:api` runs `composer require --with-all-dependencies laravel/sanctum:^4.0` (may also update `laravel/framework` and Symfony packages), publishes `config/sanctum.php` and the `create_personal_access_tokens_table` migration, copies `routes/api.php` (stub: `GET /user` with `auth:sanctum`), adds `api: __DIR__.'/../routes/api.php',` after the `web:` line of `withRouting`, asks one question "One new database migration has been published. Would you like to run all pending database migrations? (yes/no) [yes]", then prints "API scaffolding installed. Please add the [Laravel\Sanctum\HasApiTokens] trait to your User model." `HasApiTokens` is added in S14, Étape 4. Run again, it re-requires Sanctum, prints "API routes file already exists." and does not edit `bootstrap/app.php` twice.
 - API routes are registered before web routes (`ApplicationBuilder`). Same route names: `route()` returns the web route (last wins) and `route:cache` throws "Another route has already been assigned name [...]". API route names are always prefixed `api.`.
 - The `api` middleware group is only `SubstituteBindings` (no session, no cookies): `$request->user()` is null and Gate/Policy checks see a guest, even in a browser logged in on the site.
 - JSON responses use encoding options 0: curl shows `\u00e9` and `\/`. With `APP_DEBUG=true`, error bodies add `exception`, `file`, `line` and `trace`; without debug, only `message`. Validation errors are always `{message, errors}`.
 - `whenLoaded('rel')` returns a missing value (key removed) when the relation is not loaded, `null` when it is loaded but empty; `new CategoryResource(null)` inside a resource becomes `null`.
 - `LazyLoadingViolationException` is thrown only for models retrieved in a list of more than one model.
 - `make:resource` has a `--json-api` option (JSON:API resources): not taught.
+- `Sanctum::actingAs($user)` sets the user on the sanctum guard and calls `shouldUse('sanctum')`: in that test every route sees the user, even without `auth:sanctum`. A real Bearer token is only read on routes with `auth:sanctum`; on a public route (`show`) `$request->user()` and policies see a guest.
+- The `actingAs` token is a Mockery mock: `currentAccessToken()->delete()` deletes nothing. Logout tests use a real token (`createToken('api')->plainTextToken` + `withToken()`).
+- `createToken()` stores `hash('sha256', ...)` in `personal_access_tokens.token`; the plain text `id|random` is returned once. `sanctum.expiration` is null by default: tokens never expire.
+- Middleware priority puts `AuthenticatesRequests` before `SubstituteBindings` (401 before 404); a Form Request runs `authorize()` before `rules()` (403 before 422).
+- `whenCounted('posts')` reads `posts_count` and removes the key when it was not counted.
+- A JsonResource wrapping a model with `wasRecentlyCreated` already answers 201; the course still writes `->response()->setStatusCode(201)` explicitly.
 
 ```php
 namespace App\Http\Resources;

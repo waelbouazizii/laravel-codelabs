@@ -283,3 +283,22 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - The 403 page shows "403" and "This action is unauthorized." in the browser (also listed for S09).
 - "Vous êtes déconnecté." appears after logout (flash written after `invalidate()`).
 - Étape 4, part D: `php artisan test` goes red, then green after the test repairs, on a real project at `lab-05b`.
+
+## 9. Session 14 (19 Nov 2026)
+
+### Student project at tag lab-08 (end of S14)
+
+- `routes/api.php`: `GET api/user` (`auth:sanctum`); group named `api.`:
+  - `api.login`;
+  - `api.posts.index` and `api.posts.show`;
+  - `api.categories.index` and `api.categories.show`;
+  - `auth:sanctum` group: `api.logout`, `api.posts.store`, `api.posts.update`, `api.posts.destroy`;
+  - 10 routes with `--path=api`.
+- `Api\PostController` (index with filters, store, show, update, destroy), `Api\CategoryController` (index, show), `Api\AuthController` (login 201, logout 204).
+- `IndexPostRequest`: `per_page`, `category`, `tag`.
+- `CategoryResource` has `posts_count` (`whenCounted`).
+- `User` has `HasApiTokens`.
+- `lang/fr` attribute: `category` => `catégorie`.
+- Tests `ApiReadTest` (5) and `ApiWriteTest` (8, helper `apiPostData`).
+- Optional: `docs/postman/mini-cms.postman_collection.json`.
+- Moved to S16: `Api\TagController`, `TagResource`, `?tag=` tests, a `curl.exe` Bearer example in the README.
