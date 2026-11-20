@@ -4,7 +4,7 @@
 
 Atelier Framework Côté Serveur — Laravel 13.x / PHP 8.3+ — 3e année MDW (MDW32, MDW33), ISET Sidi Bouzid.
 
-Ce fichier est le sujet officiel du Projet API. `docs/session-15.html` (Partie B) le reprend intégralement, sauf le barème (section 12), réservé au correcteur et absent des pages étudiantes. Toute modification du sujet se fait ici d'abord.
+Ce fichier est le sujet officiel du Projet API. `docs/session-15.html` (Partie B) le reprend intégralement. Toute modification du sujet se fait ici d'abord. Le marqueur `[LIEN_INSCRIPTION]` est remplacé par l'enseignant dès que la liste d'inscription existe.
 
 ## 1. Objectif
 
@@ -14,10 +14,10 @@ Concevoir seul(e), sur un sujet de votre choix, une API REST Laravel 13 protég�
 
 | Étape | Date limite |
 |---|---|
-| Inscription du sujet dans la liste partagée | <DATE_INSCRIPTION> |
-| Tag `v1.0` poussé sur GitHub | <DATE_RENDU> (même date limite que `lab-08b`) |
+| Inscription du sujet dans la liste partagée | samedi 28 novembre 2026, 23 h 59 |
+| Tag `v1.0` poussé sur GitHub | samedi 12 décembre 2026, 23 h 59 (même date limite que `lab-08b`) |
 
-Liste d'inscription des sujets : <LIEN_INSCRIPTION>
+Liste d'inscription des sujets : [LIEN_INSCRIPTION]
 
 Durée estimée : environ 10 heures de travail personnel, à répartir sur plusieurs jours.
 
@@ -32,7 +32,7 @@ Durée estimée : environ 10 heures de travail personnel, à répartir sur plusi
 
 ## 4. Création du projet
 
-Créez le projet sans starter kit (choix `None`), avec Pest et SQLite, puis installez la couche API :
+Créez le projet comme le Mini-CMS : pas de starter kit (`no`), pile frontend `blade` (choix par défaut), Pest, SQLite. Si l'installateur propose d'installer les dépendances npm, vous pouvez répondre `no`. Installez ensuite la couche API :
 
 ```bash
 laravel new api-souk-agricole
@@ -150,20 +150,15 @@ php artisan serve
 
 Dans PowerShell, remplacez `cp .env.example .env` par `copy .env.example .env`.
 
-Il lance ensuite votre collection Postman. Si le projet ne démarre pas en suivant votre README, le critère « Fonctionnalité » vaut 0.
+Il lance ensuite votre collection Postman. Si le projet ne démarre pas en suivant votre README, le critère « Fonctionnalité » n'est pas validé.
 
-## 12. Barème (/20)
+## 12. Extensions facultatives
 
-| Critère | Points |
-|---|---|
-| Fonctionnalité : 9 endpoints, filtre, pagination, relations | 6 |
-| Sécurité : jetons, Policy, validation, codes 401 / 403 / 404 / 422 | 4 |
-| Tests Pest : au moins 6, tous verts | 4 |
-| Conventions Laravel 13 : Resources, Form Requests, chargement anticipé, contrôleurs légers | 2 |
-| Historique Git et tag `v1.0` | 2 |
-| README, collection Postman, « Choix d'architecture » | 2 |
+Ces extensions ne sont pas exigées. Elles ne comptent que si toutes les exigences obligatoires fonctionnent.
 
-Bonus (jusqu'à +1, note plafonnée à 20) : endpoint `POST /api/register` qui renvoie un jeton ; endpoints de lecture des étiquettes avec leur API Resource ; second filtre `?{etiquette}=<slug>` couvert par un test.
+- Un endpoint `POST /api/register` qui renvoie un jeton.
+- Des endpoints de lecture des étiquettes, avec leur API Resource.
+- Un second filtre `?{etiquette}=<slug>`, couvert par un test.
 
 ## 13. Auto-vérification avant le tag
 
