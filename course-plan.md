@@ -1,7 +1,7 @@
 # course-plan.md
 
 Atelier Framework Côté Serveur — Laravel 13.x / PHP 8.3+ — 3e année MDW (MDW32, MDW33), ISET Sidi Bouzid.
-16 session slots of about 3h10, 2 per week over 8 weeks. Since 19 Nov 2026 the course ends with S14 (S14 and S15 merged into one class) and S16 is a take-home final submission; see Calendar buffer. This file is the sequencing authority: a session may only use concepts introduced in the same or an earlier session (see the Concept Index at the end).
+16 session slots of about 3h10, 2 per week over 8 weeks. Since 19 Nov 2026 the course ends with S14 (S14 and S15 merged into one class) and S16 is a take-home final submission (Mini-CMS + free-subject Projet API); see Calendar buffer. This file is the sequencing authority: a session may only use concepts introduced in the same or an earlier session (see the Concept Index at the end).
 
 ## Evolving student project: Mini-CMS
 
@@ -18,11 +18,13 @@ Every student builds one application, `mini-cms`, from S01 to S16, in one GitHub
 
 Final result: a small publishing platform with public pages, an authenticated back office (authors manage their own posts, admins manage categories and tags), a JSON API, and a green Pest suite.
 
+S16 adds a second, separate public repository: the free-subject Projet API (`api-<sujet>`), specified in `projet-api.md`.
+
 ## Conventions for the whole course
 
 - Session file: `docs/session-XX.html`, XX = 01 to 16. S15 is retired: there is no `docs/session-15.html` and no S15 card in `docs/index.html`.
 - Session A (odd numbers) = guided codelab. Session B (even numbers) = applied sprint + assessment on the same repository. B sessions keep the 7-part structure from CLAUDE.md; in a B session, "Guided Steps" are sprint tasks with checkpoints, and the Assessment Checklist is graded. Exceptions: S14 is a guided codelab (A format) in a B slot, and S16 is a take-home submission (B format, no class).
-- Git tags: Session A of week W produces `lab-0W`, Session B produces `lab-0Wb` (week 1: `lab-01`, `lab-01b`; week 8: `lab-08`, `lab-08b`). Exception: S14 produces two tags, `lab-07b` (middle of the session) and `lab-08` (end of the session).
+- Git tags: Session A of week W produces `lab-0W`, Session B produces `lab-0Wb` (week 1: `lab-01`, `lab-01b`; week 8: `lab-08`, `lab-08b`). Exceptions: S14 produces two tags, `lab-07b` (middle of the session) and `lab-08` (end of the session); the Projet API repository has a single tag, `v1.0`.
 - Stack: `laravel new mini-cms` with no starter kit (Blade frontend stack), Pest, SQLite. Run with `composer run dev`. SQLite stays the default database for all sessions; PostgreSQL is an optional driver switch in S08 and is never required afterwards.
 - Windows PCs (mostly personal laptops, some university lab PCs): every command that differs between bash and PowerShell is given in both.
 - Repositories are public (portfolio). To limit copying, the Git history is graded: small meaningful commits between tags, one tag per session (two in S14), commits authored with the student's own identity.
@@ -47,7 +49,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 | S13 | W7 | A | Première API REST : install:api et API Resources | lab-07 |
 | S14 | W7 | A (créneau B) | API complète et authentification par jetons Sanctum | lab-07b, lab-08 |
 | S15 | — | — | Fusionnée avec S14 (pas de séance) | — |
-| S16 | W8 | B (à distance) | Livraison finale du projet | lab-08b |
+| S16 | W8 | B (à distance) | Livraison finale : Mini-CMS et projet API | lab-08b, v1.0 (dépôt API) |
 
 ---
 
@@ -241,7 +243,7 @@ Final result: a small publishing platform with public pages, an authenticated ba
 - Moved to S16 homework (former S14 sprint tasks): `Api\TagController` (index, show) with `TagResource`, tests for the `?tag=` filter, and a `curl.exe` Bearer example in the README.
 - Key commands: `php artisan make:controller Api/CategoryController --api --model=Category`, `php artisan make:controller Api/AuthController`, `php artisan route:list --path=api`, `php artisan test --filter=Api`, `curl.exe -H "Accept: application/json" "http://localhost:8000/api/posts?category=<slug>"`.
 - Portability: the `?category=` and `?tag=` filters compare slugs exactly, so they behave the same on SQLite and PostgreSQL.
-- Deliverable: push `main`, `lab-07b` and `lab-08`; the Livrable panel links to `docs/session-16.html` and states the S16 deadline.
+- Deliverable: push `main`, `lab-07b` and `lab-08`; the Livrable panel links to `docs/session-16.html`, states the S16 deadline, and announces the Projet API with its subject registration link and registration deadline (markers `[LIEN_INSCRIPTION]` and `[DATE_INSCRIPTION]` until the instructor fills them).
 - Assessment focus: consistent JSON shape and pagination, filters work, 401 without a token, 403 on another author's post, 422 on an invalid body, API tests green, both tags on GitHub.
 - Reuses: S13 API layer, S11 policies, S09 Form Requests and JSON exception rule, S07-S08 relations and eager loading.
 
@@ -250,17 +252,18 @@ Final result: a small publishing platform with public pages, an authenticated ba
 ### S15 — retired (merged into S14)
 - No class, no page, no index card, no tag of its own: `lab-08` is produced at the end of S14.
 
-### S16 — Livraison finale du projet
-- Week: W8 — Type: B, take-home (no class) — Tag: `lab-08b`
-- `docs/session-16.html` keeps the 7-part structure of a B session: Prerequisites & Objectives; Environment check = clean clone; Concept Brief = rubric and deadline; "Guided Steps" = submission tasks with checkpoints; Independent Challenge = optional bonus; graded Assessment Checklist; Deliverable. Durations on the page are estimates for home work. No Quiz éclair.
+### S16 — Livraison finale : Mini-CMS et projet API
+- Week: W8 — Type: B, take-home (no class) — Tags: `lab-08b` (Mini-CMS repository), `v1.0` (Projet API repository)
+- `docs/session-16.html` keeps the 7-part structure of a B session: Prerequisites & Objectives; Environment check = clean clone; Concept Brief = grading criteria and deadlines; "Guided Steps" = submission tasks with checkpoints, in two parts (Partie A : Mini-CMS, about 4 h; Partie B : Projet API, about 10 h); Independent Challenge = optional bonus (Projet API bonus from `projet-api.md`); graded Assessment Checklist (both repositories); Deliverable. Partie B renders the full subject from `projet-api.md` (rules, imposed data model, 9 minimum endpoints, technical requirements, 6 minimum tests, README, Git, grading, self-check). Durations on the page are estimates for home work. No Quiz éclair.
 - Learning outcomes:
   1. Finish the S14 homework: `Api\TagController` (index, show) with `TagResource`, tests for the `?tag=` filter.
-  2. Deliver a working Mini-CMS from a clean clone (`composer install`, `npm install`, `.env`, `php artisan key:generate`, `migrate:fresh --seed`, `php artisan test`), on SQLite.
-  3. Write the final README: setup (bash and PowerShell), features, API documentation (endpoints, login, Bearer token, error codes, one `curl.exe` example), screenshots, and a "Choix d'architecture" section answering, in the student's own words: why API writes go through `PostPolicy`; why `preventLazyLoading` is on; why the API uses tokens instead of the session.
-  4. Record a screencast demo (4 minutes maximum) of the web and API features, linked in the README.
-- Key commands: `php artisan make:resource TagResource`, `php artisan make:controller Api/TagController --api --model=Tag`, `git clone`, `composer install`, `copy .env.example .env` (PowerShell) / `cp .env.example .env` (bash), `php artisan key:generate`, `php artisan migrate:fresh --seed`, `php artisan test`, `git tag lab-08b`, `git push origin --tags`.
-- Grading: the instructor clones the repository at `lab-08b` and runs it on SQLite, whatever database the student used locally. The tag must be on GitHub before the deadline announced in S14. Rubric: functionality, code conventions, tests, Git history and tags, README (including "Choix d'architecture"), demo video.
-- Reuses: the whole project.
+  2. Deliver a working Mini-CMS from a clean clone (`composer install`, `npm install`, `npm run build`, `.env`, `php artisan key:generate`, `migrate:fresh --seed`, `php artisan test`), on SQLite.
+  3. Write the final Mini-CMS README: setup (bash and PowerShell), features, API documentation (endpoints, login, Bearer token, error codes, one `curl.exe` example), screenshots, and a "Choix d'architecture" section answering, in the student's own words: why API writes go through `PostPolicy`; why `preventLazyLoading` is on; why the API uses tokens instead of the session.
+  4. Build alone, on a registered free subject, a new token-protected REST API in a separate public repository `api-<sujet>`, following the minimum contract in `projet-api.md`: four imposed roles (owner `User`, owned main resource with full CRUD, read-only parent resource 1:N, N:N label set through the main resource), 9 minimum endpoints, at least 6 green Pest tests, a Postman collection, and a domain-specific "Choix d'architecture".
+- Subject rules: one subject per student, first registered first served, in the shared list; blog, news and article subjects, and plain renames of the Mini-CMS, are refused. Only S01-S14 concepts and no extra Composer package.
+- Key commands: `php artisan make:resource TagResource`, `php artisan make:controller Api/TagController --api --model=Tag`, `git clone`, `composer install`, `npm install`, `npm run build`, `copy .env.example .env` (PowerShell) / `cp .env.example .env` (bash), `php artisan key:generate`, `php artisan migrate:fresh --seed`, `php artisan test`, `git tag lab-08b`, `git push origin --tags`; Projet API: `laravel new api-<sujet>` (same answers as the Mini-CMS: no starter kit, Blade frontend stack, Pest, SQLite; the npm step may be declined), `php artisan install:api`, `php artisan serve`, `php artisan route:list --path=api`, `git tag v1.0`, `git push origin main --tags`.
+- Grading: the instructor clones the Mini-CMS at `lab-08b` and the Projet API at `v1.0`, and runs both on SQLite, whatever database the student used locally. For the Mini-CMS, `npm install` and `npm run build` run before `php artisan test`: the layout loads its assets with `@vite(...)`, so feature tests that render a page fail with "Vite manifest not found" on a clone that was never built. Both tags must be on GitHub before the deadline announced in S14. Mini-CMS criteria: functionality, code conventions, tests, Git history and tags, README (including "Choix d'architecture"). Projet API rubric (/20, bonus up to +1, capped at 20): see `projet-api.md`, section 12. Student pages show these criteria and this rubric only; they state no weighting between the two repositories and do not compare S16 with any earlier plan.
+- Reuses: the whole Mini-CMS project; the Projet API reuses S01-S14 only.
 
 ---
 
@@ -285,7 +288,7 @@ A session must not use a concept listed here with a later session number.
 | `install:api`, `apiResource`, API Resources, Postman, `curl.exe` | S13 |
 | API filters, JSON assertions, Sanctum tokens, `auth:sanctum`, `Sanctum::actingAs` | S14 |
 
-S15 is retired. S16 introduces no new concept.
+S15 is retired. S16 introduces no new concept: the Projet API is a reuse exercise of S01-S14.
 
 ## Points to verify on a lab PC before the course
 
@@ -301,11 +304,15 @@ S15 is retired. S16 introduces no new concept.
 - `cmdkey /delete:git:https://github.com` removes the stored GitHub credential on the lab PCs.
 - PostgreSQL for Windows on a student laptop: installer rights, `pdo_pgsql` and `pgsql` available in the php.net build, creation of the `mini_cms` database, and `migrate:fresh --seed` on PostgreSQL with the S07 migrations.
 - Where the official php.net PowerShell command installs PHP, and whether Composer-Setup.exe adds the Composer global `vendor\bin` folder to the PATH.
-- S14: resolved in source (19 Nov 2026): the actingAs token is a mock, so the logout test logs in with a real token.
+- S14: whether a logout test using `Sanctum::actingAs` can delete `currentAccessToken()`, or whether the logout test must log in through the API to get a real token first.
 - S14: whether the 120-minute guided part fits with a real group, since it now carries the former S14 sprint and the S15 codelab.
+- S16 Projet API: the `laravel new` prompts after the frontend-stack question for an API-only project (whether the npm step can be declined), that the project runs with `php artisan serve` alone, and, from a clean clone, whether `migrate:fresh --seed` asks before creating the missing `database/database.sqlite`.
+- S16 Mini-CMS: on a clean clone at `lab-08`, `php artisan test` fails with "Vite manifest not found" before `npm run build` and passes after it.
 
 ## Calendar buffer
 
 No buffer week is planned. If a holiday or exam period removes a session, merge the B session into the next A session (sprint tasks become homework) rather than dropping content; tags keep their numbering.
 
-Applied on 19 Nov 2026: the course ends with S14. The former S14 sprint and S15 codelab were merged into one guided S14 class (`lab-07b` and `lab-08`); the sprint tasks that did not fit (tag endpoints, tag filter tests, `curl.exe` documentation) moved to S16, which became a take-home final submission (`lab-08b`) graded from a clean clone and a screencast instead of a live soutenance.
+Applied on 19 Nov 2026: the course ends with S14. The former S14 sprint and S15 codelab were merged into one guided S14 class (`lab-07b` and `lab-08`); the sprint tasks that did not fit (tag endpoints, tag filter tests, `curl.exe` documentation) moved to S16, which became a take-home final submission (`lab-08b`) graded from a clean clone instead of a live soutenance.
+
+Also on 19 Nov 2026: S16 gained the free-subject Projet API (separate repository, tag `v1.0`, specified in `projet-api.md`).
