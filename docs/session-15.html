@@ -619,7 +619,7 @@ git ls-remote --tags origin</code></pre>
   <li>Un contrôleur <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Api\TagController</code> avec seulement les méthodes <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">index</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">show</code> (supprimez les autres méthodes générées).</li>
   <li>Une <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">TagResource</code>.</li>
   <li>Les routes déclarées avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">Route::apiResource</code>, limitée par <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">only(['index', 'show'])</code>, dans le même groupe que les catégories.</li>
-  <li>La même forme de JSON, la même pagination et la même clé de route que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/categories</code>.</li>
+  <li>La même forme de JSON et la même clé de route que <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/categories</code> : une clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code>, sans pagination (session 14, Étape 1).</li>
   <li>Le nombre d'articles de chaque tag (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withCount</code>) sur la liste.</li>
   <li>Un 404 en JSON pour un tag inconnu.</li>
 </ul>
@@ -665,7 +665,7 @@ curl.exe -i -H "Accept: application/json" http://localhost:8000/api/tags/999999<
 <details class="mb-2">
   <summary class="cursor-pointer text-sm text-brand font-medium">Indice 2</summary>
   <div class="mt-2">
-<p class="text-gray-700">Le nombre d'articles vient de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withCount</code> (<a href="session-08.html#step-7" class="underline text-brand">session 08, Étape 4</a>) dans le contrôleur, et la Resource ne l'expose que s'il a été chargé, avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenCounted</code> (session 14, Étape 1).</p>
+<p class="text-gray-700">Le nombre d'articles vient de <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withCount</code> (<a href="session-08.html#step-7" class="underline text-brand">session 08, Étape 4</a>) dans le contrôleur, et la Resource ne l'expose que s'il a été chargé, avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenCounted</code> (session 14, Étape 1). Comme pour les catégories, ne comptez que les articles publiés : <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">withCount</code> reçoit une fonction qui applique le scope <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">published()</code> (session 14, Étape 1).</p>
   </div>
 </details>
 <details class="mb-0">
@@ -700,7 +700,7 @@ curl.exe -i -H "Accept: application/json" http://localhost:8000/api/tags/999999<
   </h3>
 <ul class="space-y-2 text-gray-700 ">
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">route:list --path=api</code> affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">GET|HEAD api/tags</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">GET|HEAD api/tags/{tag}</code>.</span></li>
-  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le premier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code> renvoie un JSON avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code>, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">links</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">meta</code>, comme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/categories</code>, et un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts_count</code> pour chaque tag.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le premier <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">curl.exe</code> renvoie un JSON avec une clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">data</code>, comme <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">/api/categories</code>, et un <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">posts_count</code> pour chaque tag.</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le second affiche <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">HTTP/1.1 404 Not Found</code> et un corps JSON avec une clé <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">message</code>.</span></li>
 </ul>
 <p class="text-gray-700 mb-3 mt-4">Quand tout est vérifié :</p>
@@ -1221,7 +1221,7 @@ cd mini-cms</code></pre>
 </div>
 <div class="border-l-4 border-rose-500 bg-rose-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-bug text-rose-500 mt-0.5" aria-hidden="true"></i>
-  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Un sujet dont la ressource principale ressemble à un article (titre, texte, catégorie) est refusé, même avec d'autres noms. Changez de domaine plutôt que de noms.</p>
+  <p class="text-sm text-rose-900"><strong>Erreurs fréquentes :</strong> Un sujet dont la ressource principale n'a qu'un titre, un texte et une catégorie, sans colonne propre au domaine, est refusé, même avec d'autres noms : ajoutez des colonnes métier (prix, quantité, date, disponibilité) ou changez de domaine.</p>
 </div>
 </div>
 
@@ -1593,7 +1593,7 @@ curl.exe -i -H "Accept: application/json" http://localhost:8000/api/annonces/999
 <details class="mb-2">
   <summary class="cursor-pointer text-sm text-brand font-medium">Indice 1</summary>
   <div class="mt-2">
-<p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">apiResource</code>, les Resources, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenLoaded</code> et les dates ISO 8601 : <a href="session-13.html#step-6" class="underline text-brand">session 13, Étapes 3 et 4</a>.</p>
+<p class="text-gray-700"><code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">apiResource</code> : <a href="session-13.html#step-5" class="underline text-brand">session 13, Étape 2</a>. Les Resources, <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">whenLoaded</code> et les dates ISO 8601 (<code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">toIso8601String</code>) : <a href="session-13.html#step-6" class="underline text-brand">session 13, Étapes 3 et 4</a>.</p>
   </div>
 </details>
 <details class="mb-2">
@@ -2366,7 +2366,7 @@ cmdkey /list | Select-String github</code></pre>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code>, la commande liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/lab-08b</code> ; dans <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api-&lt;sujet&gt;</code>, elle liste <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">refs/tags/v1.0</code>.</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les deux tags apparaissent dans l'onglet Tags de chaque dépôt sur GitHub, avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">samedi 12 décembre 2026, 23 h 59</code>.</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les commits des deux dépôts portent votre identité (nom et e-mail GitHub).</span></li>
-  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Les README des deux dépôts s'affichent sur GitHub avec leurs captures.</span></li>
+  <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Le README du Mini-CMS s'affiche sur GitHub avec ses captures, et celui du Projet API s'affiche avec toutes ses sections.</span></li>
   <li class="flex items-start gap-2"><i class="fa-regular fa-square text-brand mt-1" aria-hidden="true"></i> <span>Poste de l'université uniquement : l'identifiant GitHub est supprimé, et le navigateur et Postman sont déconnectés.</span></li>
 </ul>
 </div>
