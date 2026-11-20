@@ -13,7 +13,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Session 16 - Livraison finale : Mini-CMS et projet API - Atelier Framework Côté Serveur</title>
+<title>Session 15 - Livraison finale : Mini-CMS et projet API - Atelier Framework Côté Serveur</title>
 
 <!-- Tailwind Play CDN -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -179,7 +179,7 @@
     <div class="px-5 py-5 border-b border-white/10">
       <p class="text-xs uppercase tracking-wide text-gray-400">ISET Sidi Bouzid - 3e annee MDW</p>
       <h1 class="text-white font-medium text-base mt-1">Atelier Framework Cote Serveur</h1>
-      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session 16 - Livraison finale : Mini-CMS et projet API</p>
+      <p class="text-xs text-gray-400 mt-1" id="sidebar-session-title">Session 15 - Livraison finale : Mini-CMS et projet API</p>
     </div>
     <nav class="flex-1 py-2" aria-label="Etapes du codelab">
       <ul id="step-nav-list">
@@ -352,7 +352,7 @@
         <i class="fa-solid fa-bars text-lg" aria-hidden="true"></i>
       </button>
       <div class="flex-1 min-w-0">
-        <p class="text-xs text-gray-500">Session 16 - Semaine 8 - à distance</p>
+        <p class="text-xs text-gray-500">Session 15 - Semaine 8 - à distance</p>
         <h2 id="current-step-title" class="font-medium text-gray-900 truncate">Prérequis et objectifs</h2>
       </div>
       <div class="flex items-center gap-2">
@@ -549,7 +549,7 @@ git ls-remote --tags origin</code></pre>
     <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> estimation 15 min</span>
   </h3>
 <p class="text-gray-700 mb-3">Le correcteur clone <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">mini-cms</code> au tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">lab-08b</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">api-&lt;sujet&gt;</code> au tag <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">v1.0</code>, puis lance les deux projets sur SQLite, en suivant uniquement le README de chaque dépôt, quelle que soit la base que vous avez utilisée chez vous. Pour le Mini-CMS, il lance <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">npm install</code> et <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">npm run build</code> avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">php artisan test</code> : le layout charge ses fichiers avec <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">@vite</code>, et les tests qui affichent une page échouent sur un clone qui n'a jamais été construit.</p>
-<p class="text-gray-700">Un projet qui ne démarre pas depuis un clone propre obtient 0 au critère Fonctionnalité. Les deux tags doivent être sur GitHub avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">samedi 12 décembre 2026, 23 h 59</code>.</p>
+<p class="text-gray-700">Un projet qui ne démarre pas depuis un clone propre ne valide pas le critère Fonctionnalité. Les deux tags doivent être sur GitHub avant <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">samedi 12 décembre 2026, 23 h 59</code>.</p>
 </div>
 <div class="md-card p-6 mt-6">
   <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
@@ -563,28 +563,6 @@ git ls-remote --tags origin</code></pre>
   <li>Historique Git et tags : petits commits significatifs, un tag par session, votre propre identité.</li>
   <li>README, avec la section « Choix d'architecture ».</li>
 </ul>
-</div>
-<div class="md-card p-6 mt-6">
-  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-    <i class="fa-solid fa-scale-balanced text-brand" aria-hidden="true"></i>
-    Barème du Projet API (/20)
-  </h3>
-<div class="overflow-x-auto mb-4">
-  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
-    <thead class="bg-gray-50">
-      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Critère</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Points</th></tr>
-    </thead>
-    <tbody>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Fonctionnalité : 9 endpoints, filtre, pagination, relations</th><td class="px-3 py-2 align-top">6</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Sécurité : jetons, Policy, validation, codes 401 / 403 / 404 / 422</th><td class="px-3 py-2 align-top">4</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Tests Pest : au moins 6, tous verts</th><td class="px-3 py-2 align-top">4</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Conventions Laravel 13 : Resources, Form Requests, chargement anticipé, contrôleurs légers</th><td class="px-3 py-2 align-top">2</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Historique Git et tag <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">v1.0</code></th><td class="px-3 py-2 align-top">2</td></tr>
-      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">README, collection Postman, « Choix d'architecture »</th><td class="px-3 py-2 align-top">2</td></tr>
-    </tbody>
-  </table>
-</div>
-<p class="text-gray-700">Bonus (jusqu'à +1, note plafonnée à 20) : endpoint <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">POST /api/register</code> qui renvoie un jeton ; endpoints de lecture des étiquettes avec leur API Resource ; second filtre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?{etiquette}=&lt;slug&gt;</code> couvert par un test.</p>
 </div>
 <div class="md-card p-6 mt-6">
   <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
@@ -605,7 +583,7 @@ git ls-remote --tags origin</code></pre>
     </tbody>
   </table>
 </div>
-<figcaption class="mt-2 text-sm text-gray-600">Figure 16.1 - Les quatre rôles du Projet API reprennent la structure du Mini-CMS.</figcaption>
+<figcaption class="mt-2 text-sm text-gray-600">Figure 15.1 - Les quatre rôles du Projet API reprennent la structure du Mini-CMS.</figcaption>
 </figure>
 <p class="text-gray-700">Le Projet API ne demande aucune notion nouvelle : chaque rôle a son modèle dans le Mini-CMS. Ce qui change, ce sont les noms, les colonnes métier et les questions de votre domaine.</p>
 </div>
@@ -2164,7 +2142,7 @@ php artisan test</code></pre>
     Objectif
     <span class="ml-auto inline-flex items-center gap-1 text-xs font-normal text-gray-500 bg-gray-100 px-2 py-1 rounded-full"><i class="fa-solid fa-clock" aria-hidden="true"></i> facultatif</span>
   </h3>
-<p class="text-gray-700 leading-relaxed mb-3">Aller plus loin sur le Projet API, pour un bonus pouvant aller jusqu'à +1 point (note plafonnée à 20).</p>
+<p class="text-gray-700 leading-relaxed mb-3">Aller plus loin sur le Projet API avec trois ajouts facultatifs.</p>
 <div class="border-l-4 border-blue-500 bg-blue-50 p-4 rounded flex gap-3 ">
   <i class="fa-solid fa-circle-info text-blue-500 mt-0.5" aria-hidden="true"></i>
   <p class="text-sm text-blue-900">Le défi bonus n'est pas obligatoire. Il ne compte que si tous les éléments obligatoires du Projet API fonctionnent : terminez d'abord les étapes B1 à B7.</p>
@@ -2297,28 +2275,6 @@ git commit -m "Add bonus feature"</code></pre>
   <pre><code class="language-bash">git log --format="%ad %an" --date=short</code></pre>
 </div>
 <p class="text-gray-700">La commande affiche une ligne par commit, avec sa date et votre nom : comptez les lignes et les dates différentes.</p>
-</div>
-<div class="md-card p-6 mt-6">
-  <h3 class="text-lg font-medium mb-3 flex items-center gap-2">
-    <i class="fa-solid fa-scale-balanced text-brand" aria-hidden="true"></i>
-    Rappel : barème du Projet API (/20)
-  </h3>
-<div class="overflow-x-auto mb-4">
-  <table class="w-full text-sm text-left border border-gray-200 rounded overflow-hidden">
-    <thead class="bg-gray-50">
-      <tr><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Critère</th><th scope="col" class="px-3 py-2 border-b border-gray-200 font-medium">Points</th></tr>
-    </thead>
-    <tbody>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Fonctionnalité : 9 endpoints, filtre, pagination, relations</th><td class="px-3 py-2 align-top">6</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Sécurité : jetons, Policy, validation, codes 401 / 403 / 404 / 422</th><td class="px-3 py-2 align-top">4</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Tests Pest : au moins 6, tous verts</th><td class="px-3 py-2 align-top">4</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Conventions Laravel 13 : Resources, Form Requests, chargement anticipé, contrôleurs légers</th><td class="px-3 py-2 align-top">2</td></tr>
-      <tr class="border-b border-gray-100"><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">Historique Git et tag <code class="bg-gray-100 px-1 py-0.5 rounded text-xs">v1.0</code></th><td class="px-3 py-2 align-top">2</td></tr>
-      <tr><th scope="row" class="px-3 py-2 font-medium bg-gray-50 align-top">README, collection Postman, « Choix d'architecture »</th><td class="px-3 py-2 align-top">2</td></tr>
-    </tbody>
-  </table>
-</div>
-<p class="text-gray-700">Bonus (jusqu'à +1, note plafonnée à 20) : endpoint <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm whitespace-nowrap">POST /api/register</code> qui renvoie un jeton ; endpoints de lecture des étiquettes avec leur API Resource ; second filtre <code class="bg-gray-100 px-1.5 py-0.5 rounded text-sm">?{etiquette}=&lt;slug&gt;</code> couvert par un test.</p>
 </div>
 
         </section>

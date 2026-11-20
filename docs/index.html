@@ -103,7 +103,7 @@
 (function () {
   'use strict';
 
-  // Week / title placeholders for the 14 sessions plus the S16 take-home submission (S15 merged into S14). Status is computed, not
+  // Week / title placeholders for the 14 sessions plus the S15 take-home submission (S16 retired). Status is computed, not
   // hand-maintained: a session is "Disponible" only once docs/session-XX.html
   // actually exists (see availableSessions below). Update availableSessions
   // as real session files are added.
@@ -122,11 +122,11 @@
     { num: 12, title: 'Sprint : autorisations et comparaison avec le starter kit Livewire' },
     { num: 13, title: 'Première API REST : install:api et API Resources' },
     { num: 14, title: 'API complète et authentification par jetons Sanctum' },
-    { num: 16, title: 'Livraison finale : Mini-CMS et projet API' }
+    { num: 15, title: 'Livraison finale : Mini-CMS et projet API' }
   ];
 
   // Sessions whose docs/session-XX.html file actually exists yet.
-  var availableSessions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 16];
+  var availableSessions = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15];
 
   function pad(n) {
     return n < 10 ? '0' + n : '' + n;
