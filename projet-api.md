@@ -1,10 +1,10 @@
 # projet-api.md
 
-# Projet API — sujet libre (livraison S16)
+# Projet API — sujet libre (livraison S15)
 
 Atelier Framework Côté Serveur — Laravel 13.x / PHP 8.3+ — 3e année MDW (MDW32, MDW33), ISET Sidi Bouzid.
 
-Ce fichier est le sujet officiel du Projet API. `docs/session-16.html` (Partie B) le reprend intégralement. Toute modification du sujet se fait ici d'abord.
+Ce fichier est le sujet officiel du Projet API. `docs/session-15.html` (Partie B) le reprend intégralement, sauf le barème (section 12), réservé au correcteur et absent des pages étudiantes. Toute modification du sujet se fait ici d'abord.
 
 ## 1. Objectif
 

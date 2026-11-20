@@ -301,4 +301,4 @@ If this file conflicts with `CLAUDE.md`, `CLAUDE.md` wins and the conflict is fl
 - `lang/fr` attribute: `category` => `catégorie`.
 - Tests `ApiReadTest` (5) and `ApiWriteTest` (8, helper `apiPostData`).
 - Optional: `docs/postman/mini-cms.postman_collection.json`.
-- Moved to S16: `Api\TagController`, `TagResource`, `?tag=` tests, a `curl.exe` Bearer example in the README.
+- Moved to S15: `Api\TagController`, `TagResource`, `?tag=` tests, a `curl.exe` Bearer example in the README.

@@ -19,7 +19,7 @@ Bouaziz. Groups: MDW32, MDW33.
   `main` branch's `/docs` folder).
 - The reusable skeleton lives in `templates/codelab-template.html`.
 - Every session is **one self-contained file**: `docs/session-XX.html`, where
-  `XX` is a two-digit number from `01` to `16`.
+  `XX` is a two-digit number from `01` to `15` (S16 is retired, see `course-plan.md`).
 - Exception: screenshots. They live in `docs/img/sXX/`, are referenced with a
   relative path, and are kept to steps that are hard to do or hard to fix.
   Every image has a French alt text, `width` and `height` attributes,
